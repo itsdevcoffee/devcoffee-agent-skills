@@ -1,4 +1,5 @@
 ---
+name: maximus
 description: Full review cycle - runs code-reviewer in a loop until clean, then finishes with code-simplifier
 argument-hint: [--pause-reviews] [--pause-simplifier] [--pause-major] [--max-rounds N] [--interactive]
 allowed-tools: Task, Read, Edit, Write, Bash, Grep, Glob, AskUserQuestion
@@ -18,19 +19,27 @@ Unless `--interactive` or `--pause-*` flags are passed, you must:
 1. Find issues → Fix them automatically
 2. Re-review → Fix any new issues
 3. Repeat until clean
-4. Run code-simplifier
-5. Output the formatted summary table
+4. **Run code-simplifier (MANDATORY - not optional)**
+5. **Output the complete formatted summary table (ABSOLUTELY REQUIRED)**
 
 The user invoked maximus BECAUSE they want autonomous fixing.
 
+**ALL 4 PHASES ARE MANDATORY:**
+- ✅ Phase 1: Detect changes
+- ✅ Phase 2: Review-fix loop
+- ✅ Phase 3: Simplification (DO NOT SKIP)
+- ✅ Phase 4: Summary table output (DO NOT SKIP)
+
 ## Prerequisites
 
-Spawn these agents via Task tool:
+Spawn these agents via Task tool using their fully qualified names:
 
 | Agent | Plugin | Purpose |
 |-------|--------|---------|
 | `feature-dev:code-reviewer` | feature-dev | Reviews code for bugs, security issues, and quality |
 | `code-simplifier:code-simplifier` | code-simplifier | Simplifies and refines code for clarity |
+
+**Important:** When using the Task tool, specify the complete `plugin:agent` format in the `subagent_type` parameter.
 
 If missing, show:
 ```
@@ -56,6 +65,31 @@ Parse `$ARGUMENTS` for flags (all default to OFF):
 **Arguments received:** $ARGUMENTS
 
 **If no flags passed → RUN FULLY AUTONOMOUS (no pausing, no asking)**
+
+### How to Parse Arguments
+
+Check for flags by scanning the `$ARGUMENTS` string:
+
+```
+Check if string contains flag keywords:
+- "--interactive" in $ARGUMENTS → Set all pause flags to true
+- "--pause-reviews" in $ARGUMENTS → Pause after each review round
+- "--pause-simplifier" in $ARGUMENTS → Pause before simplifier
+- "--pause-major" in $ARGUMENTS → Pause only if critical/major issues found
+- "--max-rounds" in $ARGUMENTS → Extract number following this flag (default: 5)
+
+If no flags detected → autonomous_mode = true (no pausing)
+```
+
+**Example logic:**
+```
+if $ARGUMENTS contains "--interactive" OR "--pause-reviews":
+  After code-reviewer finds issues:
+    → Use AskUserQuestion to confirm fixes
+    → Wait for user approval before proceeding
+else:
+  → Proceed immediately with fixes (no asking)
+```
 
 ## Workflow
 
@@ -124,21 +158,48 @@ history = []
 
 7. **Continue to next round**
 
-### Phase 3: Simplification
+### Phase 3: Simplification (MANDATORY - DO NOT SKIP)
 
-1. Check if `--pause-simplifier` or `--interactive` → Ask user
-2. **Otherwise proceed immediately**
+**THIS PHASE IS REQUIRED. Stopping after Phase 2 is considered FAILURE.**
+
+1. Check if `--pause-simplifier` or `--interactive` flag → Ask user permission
+2. **Otherwise proceed immediately (NO ASKING)**
 
 3. **Spawn code-simplifier** via Task tool:
    ```
    Task: code-simplifier:code-simplifier
-   Prompt: Simplify and refine these files for clarity: {file_list}
+   Prompt: Simplify and refine these files for clarity and maintainability: {file_list}
+
+   Focus on:
+   - Code clarity and readability
+   - Removing redundancy
+   - Consistent patterns
+
    Preserve all functionality.
    ```
 
-4. Record simplification changes
+4. Record simplification changes in tracking:
+   ```javascript
+   simplification: {
+     completed: true,
+     changes: ["Simplified file1.ts", ...]
+   }
+   ```
 
-### Phase 4: Summary Report (REQUIRED)
+**After Phase 3, you MUST proceed to Phase 4. You are not done yet.**
+
+### Phase 4: Summary Report (ABSOLUTELY MANDATORY)
+
+**⚠️ PRE-FLIGHT CHECKLIST - Verify before outputting:**
+
+- [ ] Phase 1 completed: Files detected and stored
+- [ ] Phase 2 completed: At least 1 review round with issues tracked by severity
+- [ ] Phase 3 completed: code-simplifier ran successfully
+- [ ] Have complete tracking data for all rounds
+- [ ] Have severity breakdowns (critical/major/minor)
+- [ ] Have simplification results recorded
+
+**If ANY item is unchecked, GO BACK and complete that phase first.**
 
 **YOU MUST OUTPUT THIS EXACT TABLE FORMAT:**
 
@@ -189,7 +250,56 @@ history = []
 
 1. **AUTONOMOUS by default** - Only pause if flags explicitly request it
 2. **NEVER ask permission** unless `--interactive` or `--pause-*` flags used
-3. **ALWAYS complete all 4 phases** - Detect → Review/Fix loop → Simplify → Summary
-4. **ALWAYS output the summary table** - This format is expected
-5. **Use Task tool** to spawn code-reviewer and code-simplifier agents
-6. **Track everything** - Round counts, issues, fixes for accurate summary
+3. **ALL 4 PHASES ARE MANDATORY** - Stopping after Phase 2 is FAILURE
+4. **PHASE 3 (Simplification) IS NOT OPTIONAL** - Must run code-simplifier
+5. **PHASE 4 (Summary) IS ABSOLUTELY REQUIRED** - Must output the complete table format, not a bullet list
+6. **CATEGORIZE BY SEVERITY** - Every issue must be tagged as critical/major/minor
+7. **TRACK EVERYTHING** - Maintain detailed records for accurate summary table
+8. **USE TASK TOOL** - Spawn code-reviewer and code-simplifier as subagents
+
+## Error Handling
+
+If errors occur during execution, follow these recovery procedures:
+
+### Subagent Failures
+
+**If `feature-dev:code-reviewer` fails:**
+1. Try spawning again with simpler prompt (just file list)
+2. If fails after 2 attempts → Skip to Phase 3, note in summary, mark "NEEDS ATTENTION"
+
+**If `code-simplifier:code-simplifier` fails:**
+1. Try spawning again with simpler prompt
+2. If fails after 2 attempts → Proceed to Phase 4, note in Timeline, mark "NEEDS ATTENTION"
+
+### Git Command Failures
+
+**If no changes detected:**
+1. Try: `git diff --name-only HEAD~1..HEAD` (last commit)
+2. If still fails → Ask user which files to review
+3. If no files → Exit gracefully with message
+
+### File Access Issues
+
+**If files cannot be read/edited:**
+1. Skip problematic file, continue with others
+2. Track skipped files
+3. Note in Phase 4 summary
+4. Mark "NEEDS ATTENTION" if critical files skipped
+
+### Recovery Principles
+
+- **Prefer partial results over complete failure**
+- **Always complete Phase 4 summary** (even with errors noted)
+- **Mark result as "NEEDS ATTENTION"** when errors occur
+- **Include error details in Timeline section**
+
+## Completion Verification
+
+Before considering yourself done, verify all phases completed:
+
+✅ Phase 1: Files detected
+✅ Phase 2: Review-fix loop completed with tracking
+✅ Phase 3: code-simplifier executed
+✅ Phase 4: Summary table outputted in correct format
+
+**If any ❌, you are NOT done. Complete the missing phase.**

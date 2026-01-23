@@ -1,5 +1,15 @@
 {
   "name": "devcoffee",
   "version": "0.1.0",
-  "description": "Dev Coffee productivity skills for Claude Code - battle-tested workflows for code quality and development efficiency"
+  "description": "Dev Coffee productivity skills for Claude Code - battle-tested workflows for code quality and development efficiency",
+  "author": {
+    "name": "Dev Coffee",
+    "url": "https://github.com/maskkiller"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/maskkiller/devcoffee-agent-skills"
+  },
+  "keywords": ["code-quality", "review", "automation", "productivity"],
+  "license": "MIT"
 }
