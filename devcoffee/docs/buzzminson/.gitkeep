@@ -1,0 +1,11 @@
+# Buzzminson Implementation Logs
+
+This directory contains implementation logs created by the buzzminson agent.
+
+Each log follows the format: `YYYY-MM-DD-descriptive-name.md`
+
+These files serve as:
+- Human-readable implementation summaries
+- Audit trails for decisions and changes
+- Context for ongoing development
+- Task lists and backlog tracking

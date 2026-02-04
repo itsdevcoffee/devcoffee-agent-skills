@@ -1,6 +1,6 @@
 ---
 name: remotion-setup
-description: Use this agent when the user wants to initialize a new Remotion project or set up Remotion in an existing project. Trigger when user says "set up Remotion", "create a new Remotion project", "initialize Remotion", or needs help with Remotion project configuration. This agent ensures proper project structure and dependency installation.
+description: Use this agent when the user wants to initialize a new Remotion project or set up Remotion in an existing project. Trigger when user says <example>set up Remotion</example>, <example>create a new Remotion project</example>, <example>initialize Remotion</example>, <example>add Remotion to my app</example>, or needs help with Remotion project configuration. This agent ensures proper project structure and dependency installation.
 model: sonnet
 color: blue
 ---

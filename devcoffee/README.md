@@ -8,17 +8,19 @@ A collection of productivity tools for Claude Code focused on code quality and d
 
 | Command | Description |
 |---------|-------------|
+| `/devcoffee:buzzminson` | Feature implementation with planning, feedback loops, and quality assurance |
 | `/devcoffee:maximus` | Full review cycle: code-reviewer loop + code-simplifier |
 
 ### Agents (can be spawned or mentioned)
 
 | Agent | Description |
 |-------|-------------|
+| `@devcoffee:buzzminson` | Feature implementation agent with structured workflow |
 | `@devcoffee:maximus` | Full review cycle as a subagent |
 
 Both invoke the same workflow - use whichever is more convenient:
-- `/devcoffee:maximus` - Type the slash command directly
-- `@devcoffee:maximus` - Mention in conversation or let Claude spawn it
+- `/devcoffee:command` - Type the slash command directly
+- `@devcoffee:agent` - Mention in conversation or let Claude spawn it
 
 ## Installation
 
@@ -45,6 +47,165 @@ This plugin depends on external agents. Install these plugins first:
 | code-simplifier | `code-simplifier` | Simplifies and refines code for clarity |
 
 Maximus will check for these dependencies and show installation instructions if missing.
+
+---
+
+## Buzzminson 🌚🐝
+
+Feature implementation agent with upfront clarification, iterative development, and integrated quality assurance.
+
+### When to Use
+
+**Use buzzminson for:**
+- Mid to large features on existing apps
+- Isolated, well-defined functionality
+- Bug fixes requiring implementation
+- Tasks that benefit from planning and feedback
+
+**Don't use buzzminson for:**
+- Very small tasks or trivial bug fixes
+- Package updates
+- Documentation-only changes
+- Git operations (commits, pushes, etc.)
+
+### Basic Usage
+
+```bash
+# Let buzzminson implement a feature
+/devcoffee:buzzminson Add user authentication with JWT
+
+# Or just mention it in conversation
+"Have @devcoffee:buzzminson implement the dashboard component"
+
+# With a markdown file of tasks
+/devcoffee:buzzminson Implement features from docs/tasks.md
+```
+
+### Workflow
+
+```
+┌─────────────────────────────────────┐
+│ 1. Clarification Phase              │
+│ → Ask questions OR YOLO it          │
+└─────────────────────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────┐
+│ 2. Implementation Phase             │
+│ → Build feature fully               │
+│ → Update tracking document          │
+└─────────────────────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────┐
+│ 3. Review & Feedback                │
+│ → Summarize changes                 │◄──┐
+│ → Gather user feedback              │   │
+└─────────────────────────────────────┘   │
+              │                           │
+        User feedback? ───────────────────┘
+              │ Ready for QA
+              ▼
+┌─────────────────────────────────────┐
+│ 4. Quality Assurance (Maximus)      │
+│ → Review, fix, simplify             │
+└─────────────────────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────┐
+│ 5. Final Summary & Commit           │
+└─────────────────────────────────────┘
+```
+
+### Features
+
+**Upfront Clarification**
+- Buzzminson asks questions before starting
+- Choose "Answer the questions" to clarify details
+- Choose "YOLO that shit dog" to skip and use best judgment
+
+**Living Documentation**
+- Creates tracking document at `docs/buzzminson/YYYY-MM-DD-feature-name.md`
+- Tracks tasks, decisions, changes, and problems
+- Serves as audit trail and context
+
+**Iterative Feedback**
+- After implementation, gather feedback
+- Iterate until you're satisfied
+- Maintains context across feedback loops
+
+**Integrated Quality Assurance**
+- Hands off to maximus when ready
+- Full review-fix-simplify cycle
+- Commit checkpoints before and after maximus
+
+**Backburner Tracking**
+- Non-critical enhancements tracked separately
+- Focus on current task
+- Document future improvements
+
+### Example Session
+
+```
+User: /devcoffee:buzzminson Add dark mode support
+
+Buzzminson: Moon Buzzminson has some questions before getting started 🌚 🐝
+  [ ] YOLO that shit dog
+  [ ] Answer the questions
+
+User: [Selects "Answer the questions"]
+
+Buzzminson:
+  Q1: Should dark mode be a toggle or auto-detect system preference?
+  Q2: Which components need dark mode support?
+
+User: [Answers questions]
+
+Buzzminson: [Implements feature, updates tracking doc]
+
+Buzzminson: Implementation Complete 🐝
+  Summary: Added dark mode with theme toggle...
+
+  What's next?
+  Do you have any feedback or should I have Maximus deeply and
+  consensually penetrate this shit? 🌚
+
+User: Looks good, run maximus
+
+Buzzminson: Should I commit the current changes before running maximus?
+
+User: Yes
+
+Buzzminson: [Runs maximus for review-fix-simplify cycle]
+
+Buzzminson: Buzzminson + Maximus Cycle Complete ✅
+  Summary: Implemented dark mode with full quality assurance...
+  Backburner Items: None
+
+  Anything else or should I commit?
+
+User: Commit it
+
+Buzzminson: ✅ Ready to commit!
+```
+
+### Tracking Documents
+
+All buzzminson sessions create implementation logs at:
+```
+docs/buzzminson/YYYY-MM-DD-descriptive-name.md
+```
+
+These documents include:
+- High-level summary
+- Task breakdown (planned, completed, backburner)
+- Questions and clarifications
+- Key decisions and assumptions
+- Implementation details and changes
+- Problems and roadblocks
+- Testing instructions
+- Maximus review results
+- Session timeline
 
 ---
 

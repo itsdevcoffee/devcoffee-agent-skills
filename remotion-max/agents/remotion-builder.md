@@ -1,8 +1,8 @@
 ---
 name: remotion-builder
-description: Use this agent when the user wants to create Remotion video components, animations, or compositions following best practices. Trigger when user says "create a Remotion component", "build a video animation", "generate Remotion code", or when they're working on Remotion projects and need component scaffolding. This agent uses the remotion-best-practices skill to ensure generated code follows established patterns.
+description: Use this agent when the user wants to create Remotion video components, animations, or compositions following best practices. Trigger when user says <example>create a Remotion component</example>, <example>build a video animation</example>, <example>generate Remotion code</example>, <example>make a text reveal</example>, or when they're working on Remotion projects and need component scaffolding. This agent uses the remotion-best-practices skill to ensure generated code follows established patterns.
 model: sonnet
-color: purple
+color: magenta
 ---
 
 # Remotion Builder Agent
