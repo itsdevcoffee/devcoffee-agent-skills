@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added - devcoffee Plugin
 - **Buzzminson agent and command** for structured feature implementation
-- Upfront clarification phase with "YOLO" option for skipping questions
+- Upfront clarification phase with option to skip questions and use best judgment
 - Living documentation system in `docs/buzzminson/` with tracking files
 - Implementation tracking template (TEMPLATE.md) with comprehensive structure
 - Iterative feedback loops for feature refinement
@@ -18,18 +18,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Session timeline logging for audit trail
 - Manual testing instructions generation
 - 4-phase workflow: Clarification → Implementation → Review → QA
+- **LICENSE.md** - Full MIT license text at repository root
+- WebFetch, WebSearch, and NotebookEdit tools to buzzminson for enhanced capabilities
 
 ### Changed - devcoffee Plugin
 - Plugin description updated to include both buzzminson and maximus
 - README reorganized with comprehensive buzzminson documentation
 - Added workflow diagrams for buzzminson
 - Enhanced command reference table with both agents
+- Buzzminson command documentation expanded from 183 to 634 words (247% increase)
+- Language improved to professional tone throughout all documentation
 - Version bumped to 0.2.0
 
 ### Fixed
-- Tool configuration in agent frontmatter
-- Example format for reliable agent triggering
-- Description clarity for better auto-delegation
+- **Critical:** Version consistency - marketplace.json and plugin.json now aligned at 0.2.0
+- **Critical:** Marketplace description now includes both agents (previously only maximus)
+- Tool configuration in agent frontmatter (maximus now has explicit tools field)
+- Example format for reliable agent triggering (all examples show actual Task tool invocation)
+- Description clarity for better auto-delegation (trigger-focused descriptions)
+- Professional language replacing casual phrases for broader audience appropriateness
 
 ## [0.1.0] - 2026-01-23
 
