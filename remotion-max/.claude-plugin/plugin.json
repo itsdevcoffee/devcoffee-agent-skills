@@ -1,7 +1,7 @@
 {
-  "name": "remotion-best-practices",
+  "name": "remotion-max",
   "version": "1.0.0",
-  "description": "Comprehensive best practices and patterns for Remotion video creation in React",
+  "description": "Complete toolkit for Remotion video creation - best practices, agents, and automation",
   "author": {
     "name": "Dev Coffee",
     "url": "https://github.com/maskkiller"

@@ -13,7 +13,7 @@
 
 # 2. Install plugins
 /plugin install devcoffee@devcoffee-agent-skills
-/plugin install remotion-best-practices@devcoffee-agent-skills
+/plugin install remotion-max@devcoffee-agent-skills
 
 # 3. Install devcoffee dependencies
 /plugin install feature-dev@claude-plugins-official
@@ -70,62 +70,58 @@ The star of the show: an autonomous agent that runs code reviews in a loop until
 
 ---
 
-### 🎬 Remotion Best Practices
+### 🎬 Remotion Max - Complete Remotion Toolkit
 
-> **Plugin:** `remotion-best-practices`
+> **Plugin:** `remotion-max`
 
-Comprehensive knowledge base for [Remotion](https://remotion.dev) video creation in React. This skill automatically provides best practices, patterns, and code examples when working with Remotion.
+Complete toolkit for [Remotion](https://remotion.dev) video creation combining best practices, intelligent agents, and automation.
 
 **When to use:**
 - ✅ Building Remotion video projects
-- ✅ Creating animations in React
-- ✅ Programmatic video generation
+- ✅ Setting up new Remotion projects
+- ✅ Generating animations and components
 - ✅ Learning Remotion patterns
 
 **What's included:**
-29+ detailed guides covering:
-- Animations, timing, and interpolation
-- Audio integration and synchronization
-- Video and image handling
-- Captions and subtitles (SRT, TikTok-style)
-- 3D content with Three.js
-- Lottie animations
-- Charts and data visualization
-- Font loading and text animations
-- Tailwind CSS integration
-- Scene transitions and sequencing
-- And much more!
+
+**📚 Comprehensive Skill**: 29+ guides covering animations, audio, video, captions, 3D, Lottie, charts, fonts, Tailwind, transitions, and more
+
+**🤖 Intelligent Agents**:
+- `remotion-builder` - Generates Remotion components following best practices
+- `remotion-setup` - Initializes and configures Remotion projects
+
+**⚡ Commands**:
+```bash
+/remotion-max:builder text-reveal    # Generate components
+/remotion-max:setup --new-project    # Initialize projects
+```
 
 **How it works:**
-The skill loads automatically when you work with Remotion. Just ask Claude about Remotion topics:
-```
-"How do I create a smooth animation in Remotion?"
-"Show me how to add captions to a Remotion video"
-"What's the best way to handle audio in Remotion?"
-```
+- **Skill**: Loads automatically when discussing Remotion
+- **Agents**: Activate when you ask to "create a Remotion component" or "set up a Remotion project"
+- **Commands**: Use directly for quick generation and setup
 
-Claude will reference the best practices and provide code examples.
-
-[View remotion-best-practices documentation →](./remotion-best-practices/README.md)
+[View remotion-max documentation →](./remotion-max/README.md)
 
 ---
 
 ## Available Plugins
 
-| Plugin | Type | Description | When to Use |
-|--------|------|-------------|-------------|
-| `devcoffee` | Command/Agent | Automated code review cycles | After coding, before commit |
-| `remotion-best-practices` | Skill | Remotion video creation guide | Building Remotion projects |
+| Plugin | Components | Description | When to Use |
+|--------|-----------|-------------|-------------|
+| `devcoffee` | Command + Agent | Automated code review cycles | After coding, before commit |
+| `remotion-max` | Skill + Agents + Commands | Remotion video creation toolkit | Building Remotion projects |
 
 ### Commands & Agents
 
 **devcoffee:**
-- **Command**: `/devcoffee:maximus` - Direct invocation
-- **Agent**: `maximus` - Ask Claude to "run maximus" or "review my code"
+- **Command**: `/devcoffee:maximus` - Run code review cycle
+- **Agent**: `maximus` - Triggers on "run maximus" or "review my code"
 
-**remotion-best-practices:**
-- **Skill**: Automatically available when discussing Remotion
-- No explicit command needed - just ask about Remotion topics
+**remotion-max:**
+- **Commands**: `/remotion-max:builder`, `/remotion-max:setup` - Generate components, initialize projects
+- **Agents**: `remotion-builder`, `remotion-setup` - Activate on "create Remotion component" or "set up Remotion"
+- **Skill**: `remotion-best-practices` - Automatically loads when discussing Remotion
 
 ---
 
@@ -149,8 +145,8 @@ Or use the local path if you've cloned the repo:
 # Install devcoffee (code review automation)
 /plugin install devcoffee@devcoffee-agent-skills
 
-# Install remotion-best-practices (optional - if you work with Remotion)
-/plugin install remotion-best-practices@devcoffee-agent-skills
+# Install remotion-max (if you work with Remotion)
+/plugin install remotion-max@devcoffee-agent-skills
 ```
 
 ### Step 3: Install Dependencies (for devcoffee only)
@@ -174,7 +170,7 @@ Maximus requires these official plugins:
 
 # Should show:
 # ✔ devcoffee@devcoffee-agent-skills
-# ✔ remotion-best-practices@devcoffee-agent-skills
+# ✔ remotion-max@devcoffee-agent-skills
 
 # Check available commands
 /help | grep devcoffee
@@ -458,9 +454,11 @@ MIT License - see [LICENSE](LICENSE) for details.
 ## Changelog
 
 ### v0.2.0 (2026-02-04)
-- Added `remotion-best-practices` plugin
+- Added `remotion-max` plugin (renamed from remotion-best-practices)
+- Added `remotion-builder` and `remotion-setup` agents
+- Added `/remotion-max:builder` and `/remotion-max:setup` commands
 - 29+ comprehensive guides for Remotion video creation
-- Covers animations, audio, captions, 3D, and more
+- Complete automation for Remotion project setup and component generation
 
 ### v0.1.0 (2026-02-04)
 - Initial release

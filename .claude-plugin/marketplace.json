@@ -27,9 +27,9 @@
       "license": "MIT"
     },
     {
-      "name": "remotion-best-practices",
-      "source": "./remotion-best-practices",
-      "description": "Comprehensive best practices and patterns for Remotion video creation in React",
+      "name": "remotion-max",
+      "source": "./remotion-max",
+      "description": "Complete toolkit for Remotion video creation - best practices, agents, and automation",
       "version": "1.0.0",
       "author": {
         "name": "Dev Coffee",
@@ -40,7 +40,8 @@
         "video",
         "react",
         "animation",
-        "composition"
+        "composition",
+        "automation"
       ],
       "category": "Development Tools",
       "license": "MIT"
