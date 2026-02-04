@@ -1,0 +1,25 @@
+{
+  "name": "devcoffee-marketplace",
+  "owner": {
+    "name": "Dev Coffee",
+    "url": "https://github.com/maskkiller"
+  },
+  "metadata": {
+    "description": "Productivity tools and automation workflows for Claude Code focused on code quality and development efficiency"
+  },
+  "plugins": [
+    {
+      "name": "devcoffee",
+      "source": "./devcoffee",
+      "description": "Automated code review cycles with maximus - runs code-reviewer in a loop until clean, then finishes with code-simplifier",
+      "version": "0.1.0",
+      "author": {
+        "name": "Dev Coffee",
+        "url": "https://github.com/maskkiller"
+      },
+      "repository": "https://github.com/maskkiller/devcoffee-agent-skills",
+      "keywords": ["code-quality", "review", "automation", "productivity"],
+      "license": "MIT"
+    }
+  ]
+}

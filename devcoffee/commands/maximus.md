@@ -1,8 +1,7 @@
 ---
-name: maximus
 description: Full review cycle - runs code-reviewer in a loop until clean, then finishes with code-simplifier
 argument-hint: [--pause-reviews] [--pause-simplifier] [--pause-major] [--max-rounds N] [--interactive]
-allowed-tools: Task, Read, Edit, Write, Bash, Grep, Glob, AskUserQuestion
+tools: Task, Read, Edit, Write, Bash, Grep, Glob, AskUserQuestion
 ---
 
 # Maximus: Full Review Cycle

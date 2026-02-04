@@ -6,10 +6,7 @@
     "name": "Dev Coffee",
     "url": "https://github.com/maskkiller"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/maskkiller/devcoffee-agent-skills"
-  },
+  "repository": "https://github.com/maskkiller/devcoffee-agent-skills",
   "keywords": ["code-quality", "review", "automation", "productivity"],
   "license": "MIT"
 }
