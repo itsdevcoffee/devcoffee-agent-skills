@@ -11,8 +11,8 @@
     {
       "name": "devcoffee",
       "source": "./devcoffee",
-      "description": "Automated code review cycles with maximus - runs code-reviewer in a loop until clean, then finishes with code-simplifier",
-      "version": "0.1.0",
+      "description": "Feature implementation and code quality automation - buzzminson for planned development, maximus for autonomous review cycles",
+      "version": "0.2.0",
       "author": {
         "name": "Dev Coffee",
         "url": "https://github.com/maskkiller"

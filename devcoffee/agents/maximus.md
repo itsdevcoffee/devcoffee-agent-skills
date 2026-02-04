@@ -3,6 +3,7 @@ name: maximus
 description: Use this agent when the user wants a full code review cycle with automatic fixes and simplification. Trigger when user says "run maximus", "full review cycle", "review and fix my code", "review all my changes", "thorough code review", or after implementing a feature when they want quality assurance.
 model: sonnet
 color: green
+tools: Task, Read, Edit, Write, Bash, Grep, Glob, AskUserQuestion
 ---
 
 <example>

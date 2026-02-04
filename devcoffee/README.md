@@ -122,7 +122,7 @@ Feature implementation agent with upfront clarification, iterative development, 
 **Upfront Clarification**
 - Buzzminson asks questions before starting
 - Choose "Answer the questions" to clarify details
-- Choose "YOLO that shit dog" to skip and use best judgment
+- Choose "Skip questions - use your best judgment" to proceed with assumptions
 
 **Living Documentation**
 - Creates tracking document at `docs/buzzminson/YYYY-MM-DD-feature-name.md`
@@ -150,7 +150,7 @@ Feature implementation agent with upfront clarification, iterative development, 
 User: /devcoffee:buzzminson Add dark mode support
 
 Buzzminson: Moon Buzzminson has some questions before getting started 🌚 🐝
-  [ ] YOLO that shit dog
+  [ ] Skip questions - use your best judgment
   [ ] Answer the questions
 
 User: [Selects "Answer the questions"]
@@ -167,8 +167,7 @@ Buzzminson: Implementation Complete 🐝
   Summary: Added dark mode with theme toggle...
 
   What's next?
-  Do you have any feedback or should I have Maximus deeply and
-  consensually penetrate this shit? 🌚
+  Do you have any feedback or should I run maximus for quality assurance? 🌚
 
 User: Looks good, run maximus
 

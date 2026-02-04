@@ -5,6 +5,32 @@ All notable changes to Dev Coffee Agent Skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-02-04
+
+### Added - devcoffee Plugin
+- **Buzzminson agent and command** for structured feature implementation
+- Upfront clarification phase with "YOLO" option for skipping questions
+- Living documentation system in `docs/buzzminson/` with tracking files
+- Implementation tracking template (TEMPLATE.md) with comprehensive structure
+- Iterative feedback loops for feature refinement
+- Integrated quality assurance via maximus handoff
+- Backburner tracking for future enhancements
+- Session timeline logging for audit trail
+- Manual testing instructions generation
+- 4-phase workflow: Clarification → Implementation → Review → QA
+
+### Changed - devcoffee Plugin
+- Plugin description updated to include both buzzminson and maximus
+- README reorganized with comprehensive buzzminson documentation
+- Added workflow diagrams for buzzminson
+- Enhanced command reference table with both agents
+- Version bumped to 0.2.0
+
+### Fixed
+- Tool configuration in agent frontmatter
+- Example format for reliable agent triggering
+- Description clarity for better auto-delegation
+
 ## [0.1.0] - 2026-01-23
 
 ### Added

@@ -27,13 +27,13 @@
 
 ### Initial Questions
 
-**User's approach:** [YOLO | Answered questions]
+**User's approach:** [Skipped questions | Answered questions]
 
 1. **Q:** [Question text]
-   **A:** [User's answer OR assumption if YOLO]
+   **A:** [User's answer OR assumption if questions skipped]
 
 2. **Q:** [Question text]
-   **A:** [User's answer OR assumption if YOLO]
+   **A:** [User's answer OR assumption if questions skipped]
 
 ### Follow-up Questions
 [Only if additional clarification was needed]
