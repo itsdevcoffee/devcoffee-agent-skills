@@ -2,7 +2,7 @@
   "name": "devcoffee-marketplace",
   "owner": {
     "name": "Dev Coffee",
-    "url": "https://github.com/maskkiller"
+    "url": "https://github.com/itsdevcoffee"
   },
   "metadata": {
     "description": "Productivity tools and automation workflows for Claude Code focused on code quality and development efficiency"
@@ -15,9 +15,9 @@
       "version": "0.2.0",
       "author": {
         "name": "Dev Coffee",
-        "url": "https://github.com/maskkiller"
+        "url": "https://github.com/itsdevcoffee"
       },
-      "repository": "https://github.com/maskkiller/devcoffee-agent-skills",
+      "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
       "keywords": [
         "code-quality",
         "review",
@@ -33,7 +33,7 @@
       "version": "1.0.0",
       "author": {
         "name": "Dev Coffee",
-        "url": "https://github.com/maskkiller"
+        "url": "https://github.com/itsdevcoffee"
       },
       "keywords": [
         "remotion",

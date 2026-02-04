@@ -52,7 +52,7 @@ Complete toolkit for [Remotion](https://remotion.dev) video creation in React - 
 
 ```bash
 # Add marketplace (if you haven't already)
-/plugin marketplace add maskkiller/devcoffee-agent-skills
+/plugin marketplace add itsdevcoffee/devcoffee-agent-skills
 
 # Install remotion-max
 /plugin install remotion-max@devcoffee-agent-skills

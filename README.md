@@ -9,7 +9,7 @@
 
 ```bash
 # 1. Add this marketplace to Claude Code
-/plugin marketplace add maskkiller/devcoffee-agent-skills
+/plugin marketplace add itsdevcoffee/devcoffee-agent-skills
 
 # 2. Install plugins
 /plugin install devcoffee@devcoffee-agent-skills
@@ -131,7 +131,7 @@ Complete toolkit for [Remotion](https://remotion.dev) video creation combining b
 
 In Claude Code, run:
 ```bash
-/plugin marketplace add maskkiller/devcoffee-agent-skills
+/plugin marketplace add itsdevcoffee/devcoffee-agent-skills
 ```
 
 Or use the local path if you've cloned the repo:
@@ -340,7 +340,7 @@ Maximus automatically detects what to review:
 
 Make sure you've added the marketplace first:
 ```bash
-/plugin marketplace add maskkiller/devcoffee-agent-skills
+/plugin marketplace add itsdevcoffee/devcoffee-agent-skills
 ```
 
 ### "Agent code-reviewer not found"
