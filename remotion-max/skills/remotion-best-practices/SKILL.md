@@ -16,6 +16,7 @@ Read individual rule files for detailed explanations and code examples:
 - [rules/calculate-metadata.md](rules/calculate-metadata.md) - Dynamically set composition duration, dimensions, and props
 - [rules/can-decode.md](rules/can-decode.md) - Check if a video can be decoded by the browser using Mediabunny
 - [rules/charts.md](rules/charts.md) - Chart and data visualization patterns for Remotion
+- [rules/common-mistakes.md](rules/common-mistakes.md) - Top 10 common mistakes and how to avoid them
 - [rules/compositions.md](rules/compositions.md) - Defining compositions, stills, folders, default props and dynamic metadata
 - [rules/display-captions.md](rules/display-captions.md) - Displaying captions in Remotion with TikTok-style pages and word highlighting
 - [rules/extract-frames.md](rules/extract-frames.md) - Extract frames from videos at specific timestamps using Mediabunny
@@ -36,4 +37,5 @@ Read individual rule files for detailed explanations and code examples:
 - [rules/transcribe-captions.md](rules/transcribe-captions.md) - Transcribing audio to generate captions in Remotion
 - [rules/transitions.md](rules/transitions.md) - Scene transition patterns for Remotion
 - [rules/trimming.md](rules/trimming.md) - Trimming patterns for Remotion - cut the beginning or end of animations
+- [rules/troubleshooting.md](rules/troubleshooting.md) - Debugging guide for common issues - black screens, build errors, animations not working
 - [rules/videos.md](rules/videos.md) - Embedding videos in Remotion - trimming, volume, speed, looping, pitch

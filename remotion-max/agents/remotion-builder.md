@@ -83,4 +83,83 @@ User: "Create a text reveal animation in Remotion"
 - Export components properly for composition registration
 - Follow React best practices (hooks, memoization)
 
+## CRITICAL: Tailwind + AbsoluteFill Pattern
+
+When using Tailwind with AbsoluteFill for centering:
+
+**❌ WRONG - Won't center:**
+```tsx
+<AbsoluteFill className="items-center justify-center">
+```
+
+**✅ CORRECT - Must add 'flex':**
+```tsx
+<AbsoluteFill className="flex items-center justify-center">
+```
+
+**Why:** `items-center` and `justify-center` are flexbox utilities that require `display: flex`. Without the `flex` class, content appears in the top-left corner.
+
+**Common patterns:**
+- Vertical stack: `"flex flex-col items-center justify-center"`
+- Horizontal row: `"flex flex-row items-center justify-center gap-4"`
+- With background: `"flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800"`
+
+**ALWAYS include 'flex' before using any flexbox utilities (items-*, justify-*, flex-col/row, gap-*).**
+
+## Component Template
+
+Use this template for centered, animated content:
+
+```tsx
+import {AbsoluteFill, useCurrentFrame, interpolate, spring, useVideoConfig} from 'remotion';
+
+interface Props {
+  title: string;
+}
+
+export const Component: React.FC<Props> = ({title}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+
+  const opacity = interpolate(frame, [0, 15], [0, 1], {
+    extrapolateRight: 'clamp',
+  });
+
+  const scale = spring({frame, fps, config: {damping: 100, stiffness: 200}});
+
+  return (
+    <AbsoluteFill className="flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
+      <div style={{opacity, transform: `scale(${scale})`}} className="text-center">
+        <h1 className="text-6xl font-bold text-gray-50">{title}</h1>
+      </div>
+    </AbsoluteFill>
+  );
+};
+```
+
+**Critical elements:**
+- ✅ AbsoluteFill has 'flex' before centering utilities
+- ✅ Animations use style prop (opacity, transform)
+- ✅ Layout uses className (flex, text-center, etc.)
+- ✅ TypeScript types defined
+- ✅ Extrapolation clamped
+
+## Pre-Generation Checklist
+
+Before generating components, verify:
+- [ ] If using Tailwind: Is @remotion/tailwind installed?
+- [ ] If using Tailwind: Is enableTailwind() in remotion.config.ts?
+- [ ] If using Tailwind: Is style.css imported in index.tsx?
+
+If ANY check fails, components will render incorrectly. See rules/tailwind.md.
+
+## Post-Generation Checklist
+
+After generating components, verify:
+- [ ] All AbsoluteFill with centering has 'flex' class
+- [ ] All animations use style prop (not className)
+- [ ] All interpolations have extrapolateRight set
+- [ ] TypeScript types are defined
+- [ ] Imports from 'remotion' not 'react'
+
 Your goal: Generate production-ready Remotion components that are performant, maintainable, and follow community best practices.

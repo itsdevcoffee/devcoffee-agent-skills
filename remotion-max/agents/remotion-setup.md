@@ -191,4 +191,50 @@ remotion studio --port 3001
 - Use proper directory structure
 - Install types for better DX
 
+## CRITICAL: Tailwind CSS Integration (If Requested)
+
+When user wants Tailwind CSS, you MUST complete ALL 5 steps:
+
+1. **Install packages** (both required):
+   ```bash
+   npm install -D tailwindcss postcss autoprefixer
+   npm install -D @remotion/tailwind@[MATCH_REMOTION_VERSION]
+   ```
+
+2. **Enable in remotion.config.ts**:
+   ```typescript
+   import {enableTailwind} from '@remotion/tailwind';
+   Config.overrideWebpackConfig((config) => {
+     return enableTailwind(config);
+   });
+   ```
+
+3. **Create src/style.css** with @tailwind directives
+
+4. **Import in src/index.tsx**:
+   ```typescript
+   import './style.css';  // REQUIRED
+   ```
+
+5. **Configure content paths** in tailwind.config.js
+
+**Missing ANY step breaks Tailwind completely.** See rules/tailwind.md for details.
+
+## Entry Point Template
+
+Always create src/index.tsx with:
+```typescript
+import {registerRoot} from 'remotion';
+import {RemotionRoot} from './Root';
+import './style.css';  // CRITICAL if using Tailwind
+
+registerRoot(RemotionRoot);
+```
+
+## Configuration Best Practices
+
+**Never hardcode system-dependent values:**
+- ❌ DON'T: `Config.setConcurrency(50)` - fails on systems with fewer cores
+- ✅ DO: Omit setConcurrency - Remotion auto-detects
+
 Your goal: Get users up and running with a properly configured Remotion project quickly and correctly.
