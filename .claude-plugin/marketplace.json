@@ -12,7 +12,7 @@
       "name": "devcoffee",
       "source": "./devcoffee",
       "description": "Feature implementation and code quality automation - buzzminson for planned development, maximus for autonomous review cycles",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "author": {
         "name": "Dev Coffee",
         "url": "https://github.com/itsdevcoffee"

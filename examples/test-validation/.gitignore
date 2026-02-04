@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Build output
+out/
+dist/
+build/
+
+# Remotion cache
+.remotion/
+
+# OS files
+.DS_Store
+
+# Logs
+*.log
+
+# Environment
+.env

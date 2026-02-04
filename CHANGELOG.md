@@ -5,6 +5,31 @@ All notable changes to Dev Coffee Agent Skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-02-04
+
+### Improved - Maximus Agent
+- **Enhanced code-simplifier output** with detailed metrics and categorization
+- Simplifier now provides structured output matching review phase detail level
+- Added 8 improvement categories: Extract Function, Rename Variable, Reduce Nesting, Consolidate Code, Remove Duplication, Improve Types, Add Constants, Simplify Logic
+- Phase 4 summary now includes comprehensive Simplification Summary section
+- Detailed improvements per file with specific changes and impact measurements
+- Files Modified section shows simplification counts instead of generic "simplified"
+
+### Added - Maximus Agent
+- New state tracking structure for simplification with `files_processed`, `improvements`, and `by_category`
+- Structured simplifier prompt requesting categorized output with impact details
+- Simplification Summary section in Phase 4 output with metrics and breakdowns
+- Improvements by Category grouping in output
+- Detailed Improvements section showing per-file changes with categories and impacts
+
+### Changed - Maximus Agent
+- State structure: `simplification.changes` → `simplification.improvements` (array of objects with file, category, description, impact)
+- Timeline output: Generic "Simplification → {files}" → Detailed "Simplification Results: {specific improvements per file}"
+- Error handling: Updated to handle new state structure and provide graceful degradation
+
+### Result
+Phase 3 (Simplification) now provides the same level of detail and clarity as Phase 2 (Review), making it easy to understand what code quality improvements were made and their impact.
+
 ## [0.2.0] - 2026-02-04
 
 ### Added - devcoffee Plugin
