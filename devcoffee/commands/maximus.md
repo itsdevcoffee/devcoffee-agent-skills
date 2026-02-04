@@ -175,13 +175,43 @@ history = []
    - Consistent patterns
 
    Preserve all functionality.
+
+   IMPORTANT: After simplification, provide detailed output for EACH file in this format:
+
+   File: <filename>
+   Improvements:
+   - [Category]: <specific change made and impact>
+   - [Category]: <specific change made and impact>
+
+   Categories: Extract Function, Rename Variable, Reduce Nesting, Consolidate Code,
+   Remove Duplication, Improve Types, Add Constants, Simplify Logic
+
+   Example:
+   File: UpdateOverlay.tsx
+   Improvements:
+   - [Extract Function]: Extracted animation logic into useAnimation hook (reduced 40 lines)
+   - [Reduce Nesting]: Flattened nested conditionals using early returns (3 levels → 1)
    ```
 
-4. Record simplification changes in tracking:
+4. **Parse simplifier output and record detailed changes** in tracking:
    ```javascript
    simplification: {
      completed: true,
-     changes: ["Simplified file1.ts", ...]
+     files_processed: 2,
+     improvements: [
+       {
+         file: "UpdateOverlay.tsx",
+         category: "Extract Function",
+         description: "Extracted animation logic into useAnimation hook",
+         impact: "reduced 40 lines"
+       },
+       // ... more improvements
+     ],
+     by_category: {
+       "Extract Function": 1,
+       "Reduce Nesting": 1,
+       // ... more categories
+     }
    }
    ```
 
@@ -196,7 +226,7 @@ history = []
 - [ ] Phase 3 completed: code-simplifier ran successfully
 - [ ] Have complete tracking data for all rounds
 - [ ] Have severity breakdowns (critical/major/minor)
-- [ ] Have simplification results recorded
+- [ ] Have detailed simplification results (improvements per file, categories, impacts)
 
 **If ANY item is unchecked, GO BACK and complete that phase first.**
 
@@ -229,17 +259,32 @@ history = []
 - Major: {N} found, {N} fixed
 - Minor: {N} found, {N} fixed
 
+### Simplification Summary
+- **Files processed:** {N}
+- **Total improvements:** {N}
+
+#### Improvements by Category
+- **{Category}:** {N} improvements
+- **{Category}:** {N} improvements
+
+#### Detailed Improvements
+**{filename}:**
+- {category}: {description} ({impact})
+- {category}: {description} ({impact})
+
 ### Timeline
 1. Initial scan → {N} issues ({severity breakdown})
 2. Round 1 fixes → {brief description of fixes}
 3. Verification scan → {N} issues
 4. Round 2 fixes → {brief description}
 5. Final scan → Clean
-6. Simplification → {what was simplified}
+6. Simplification Results:
+   - {filename}: {list improvements with categories and impacts}
+   - {filename}: {list improvements with categories and impacts}
 
 ### Files Modified
-- `path/to/file1.ts` - {N} issues fixed, simplified
-- `path/to/file2.ts` - {N} issues fixed
+- `path/to/file1.ts` - {N} issues fixed, {N} simplifications applied
+- `path/to/file2.ts` - {N} issues fixed, {N} simplifications applied
 
 ### Result: {PASS | NEEDS ATTENTION}
 {One sentence summary}
@@ -267,8 +312,12 @@ If errors occur during execution, follow these recovery procedures:
 2. If fails after 2 attempts → Skip to Phase 3, note in summary, mark "NEEDS ATTENTION"
 
 **If `code-simplifier:code-simplifier` fails:**
-1. Try spawning again with simpler prompt
-2. If fails after 2 attempts → Proceed to Phase 4, note in Timeline, mark "NEEDS ATTENTION"
+1. Try spawning again with simpler prompt (without detailed output requirement)
+2. If fails after 2 attempts:
+   - Proceed to Phase 4 anyway
+   - Note in Timeline: "Simplification skipped due to subagent failure"
+   - Note in Simplification Summary: "Simplification attempted but failed"
+   - Mark result as "NEEDS ATTENTION"
 
 ### Git Command Failures
 

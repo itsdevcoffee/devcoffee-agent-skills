@@ -95,7 +95,9 @@ state = {
   // Phase 3
   simplification: {
     completed: false,
-    changes: []
+    files_processed: 0,
+    improvements: [],
+    by_category: {}
   },
 
   // Phase 4
@@ -168,15 +170,62 @@ If no changes found, report and exit.
    - Code clarity and readability
    - Removing redundancy
    - Consistent patterns
+
+   IMPORTANT: After simplification, provide detailed output for EACH file in this format:
+
+   File: <filename>
+   Improvements:
+   - [Category]: <specific change made and impact>
+   - [Category]: <specific change made and impact>
+
+   Categories: Extract Function, Rename Variable, Reduce Nesting, Consolidate Code,
+   Remove Duplication, Improve Types, Add Constants, Simplify Logic
+
+   Example:
+   File: UpdateOverlay.tsx
+   Improvements:
+   - [Extract Function]: Extracted animation logic into useAnimation hook (reduced 40 lines)
+   - [Reduce Nesting]: Flattened nested conditionals using early returns (3 levels → 1)
+   - [Rename Variable]: Renamed 'x' to 'animationProgress' for clarity
    ```
 
-2. Record changes in state.simplification:
+2. **Parse simplifier output and record detailed changes** in state.simplification:
    ```javascript
    state.simplification = {
      completed: true,
-     changes: ["Simplified file1.ts", "Refactored file2.ts", ...]
+     files_processed: 2,
+     improvements: [
+       {
+         file: "UpdateOverlay.tsx",
+         category: "Extract Function",
+         description: "Extracted animation logic into useAnimation hook",
+         impact: "reduced 40 lines"
+       },
+       {
+         file: "UpdateOverlay.tsx",
+         category: "Reduce Nesting",
+         description: "Flattened nested conditionals using early returns",
+         impact: "3 levels → 1"
+       },
+       {
+         file: "use-ota-updates.ts",
+         category: "Consolidate Code",
+         description: "Combined 3 similar error handlers into single function",
+         impact: "reduced duplication"
+       }
+     ],
+     by_category: {
+       "Extract Function": 1,
+       "Reduce Nesting": 1,
+       "Consolidate Code": 1
+     }
    }
    ```
+
+3. **Track metrics:**
+   - Count improvements per file
+   - Group by category
+   - Note any significant line reductions
 
 **After Phase 3, you MUST proceed to Phase 4. You are not finished yet.**
 
@@ -189,7 +238,7 @@ If no changes found, report and exit.
 - [ ] Completed Phase 3 (ran code-simplifier)
 - [ ] Have complete state data with all rounds tracked
 - [ ] Have severity breakdowns for all issues
-- [ ] Have simplification results
+- [ ] Have detailed simplification results (improvements per file, categories)
 
 **If ANY checkbox is unchecked, GO BACK and complete that phase.**
 
@@ -221,13 +270,29 @@ If no changes found, report and exit.
 - Major: {sum} found, {sum} fixed
 - Minor: {sum} found, {sum} fixed
 
+### Simplification Summary
+- **Files processed:** {state.simplification.files_processed}
+- **Total improvements:** {count of state.simplification.improvements}
+
+#### Improvements by Category
+{For each category in state.simplification.by_category:}
+- **{Category}:** {count} improvements
+
+#### Detailed Improvements
+{For each file with improvements:}
+**{filename}:**
+- {category}: {description} ({impact if available})
+- {category}: {description} ({impact if available})
+
 ### Timeline
 1. Initial scan → {round 1 issues_found} issues (breakdown)
 2. Round 1 fixes → {list fixes_applied from state.rounds[0]}
 3. Verification scan → {round 2 issues_found} issues (or "Clean" if 0)
 4. Round 2 fixes → {list fixes_applied from state.rounds[1] if exists}
 ... continue for each round in state.rounds ...
-N. Simplification → {state.simplification.changes}
+N. Simplification Results:
+   {For each file:}
+   - {filename}: {list improvements with categories and impacts}
 
 ### Files Modified
 {For each file in state.files:}
@@ -264,18 +329,42 @@ N. Simplification → {state.simplification.changes}
 - Major: 2 found, 2 fixed
 - Minor: 1 found, 1 fixed
 
+### Simplification Summary
+- **Files processed:** 2
+- **Total improvements:** 5
+
+#### Improvements by Category
+- **Extract Function:** 2 improvements
+- **Reduce Nesting:** 1 improvement
+- **Rename Variable:** 1 improvement
+- **Consolidate Code:** 1 improvement
+
+#### Detailed Improvements
+**UpdateOverlay.tsx:**
+- Extract Function: Extracted animation logic into useAnimation hook (reduced 40 lines)
+- Reduce Nesting: Flattened nested conditionals using early returns (3 levels → 1)
+- Rename Variable: Renamed 'x' to 'animationProgress' for clarity
+
+**use-ota-updates.ts:**
+- Consolidate Code: Combined 3 similar error handlers into single function (reduced duplication)
+- Extract Function: Extracted retry logic into useRetry hook (improved reusability)
+
 ### Timeline
 1. Initial scan → 3 issues (2 major, 1 minor)
 2. Round 1 fixes → Fixed missing useEffect dependencies in UpdateOverlay.tsx, added cleanup logic for animation state, added error handling for Updates.reloadAsync()
 3. Verification scan → Clean
-4. Simplification → Simplified UpdateOverlay.tsx, refactored use-ota-updates.ts
+4. Simplification Results:
+   - UpdateOverlay.tsx: Extracted animation logic into useAnimation hook (reduced 40 lines),
+     flattened nested conditionals (3 levels → 1), renamed 'x' to 'animationProgress'
+   - use-ota-updates.ts: Combined 3 error handlers into single function,
+     extracted retry logic into useRetry hook
 
 ### Files Modified
-- `UpdateOverlay.tsx` - 2 issues fixed, simplified
-- `use-ota-updates.ts` - 1 issue fixed, simplified
+- `UpdateOverlay.tsx` - 2 issues fixed, 3 simplifications applied
+- `use-ota-updates.ts` - 1 issue fixed, 2 simplifications applied
 
 ### Result: PASS
-All issues resolved. Code reviewed, fixed, and simplified successfully.
+All issues resolved. Code reviewed, fixed, and simplified with 5 quality improvements.
 ```
 
 **Set state.summary_output = true after outputting the table.**
@@ -305,11 +394,21 @@ If errors occur during execution, follow these recovery procedures:
    - Mark result as "NEEDS ATTENTION"
 
 **If `code-simplifier` subagent fails:**
-1. Record the failure in state.simplification: `{completed: false, error: "subagent failed"}`
-2. Try spawning again with simpler prompt
+1. Record the failure in state.simplification:
+   ```javascript
+   {
+     completed: false,
+     files_processed: 0,
+     improvements: [],
+     by_category: {},
+     error: "subagent failed"
+   }
+   ```
+2. Try spawning again with simpler prompt (without detailed output requirement)
 3. If still fails after 2 attempts:
    - Proceed to Phase 4 anyway
    - Note in Timeline: "Simplification skipped due to subagent failure"
+   - Note in Simplification Summary: "Simplification attempted but failed"
    - Mark result as "NEEDS ATTENTION"
 
 ### Git Command Failures
