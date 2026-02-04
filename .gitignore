@@ -1,0 +1,31 @@
+node_modules/
+.DS_Store
+
+# Example projects build output
+examples/*/out/
+examples/*/node_modules/
+examples/*/.remotion/
+examples/*/dist/
+examples/*/build/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+.cache/
