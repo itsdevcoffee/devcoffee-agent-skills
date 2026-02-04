@@ -18,7 +18,31 @@
         "url": "https://github.com/maskkiller"
       },
       "repository": "https://github.com/maskkiller/devcoffee-agent-skills",
-      "keywords": ["code-quality", "review", "automation", "productivity"],
+      "keywords": [
+        "code-quality",
+        "review",
+        "automation",
+        "productivity"
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "remotion-best-practices",
+      "source": "./remotion-best-practices",
+      "description": "Comprehensive best practices and patterns for Remotion video creation in React",
+      "version": "1.0.0",
+      "author": {
+        "name": "Dev Coffee",
+        "url": "https://github.com/maskkiller"
+      },
+      "keywords": [
+        "remotion",
+        "video",
+        "react",
+        "animation",
+        "composition"
+      ],
+      "category": "Development Tools",
       "license": "MIT"
     }
   ]

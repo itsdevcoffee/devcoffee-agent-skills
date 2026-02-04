@@ -11,24 +11,26 @@
 # 1. Add this marketplace to Claude Code
 /plugin marketplace add maskkiller/devcoffee-agent-skills
 
-# 2. Install the plugin
+# 2. Install plugins
 /plugin install devcoffee@devcoffee-agent-skills
+/plugin install remotion-best-practices@devcoffee-agent-skills
 
-# 3. Install dependencies
+# 3. Install devcoffee dependencies
 /plugin install feature-dev@claude-plugins-official
 /plugin install code-simplifier@claude-plugins-official
 
-# 4. Run your first review cycle
-/devcoffee:maximus
+# 4. Try them out
+/devcoffee:maximus                  # Run code review cycle
+# Or work with Remotion - skill loads automatically
 ```
-
-That's it! Maximus will now automatically review your code, fix issues, and simplify it.
 
 ---
 
 ## What's Included
 
 ### 🎯 Maximus - Automated Code Review Cycle
+
+> **Plugin:** `devcoffee`
 
 The star of the show: an autonomous agent that runs code reviews in a loop until your code is clean, then polishes it with automatic simplification.
 
@@ -68,15 +70,62 @@ The star of the show: an autonomous agent that runs code reviews in a loop until
 
 ---
 
-## Available Commands & Agents
+### 🎬 Remotion Best Practices
 
-| Command | Agent | Description | When to Use |
-|---------|-------|-------------|-------------|
-| `/devcoffee:maximus` | `maximus` | Full review-fix-simplify cycle | After coding, before commit |
+> **Plugin:** `remotion-best-practices`
 
-**Two ways to invoke:**
+Comprehensive knowledge base for [Remotion](https://remotion.dev) video creation in React. This skill automatically provides best practices, patterns, and code examples when working with Remotion.
+
+**When to use:**
+- ✅ Building Remotion video projects
+- ✅ Creating animations in React
+- ✅ Programmatic video generation
+- ✅ Learning Remotion patterns
+
+**What's included:**
+29+ detailed guides covering:
+- Animations, timing, and interpolation
+- Audio integration and synchronization
+- Video and image handling
+- Captions and subtitles (SRT, TikTok-style)
+- 3D content with Three.js
+- Lottie animations
+- Charts and data visualization
+- Font loading and text animations
+- Tailwind CSS integration
+- Scene transitions and sequencing
+- And much more!
+
+**How it works:**
+The skill loads automatically when you work with Remotion. Just ask Claude about Remotion topics:
+```
+"How do I create a smooth animation in Remotion?"
+"Show me how to add captions to a Remotion video"
+"What's the best way to handle audio in Remotion?"
+```
+
+Claude will reference the best practices and provide code examples.
+
+[View remotion-best-practices documentation →](./remotion-best-practices/README.md)
+
+---
+
+## Available Plugins
+
+| Plugin | Type | Description | When to Use |
+|--------|------|-------------|-------------|
+| `devcoffee` | Command/Agent | Automated code review cycles | After coding, before commit |
+| `remotion-best-practices` | Skill | Remotion video creation guide | Building Remotion projects |
+
+### Commands & Agents
+
+**devcoffee:**
 - **Command**: `/devcoffee:maximus` - Direct invocation
-- **Agent**: Just ask Claude to "run maximus" or "review my code" - it will trigger automatically
+- **Agent**: `maximus` - Ask Claude to "run maximus" or "review my code"
+
+**remotion-best-practices:**
+- **Skill**: Automatically available when discussing Remotion
+- No explicit command needed - just ask about Remotion topics
 
 ---
 
@@ -94,13 +143,17 @@ Or use the local path if you've cloned the repo:
 /plugin marketplace add /path/to/devcoffee-agent-skills
 ```
 
-### Step 2: Install Plugin
+### Step 2: Install Plugins
 
 ```bash
+# Install devcoffee (code review automation)
 /plugin install devcoffee@devcoffee-agent-skills
+
+# Install remotion-best-practices (optional - if you work with Remotion)
+/plugin install remotion-best-practices@devcoffee-agent-skills
 ```
 
-### Step 3: Install Dependencies
+### Step 3: Install Dependencies (for devcoffee only)
 
 Maximus requires these official plugins:
 
@@ -116,10 +169,17 @@ Maximus requires these official plugins:
 ### Verify Installation
 
 ```bash
-/help | grep devcoffee
-```
+# Check installed plugins
+/plugin list | grep devcoffee
 
-You should see `/devcoffee:maximus` listed.
+# Should show:
+# ✔ devcoffee@devcoffee-agent-skills
+# ✔ remotion-best-practices@devcoffee-agent-skills
+
+# Check available commands
+/help | grep devcoffee
+# Should show: /devcoffee:maximus
+```
 
 ---
 
@@ -396,6 +456,11 @@ MIT License - see [LICENSE](LICENSE) for details.
 ---
 
 ## Changelog
+
+### v0.2.0 (2026-02-04)
+- Added `remotion-best-practices` plugin
+- 29+ comprehensive guides for Remotion video creation
+- Covers animations, audio, captions, 3D, and more
 
 ### v0.1.0 (2026-02-04)
 - Initial release

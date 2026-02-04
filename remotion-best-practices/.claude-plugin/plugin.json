@@ -1,0 +1,11 @@
+{
+  "name": "remotion-best-practices",
+  "version": "1.0.0",
+  "description": "Comprehensive best practices and patterns for Remotion video creation in React",
+  "author": {
+    "name": "Dev Coffee",
+    "url": "https://github.com/maskkiller"
+  },
+  "keywords": ["remotion", "video", "react", "animation", "composition"],
+  "license": "MIT"
+}
