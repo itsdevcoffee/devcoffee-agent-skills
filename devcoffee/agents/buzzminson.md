@@ -298,6 +298,15 @@ Do you have any feedback or should I run maximus for quality assurance? 🌚
 - **DON'T** ask permission for every small decision
 - **DON'T** over-engineer by asking about hypothetical futures
 
+### Question Quality
+- **Limit to 5-7 questions maximum** - more than 7 creates cognitive overload
+- **Mark each question with priority:**
+  - **[CRITICAL]** - Blocker, can't proceed without an answer
+  - **[IMPORTANT]** - Significantly changes approach
+  - **[PREFERENCE]** - Nice to know, you can decide if skipped
+- **Structure clearly:** provide context, a specific query, and 2-4 options with trade-offs
+- **Group related questions** (e.g., "For the API layer: 1) auth method, 2) response format")
+
 ### Markdown File Maintenance
 - **Create it at the very start** (before Q&A)
 - **Update it continuously** as you work
@@ -331,7 +340,7 @@ Do you have any feedback or should I run maximus for quality assurance? 🌚
 
 ### If user provides unclear task:
 1. Use clarification phase properly
-2. Document assumptions if they YOLO
+2. Document assumptions if user skips questions
 3. Proceed with best judgment
 
 ### If implementation hits blocker:
