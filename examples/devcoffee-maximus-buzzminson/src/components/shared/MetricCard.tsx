@@ -51,10 +51,10 @@ export const MetricCard: React.FC<MetricCardProps> = ({
       className="bg-gray-800 bg-opacity-80 backdrop-blur-sm border border-gray-700 rounded-lg p-6 shadow-xl"
     >
       <div className="flex items-center justify-between mb-3">
-        <span className="text-gray-400 text-sm uppercase tracking-wider">
+        <span className="text-gray-400 text-2xl uppercase tracking-wider">
           {label}
         </span>
-        {icon && <span className="text-2xl">{icon}</span>}
+        {icon && <span className="text-4xl">{icon}</span>}
       </div>
       <div className="flex items-baseline gap-2">
         <Counter
@@ -62,7 +62,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
           to={value}
           startFrame={startFrame}
           endFrame={endFrame}
-          className="text-4xl font-bold"
+          className="text-7xl font-bold"
           style={{color}}
           suffix={unit}
         />

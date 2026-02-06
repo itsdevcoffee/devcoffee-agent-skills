@@ -25,9 +25,9 @@ export const ReviewPanel: React.FC = () => {
       style={{opacity, transform: `scale(${scale})`}}
       className="flex flex-col items-center justify-center p-8"
     >
-      <div className="text-5xl mb-4">🔄</div>
-      <h3 className="text-3xl font-bold text-white mb-4">Review</h3>
-      <p className="text-purple-300 text-center mb-6">Iterate until perfect</p>
+      <div className="text-8xl mb-4">🔄</div>
+      <h3 className="text-5xl font-bold text-white mb-4">Review</h3>
+      <p className="text-purple-300 text-center mb-6 text-3xl">Iterate until perfect</p>
 
       {/* Iteration loop visualization */}
       <div className="relative">
@@ -45,7 +45,7 @@ export const ReviewPanel: React.FC = () => {
               extrapolateRight: 'clamp',
             }),
           }}
-          className="absolute -top-8 -right-12 bg-purple-600 text-white px-3 py-1 rounded-full text-sm"
+          className="absolute -top-8 -right-12 bg-purple-600 text-white px-4 py-2 rounded-full text-xl"
         >
           👤 Feedback
         </div>

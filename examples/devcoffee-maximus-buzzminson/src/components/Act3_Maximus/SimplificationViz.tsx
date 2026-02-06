@@ -26,7 +26,7 @@ export const SimplificationViz: React.FC = () => {
       className="flex items-center justify-center bg-gray-900 bg-opacity-90 backdrop-blur-sm"
     >
       <div className="text-center">
-        <h2 className="text-4xl font-bold text-white mb-12">
+        <h2 className="text-5xl font-bold text-white mb-12">
           Code Simplification
         </h2>
 
@@ -43,17 +43,17 @@ export const SimplificationViz: React.FC = () => {
             }}
             className="bg-gray-800 rounded-lg p-8 border border-green-500"
           >
-            <p className="text-gray-400 text-sm mb-2">Lines of Code</p>
+            <p className="text-gray-400 text-3xl mb-2">Lines of Code</p>
             <div className="flex items-baseline justify-center gap-4">
               <Counter
                 from={simplificationMetrics.before.lines}
                 to={simplificationMetrics.after.lines}
                 startFrame={30}
                 endFrame={90}
-                className="text-5xl font-bold text-green-400"
+                className="text-7xl font-bold text-green-400"
               />
             </div>
-            <p className="text-gray-500 text-xs mt-2">
+            <p className="text-gray-500 text-xl mt-2">
               {simplificationMetrics.before.lines} → {simplificationMetrics.after.lines}
             </p>
           </div>
@@ -69,18 +69,18 @@ export const SimplificationViz: React.FC = () => {
             }}
             className="bg-gray-800 rounded-lg p-8 border border-green-500"
           >
-            <p className="text-gray-400 text-sm mb-2">Complexity</p>
+            <p className="text-gray-400 text-3xl mb-2">Complexity</p>
             <div className="flex items-baseline justify-center gap-4">
               <Counter
                 from={simplificationMetrics.before.complexity}
                 to={simplificationMetrics.after.complexity}
                 startFrame={30}
                 endFrame={90}
-                className="text-5xl font-bold text-green-400"
+                className="text-7xl font-bold text-green-400"
                 suffix="/10"
               />
             </div>
-            <p className="text-gray-500 text-xs mt-2">
+            <p className="text-gray-500 text-xl mt-2">
               {simplificationMetrics.before.complexity} → {simplificationMetrics.after.complexity}
             </p>
           </div>
@@ -96,17 +96,17 @@ export const SimplificationViz: React.FC = () => {
             }}
             className="bg-gray-800 rounded-lg p-8 border border-green-500"
           >
-            <p className="text-gray-400 text-sm mb-2">Issues</p>
+            <p className="text-gray-400 text-3xl mb-2">Issues</p>
             <div className="flex items-baseline justify-center gap-4">
               <Counter
                 from={simplificationMetrics.before.issues}
                 to={simplificationMetrics.after.issues}
                 startFrame={30}
                 endFrame={90}
-                className="text-5xl font-bold text-green-400"
+                className="text-7xl font-bold text-green-400"
               />
             </div>
-            <p className="text-gray-500 text-xs mt-2">
+            <p className="text-gray-500 text-xl mt-2">
               {simplificationMetrics.before.issues} → {simplificationMetrics.after.issues}
             </p>
           </div>
@@ -119,7 +119,7 @@ export const SimplificationViz: React.FC = () => {
               extrapolateRight: 'clamp',
             }),
           }}
-          className="text-2xl text-green-400 font-semibold"
+          className="text-4xl text-green-400 font-semibold"
         >
           ✓ Code quality improved by 85%
         </div>

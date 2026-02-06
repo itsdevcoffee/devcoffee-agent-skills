@@ -33,11 +33,11 @@ export const CodeEditor: React.FC = () => {
           <div className="w-3 h-3 rounded-full bg-red-500" />
           <div className="w-3 h-3 rounded-full bg-yellow-500" />
           <div className="w-3 h-3 rounded-full bg-green-500" />
-          <span className="ml-4 text-gray-400 text-sm">fetchUserData.js</span>
+          <span className="ml-4 text-gray-400 text-lg">fetchUserData.js</span>
         </div>
 
         {/* Code content */}
-        <div className="bg-code-background rounded-b-lg p-6 code-font text-sm text-gray-300 relative min-h-[400px]">
+        <div className="bg-code-background rounded-b-lg p-6 code-font text-xl text-gray-300 relative min-h-[400px]">
           <pre className="whitespace-pre-wrap leading-relaxed">
             {lines.map((line, index) => {
               // For the last line (currently being typed), only highlight what's shown
@@ -57,10 +57,10 @@ export const CodeEditor: React.FC = () => {
           {/* Feature Complete badge */}
           <div
             style={{opacity: checkmarkOpacity}}
-            className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg"
+            className="absolute top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg flex items-center gap-2 shadow-lg"
           >
-            <span className="text-xl">✓</span>
-            <span className="font-semibold">Feature Complete</span>
+            <span className="text-3xl">✓</span>
+            <span className="text-xl font-semibold">Feature Complete</span>
           </div>
         </div>
       </div>

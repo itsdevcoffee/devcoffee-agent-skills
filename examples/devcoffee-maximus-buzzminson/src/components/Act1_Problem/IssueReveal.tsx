@@ -53,10 +53,10 @@ export const IssueReveal: React.FC = () => {
               className="bg-gray-800 bg-opacity-90 backdrop-blur-sm border-2 border-red-500 rounded-lg p-6 shadow-2xl"
             >
               <div className="text-6xl mb-4 text-center">{issue.icon}</div>
-              <h3 className="text-xl font-bold text-red-400 mb-2 text-center">
+              <h3 className="text-3xl font-bold text-red-400 mb-2 text-center">
                 {issue.label}
               </h3>
-              <p className="text-gray-400 text-sm text-center">
+              <p className="text-gray-400 text-xl text-center">
                 {issue.description}
               </p>
             </div>
@@ -73,7 +73,7 @@ export const IssueReveal: React.FC = () => {
         }}
         className="absolute bottom-20 text-center"
       >
-        <p className="text-3xl font-bold text-red-400">
+        <p className="text-4xl font-bold text-red-400">
           4 issues hiding in plain sight
         </p>
       </div>

@@ -25,7 +25,7 @@ export const BeforeAfterComparison: React.FC = () => {
         <div className="grid grid-cols-2 gap-12">
           {/* BEFORE */}
           <div className="space-y-6">
-            <h3 className="text-3xl font-bold text-red-400 text-center mb-8">
+            <h3 className="text-5xl font-bold text-red-400 text-center mb-8">
               BEFORE
             </h3>
             {metricsComparison.map((metric, index) => {
@@ -42,12 +42,12 @@ export const BeforeAfterComparison: React.FC = () => {
                   style={{transform: `scale(${scale})`}}
                   className="bg-gray-800 bg-opacity-80 border-2 border-red-500 rounded-lg p-6"
                 >
-                  <p className="text-gray-400 text-sm uppercase tracking-wider mb-2">
+                  <p className="text-gray-400 text-3xl uppercase tracking-wider mb-2">
                     {metric.label}
                   </p>
-                  <p className="text-5xl font-bold text-red-400">
+                  <p className="text-7xl font-bold text-red-400">
                     {metric.before}
-                    <span className="text-2xl text-gray-500 ml-2">
+                    <span className="text-4xl text-gray-500 ml-2">
                       {metric.unit}
                     </span>
                   </p>
@@ -58,7 +58,7 @@ export const BeforeAfterComparison: React.FC = () => {
 
           {/* AFTER */}
           <div className="space-y-6">
-            <h3 className="text-3xl font-bold text-green-400 text-center mb-8">
+            <h3 className="text-5xl font-bold text-green-400 text-center mb-8">
               AFTER
             </h3>
             {metricsComparison.map((metric, index) => {
@@ -86,7 +86,7 @@ export const BeforeAfterComparison: React.FC = () => {
                     className="absolute inset-0 bg-green-500"
                   />
 
-                  <p className="text-gray-400 text-sm uppercase tracking-wider mb-2 relative z-10">
+                  <p className="text-gray-400 text-3xl uppercase tracking-wider mb-2 relative z-10">
                     {metric.label}
                   </p>
                   <div className="relative z-10">
@@ -95,7 +95,7 @@ export const BeforeAfterComparison: React.FC = () => {
                       to={metric.after}
                       startFrame={startFrame}
                       endFrame={endFrame}
-                      className="text-5xl font-bold text-green-400"
+                      className="text-7xl font-bold text-green-400"
                       suffix={` ${metric.unit}`}
                     />
                   </div>
@@ -107,7 +107,7 @@ export const BeforeAfterComparison: React.FC = () => {
                         extrapolateRight: 'clamp',
                       }),
                     }}
-                    className="mt-2 text-green-300 text-sm font-semibold relative z-10"
+                    className="mt-2 text-green-300 text-xl font-semibold relative z-10"
                   >
                     ↑ {metric.improvement}% improvement
                   </div>

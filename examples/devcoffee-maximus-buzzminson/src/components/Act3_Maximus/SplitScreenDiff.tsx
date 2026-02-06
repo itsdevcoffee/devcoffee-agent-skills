@@ -23,8 +23,8 @@ export const SplitScreenDiff: React.FC = () => {
       {/* Left side - BEFORE */}
       <div className="w-1/2 flex flex-col p-8 border-r border-green-500 border-opacity-30">
         <div className="mb-4">
-          <h3 className="text-2xl font-bold text-red-400 mb-2">BEFORE</h3>
-          <p className="text-gray-400 text-sm">Original code with issues</p>
+          <h3 className="text-4xl font-bold text-red-400 mb-2">BEFORE</h3>
+          <p className="text-gray-400 text-xl">Original code with issues</p>
         </div>
         <div className="flex-1 overflow-hidden">
           <CodeBlock code={beforeCode} startFrame={0} endFrame={30} />
@@ -34,8 +34,8 @@ export const SplitScreenDiff: React.FC = () => {
       {/* Right side - AFTER */}
       <div className="w-1/2 flex flex-col p-8">
         <div className="mb-4">
-          <h3 className="text-2xl font-bold text-green-400 mb-2">AFTER</h3>
-          <p className="text-gray-400 text-sm">Fixed and improved</p>
+          <h3 className="text-4xl font-bold text-green-400 mb-2">AFTER</h3>
+          <p className="text-gray-400 text-xl">Fixed and improved</p>
         </div>
         <div className="flex-1 overflow-hidden">
           <CodeBlock code={afterCode} startFrame={30} endFrame={60} />

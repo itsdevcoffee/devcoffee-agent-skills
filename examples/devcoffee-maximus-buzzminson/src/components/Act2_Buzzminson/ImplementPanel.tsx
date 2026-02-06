@@ -21,9 +21,9 @@ export const ImplementPanel: React.FC = () => {
       style={{opacity, transform: `scale(${scale})`}}
       className="flex flex-col items-center justify-center p-8"
     >
-      <div className="text-5xl mb-4">🔨</div>
-      <h3 className="text-3xl font-bold text-white mb-4">Implement</h3>
-      <p className="text-purple-300 text-center mb-6">Build it completely</p>
+      <div className="text-8xl mb-4">🔨</div>
+      <h3 className="text-5xl font-bold text-white mb-4">Implement</h3>
+      <p className="text-purple-300 text-center mb-6 text-3xl">Build it completely</p>
 
       {/* Code blocks appearing */}
       <div className="w-full max-w-sm space-y-2">
@@ -40,7 +40,7 @@ export const ImplementPanel: React.FC = () => {
             <div
               key={index}
               style={{opacity: blockOpacity}}
-              className="bg-code-background h-8 rounded border border-purple-500"
+              className="bg-code-background h-12 rounded border border-purple-500"
             />
           );
         })}
@@ -52,7 +52,7 @@ export const ImplementPanel: React.FC = () => {
           startFrame={20}
           endFrame={80}
           color="#a855f7"
-          height={6}
+          height={12}
         />
       </div>
     </AbsoluteFill>

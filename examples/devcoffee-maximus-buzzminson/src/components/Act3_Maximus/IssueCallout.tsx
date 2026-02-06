@@ -61,8 +61,8 @@ export const IssueCallout: React.FC<IssueCalloutProps> = ({
       {/* Issue indicator */}
       {!isFixed && (
         <div className="bg-red-500 bg-opacity-90 px-6 py-3 rounded-lg shadow-xl border-2 border-red-400">
-          <p className="text-white font-semibold flex items-center gap-2">
-            <span className="text-2xl">🔴</span>
+          <p className="text-white font-semibold flex items-center gap-2 text-2xl">
+            <span className="text-3xl">🔴</span>
             <span>{issueMessages[index % issueMessages.length]}</span>
           </p>
         </div>
@@ -74,8 +74,8 @@ export const IssueCallout: React.FC<IssueCalloutProps> = ({
           style={{transform: `scale(${fixScale})`}}
           className="bg-green-500 bg-opacity-90 px-6 py-3 rounded-lg shadow-xl border-2 border-green-400"
         >
-          <p className="text-white font-semibold flex items-center gap-2">
-            <span className="text-2xl">✓</span>
+          <p className="text-white font-semibold flex items-center gap-2 text-2xl">
+            <span className="text-3xl">✓</span>
             <span>Fixed</span>
           </p>
         </div>

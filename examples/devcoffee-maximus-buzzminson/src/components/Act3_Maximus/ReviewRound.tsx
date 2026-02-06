@@ -39,7 +39,7 @@ export const ReviewRound: React.FC<ReviewRoundProps> = ({round}) => {
           opacity: badgeOpacity,
           transform: `scale(${badgeScale})`,
         }}
-        className="absolute top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-full font-bold text-xl shadow-lg z-20"
+        className="absolute top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-8 py-4 rounded-full font-bold text-3xl shadow-lg z-20"
       >
         Round {round} - {roundData.description}
       </div>
@@ -89,9 +89,9 @@ export const ReviewRound: React.FC<ReviewRoundProps> = ({round}) => {
           className="absolute inset-0 flex items-center justify-center"
         >
           <div className="bg-green-500 bg-opacity-90 px-16 py-12 rounded-3xl text-center shadow-2xl">
-            <div className="text-8xl mb-4">✓</div>
-            <h2 className="text-5xl font-black text-white mb-2">CLEAN</h2>
-            <p className="text-2xl text-green-100">No issues found</p>
+            <div className="text-9xl mb-4">✓</div>
+            <h2 className="text-7xl font-black text-white mb-2">CLEAN</h2>
+            <p className="text-4xl text-green-100">No issues found</p>
           </div>
         </div>
       )}
@@ -105,7 +105,7 @@ export const ReviewRound: React.FC<ReviewRoundProps> = ({round}) => {
         }}
         className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 bg-opacity-90 px-8 py-4 rounded-lg text-center"
       >
-        <p className="text-2xl font-bold text-white">
+        <p className="text-3xl font-bold text-white">
           {roundData.issuesFound} found → {roundData.issuesFixed} fixed
         </p>
       </div>

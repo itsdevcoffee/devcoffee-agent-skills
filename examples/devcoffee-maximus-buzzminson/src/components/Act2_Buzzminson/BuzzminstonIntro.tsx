@@ -81,7 +81,7 @@ export const BuzzminstonIntro: React.FC = () => {
         {/* Tagline */}
         <p
           style={{opacity: taglineOpacity}}
-          className="text-2xl text-purple-300"
+          className="text-4xl text-purple-300"
         >
           Your feature implementation partner
         </p>

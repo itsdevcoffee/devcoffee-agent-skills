@@ -25,22 +25,22 @@ export const HandoffPanel: React.FC = () => {
       style={{opacity, transform: `scale(${scale})`}}
       className="flex flex-col items-center justify-center p-8"
     >
-      <div className="text-5xl mb-4">🤝</div>
-      <h3 className="text-3xl font-bold text-white mb-4">Handoff</h3>
-      <p className="text-purple-300 text-center mb-6">Pass to Maximus</p>
+      <div className="text-8xl mb-4">🤝</div>
+      <h3 className="text-5xl font-bold text-white mb-4">Handoff</h3>
+      <p className="text-purple-300 text-center mb-6 text-3xl">Pass to Maximus</p>
 
       {/* Passing animation */}
       <div className="relative w-full max-w-xs h-20 flex items-center justify-center">
-        <div className="absolute left-0 text-4xl">🌚</div>
+        <div className="absolute left-0 text-6xl">🌚</div>
         <div
           style={{
             transform: `translateX(${batonX}px)`,
           }}
-          className="absolute text-3xl"
+          className="absolute text-5xl"
         >
           🏃
         </div>
-        <div className="absolute right-0 text-4xl opacity-50">💪</div>
+        <div className="absolute right-0 text-6xl opacity-50">💪</div>
       </div>
 
       {/* Arrow pointing to Maximus */}
@@ -50,7 +50,7 @@ export const HandoffPanel: React.FC = () => {
             extrapolateRight: 'clamp',
           }),
         }}
-        className="mt-4 text-green-400 text-2xl animate-bounce"
+        className="mt-4 text-green-400 text-4xl animate-bounce"
       >
         ↓
       </div>

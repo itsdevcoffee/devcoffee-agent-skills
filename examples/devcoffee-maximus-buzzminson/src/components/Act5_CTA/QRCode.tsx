@@ -24,7 +24,7 @@ export const QRCode: React.FC = () => {
       className="flex flex-col items-center"
     >
       {/* QR Code placeholder (in real implementation, use a QR code library) */}
-      <div className="w-48 h-48 bg-white rounded-lg p-4 shadow-2xl border-4 border-green-500">
+      <div className="w-64 h-64 bg-white rounded-lg p-4 shadow-2xl border-4 border-green-500">
         <div className="w-full h-full bg-gray-900 rounded grid grid-cols-8 grid-rows-8 gap-1 p-2">
           {Array.from({length: 64}).map((_, i) => {
             // Simple pattern for visual representation
@@ -38,7 +38,7 @@ export const QRCode: React.FC = () => {
           })}
         </div>
       </div>
-      <p className="text-gray-400 text-sm mt-4">Scan to visit repo</p>
+      <p className="text-gray-400 text-xl mt-4">Scan to visit repo</p>
     </div>
   );
 };

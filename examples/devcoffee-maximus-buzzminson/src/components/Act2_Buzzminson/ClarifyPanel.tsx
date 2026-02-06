@@ -23,9 +23,9 @@ export const ClarifyPanel: React.FC = () => {
       style={{opacity, transform: `scale(${scale})`}}
       className="flex flex-col items-center justify-center p-8"
     >
-      <div className="text-5xl mb-4">❓</div>
-      <h3 className="text-3xl font-bold text-white mb-4">Clarify</h3>
-      <p className="text-purple-300 text-center mb-6">Ask questions first</p>
+      <div className="text-8xl mb-4">❓</div>
+      <h3 className="text-5xl font-bold text-white mb-4">Clarify</h3>
+      <p className="text-purple-300 text-center mb-6 text-3xl">Ask questions first</p>
 
       {/* Question to checkmark animation */}
       <div className="flex gap-4">
@@ -42,7 +42,7 @@ export const ClarifyPanel: React.FC = () => {
           return (
             <div
               key={index}
-              className="text-4xl"
+              className="text-6xl"
               style={{
                 transform: showCheck ? `scale(${checkScale})` : 'scale(1)',
               }}

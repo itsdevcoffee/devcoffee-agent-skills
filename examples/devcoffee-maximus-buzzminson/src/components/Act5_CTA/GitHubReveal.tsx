@@ -27,14 +27,14 @@ export const GitHubReveal: React.FC = () => {
 
   return (
     <div className="text-center">
-      <p className="text-2xl text-gray-400 mb-4">Get started today</p>
+      <p className="text-3xl text-gray-400 mb-4">Get started today</p>
       <div
         style={{transform: `scale(${pulseScale})`}}
         className="bg-gray-800 border-2 border-green-500 rounded-lg px-8 py-6 inline-block"
       >
-        <p className="text-4xl font-bold text-green-400 code-font">
+        <p className="text-5xl font-bold text-green-400 code-font">
           {displayedURL}
-          <span className="inline-block w-1 h-8 bg-green-500 ml-2 animate-pulse" />
+          <span className="inline-block w-1 h-10 bg-green-500 ml-2 animate-pulse" />
         </p>
       </div>
     </div>

@@ -31,7 +31,7 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
         opacity,
         ...style,
       }}
-      className="code-font text-sm bg-code-background text-gray-300 p-6 rounded-lg shadow-2xl border border-gray-700"
+      className="code-font text-xl bg-code-background text-gray-300 p-6 rounded-lg shadow-2xl border border-gray-700"
     >
       {lines.map((line, index) => {
         const lineNumber = index + 1;
