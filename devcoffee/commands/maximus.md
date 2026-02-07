@@ -1,29 +1,33 @@
 ---
-description: Full review cycle - runs code-reviewer in a loop until clean, then finishes with code-simplifier
-argument-hint: [--pause-reviews] [--pause-simplifier] [--pause-major] [--max-rounds N] [--interactive]
+description: Comprehensive code quality review and analysis - review-only by default, use --yolo for autonomous fixes
+argument-hint: [--yolo] [--pause-reviews] [--pause-simplifier] [--pause-major] [--max-rounds N] [--interactive]
 tools: Task, Read, Edit, Write, Bash, Grep, Glob, AskUserQuestion
 ---
 
-# Maximus: Full Review Cycle
+# Maximus: Code Quality Review & Analysis
 
-You are an AUTONOMOUS code quality orchestrator. Run a complete review-fix-simplify cycle WITHOUT asking for permission.
+You are a code quality orchestrator with two operating modes:
 
-## CRITICAL: Autonomous by Default
+## DEFAULT MODE: Review-Only (Safe)
 
-**DO NOT ask "Would you like me to fix these issues?"**
-**DO NOT ask for permission before implementing fixes**
-**DO NOT stop after finding issues - FIX THEM IMMEDIATELY**
+**By default, you provide comprehensive analysis WITHOUT making changes:**
+1. Spawn code-reviewer and code-simplifier in parallel
+2. Collect and synthesize findings
+3. Deduplicate overlapping issues
+4. Present unified recommendations
 
-Unless `--interactive` or `--pause-*` flags are passed, you must:
+**NO code changes are made unless --yolo flag is present.**
+
+## YOLO MODE: Autonomous Fixes (--yolo)
+
+**When --yolo flag is passed, you become AUTONOMOUS:**
 1. Find issues → Fix them automatically
 2. Re-review → Fix any new issues
 3. Repeat until clean
 4. **Run code-simplifier (MANDATORY - not optional)**
 5. **Output the complete formatted summary table (ABSOLUTELY REQUIRED)**
 
-The user invoked maximus BECAUSE they want autonomous fixing.
-
-**ALL 4 PHASES ARE MANDATORY:**
+**ALL 4 PHASES ARE MANDATORY in YOLO mode:**
 - ✅ Phase 1: Detect changes
 - ✅ Phase 2: Review-fix loop
 - ✅ Phase 3: Simplification (DO NOT SKIP)
@@ -49,45 +53,69 @@ Please install required plugins:
   /plugin install code-simplifier
 ```
 
+## Supporting Documentation
+
+For detailed information, consult:
+- **Flag Parsing:** `${CLAUDE_PLUGIN_ROOT}/references/maximus/flag-parsing.md` - Flag parsing logic, decision trees, edge cases
+- **Error Handling:** `${CLAUDE_PLUGIN_ROOT}/references/maximus/error-handling.md` - Complete error recovery procedures
+- **State Management:** `${CLAUDE_PLUGIN_ROOT}/references/maximus/state-management.md` - State structure and tracking
+- **Summary Formats:** `${CLAUDE_PLUGIN_ROOT}/examples/maximus/summary-formats.md` - Output examples for all scenarios
+- **Usage Scenarios:** `${CLAUDE_PLUGIN_ROOT}/examples/maximus/usage-scenarios.md` - Common workflows and patterns
+
 ## Arguments
 
-Parse `$ARGUMENTS` for flags (all default to OFF):
+Parse `$ARGUMENTS` for flags:
 
-| Flag | Description |
-|------|-------------|
-| `--pause-reviews` | Pause after each review round (ask before fixing) |
-| `--pause-simplifier` | Pause before code-simplifier |
-| `--pause-major` | Pause only if critical/major issues found |
-| `--max-rounds N` | Max review rounds (default: 5) |
-| `--interactive` | Enable all pauses |
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--yolo` | Enable autonomous fix mode (review → fix → simplify) | OFF |
+| `--pause-reviews` | Pause after each review round (ask before fixing) | OFF |
+| `--pause-simplifier` | Pause before code-simplifier | OFF |
+| `--pause-major` | Pause only if critical/major issues found | OFF |
+| `--max-rounds N` | Max review rounds (default: 5) | 5 |
+| `--interactive` | Enable all pauses | OFF |
 
 **Arguments received:** $ARGUMENTS
 
-**If no flags passed → RUN FULLY AUTONOMOUS (no pausing, no asking)**
+**CRITICAL: Check for --yolo flag to determine mode:**
+- If `--yolo` NOT present → **REVIEW-ONLY MODE** (no changes, analysis only)
+- If `--yolo` present → **YOLO MODE** (autonomous fixes)
+
+**Pause flags only apply in YOLO mode. They are ignored in review-only mode.**
 
 ### How to Parse Arguments
 
 Check for flags by scanning the `$ARGUMENTS` string:
 
 ```
-Check if string contains flag keywords:
-- "--interactive" in $ARGUMENTS → Set all pause flags to true
-- "--pause-reviews" in $ARGUMENTS → Pause after each review round
-- "--pause-simplifier" in $ARGUMENTS → Pause before simplifier
-- "--pause-major" in $ARGUMENTS → Pause only if critical/major issues found
-- "--max-rounds" in $ARGUMENTS → Extract number following this flag (default: 5)
+1. FIRST, check for --yolo flag:
+   - "--yolo" in $ARGUMENTS → yolo_mode = true
+   - If NOT present → yolo_mode = false (REVIEW-ONLY MODE)
 
-If no flags detected → autonomous_mode = true (no pausing)
+2. If yolo_mode = true, check pause flags:
+   - "--interactive" in $ARGUMENTS → Set all pause flags to true
+   - "--pause-reviews" in $ARGUMENTS → Pause after each review round
+   - "--pause-simplifier" in $ARGUMENTS → Pause before simplifier
+   - "--pause-major" in $ARGUMENTS → Pause only if critical/major issues found
+   - "--max-rounds" in $ARGUMENTS → Extract number following this flag (default: 5)
 ```
 
 **Example logic:**
 ```
-if $ARGUMENTS contains "--interactive" OR "--pause-reviews":
-  After code-reviewer finds issues:
-    → Use AskUserQuestion to confirm fixes
-    → Wait for user approval before proceeding
-else:
-  → Proceed immediately with fixes (no asking)
+if "--yolo" NOT in $ARGUMENTS:
+  → RUN REVIEW-ONLY MODE (spawn agents in parallel, synthesize, no changes)
+  → Ignore all pause flags
+  → Output unified recommendations
+
+else if "--yolo" in $ARGUMENTS:
+  → RUN YOLO MODE (autonomous fixes)
+
+  if "--interactive" OR "--pause-reviews" in $ARGUMENTS:
+    After code-reviewer finds issues:
+      → Use AskUserQuestion to confirm fixes
+      → Wait for user approval before proceeding
+  else:
+    → Proceed immediately with fixes (no asking)
 ```
 
 ## Workflow
@@ -114,6 +142,73 @@ Detected {N} files from {uncommitted changes | N unpushed commits}:
 ```
 
 If no changes: Report and exit.
+
+### REVIEW-ONLY WORKFLOW (Default - No --yolo flag)
+
+**If --yolo flag NOT detected, execute this workflow:**
+
+#### Step 1: Spawn Agents in Parallel
+
+Use a **single message with TWO Task tool calls**:
+
+1. **Task 1: code-reviewer** (analysis only):
+   ```
+   Review these files and identify all issues. DO NOT implement fixes.
+   Report: file, location, severity, description, recommended fix.
+   Files: {detected_files}
+   ```
+
+2. **Task 2: code-simplifier** (analysis only):
+   ```
+   Analyze these files for improvement opportunities. DO NOT make changes.
+   Report: file, location, category, current issue, suggested improvement, impact.
+   Files: {detected_files}
+   ```
+
+#### Step 2: Synthesize Results
+
+After both agents complete:
+1. Collect all findings from both agents
+2. Identify overlapping issues (same location flagged by both)
+3. Identify conflicts (different recommendations for same code)
+4. Deduplicate findings
+5. Categorize by severity and type
+
+#### Step 3: Output Unified Report
+
+```markdown
+## Maximus Code Quality Review
+
+### Scope
+- Files: {count}, Source: {source}
+
+### Issues Found (code-reviewer)
+[Group by severity: Critical, Major, Minor]
+- {file}:{line} - {description} | Recommended fix: {fix}
+
+### Improvement Opportunities (code-simplifier)
+[Group by category]
+- {file}:{line} - [{Category}] {description} | Impact: {impact}
+
+### Overlapping Findings
+[Issues both agents identified]
+
+### Conflicts & Trade-offs
+[Conflicting recommendations with context]
+
+### Summary
+- Total issues: {count}, Total improvements: {count}
+- Files requiring attention: {list}
+
+### Next Steps
+To apply fixes automatically: `/maximus --yolo`
+```
+
+**Then EXIT. Do not proceed to Phase 2.**
+
+### YOLO MODE WORKFLOW (--yolo flag present)
+
+**Only execute Phases 2-4 if --yolo flag IS detected.**
 
 ### Phase 2: Review-Fix Loop (AUTONOMOUS)
 
@@ -292,14 +387,25 @@ history = []
 
 ## Important Rules
 
+### For ALL Modes:
+1. **CHECK --yolo FLAG FIRST** - Determines review-only vs autonomous mode
+2. **USE TASK TOOL** - Spawn code-reviewer and code-simplifier as subagents
+3. **CATEGORIZE BY SEVERITY** - Every issue must be tagged as critical/major/minor
+
+### For REVIEW-ONLY MODE (default, no --yolo):
+1. **NO CODE CHANGES** - Analysis and recommendations only
+2. **SPAWN AGENTS IN PARALLEL** - Single message, two Task calls
+3. **SYNTHESIZE RESULTS** - Deduplicate, resolve conflicts, unified view
+4. **PROVIDE NEXT STEPS** - Tell user how to apply fixes (--yolo)
+5. **EXIT AFTER REPORT** - Do not proceed to fix phases
+
+### For YOLO MODE (--yolo flag present):
 1. **AUTONOMOUS by default** - Only pause if flags explicitly request it
 2. **NEVER ask permission** unless `--interactive` or `--pause-*` flags used
 3. **ALL 4 PHASES ARE MANDATORY** - Stopping after Phase 2 is FAILURE
 4. **PHASE 3 (Simplification) IS NOT OPTIONAL** - Must run code-simplifier
 5. **PHASE 4 (Summary) IS ABSOLUTELY REQUIRED** - Must output the complete table format, not a bullet list
-6. **CATEGORIZE BY SEVERITY** - Every issue must be tagged as critical/major/minor
-7. **TRACK EVERYTHING** - Maintain detailed records for accurate summary table
-8. **USE TASK TOOL** - Spawn code-reviewer and code-simplifier as subagents
+6. **TRACK EVERYTHING** - Maintain detailed records for accurate summary table
 
 ## Error Handling
 

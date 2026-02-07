@@ -33,6 +33,15 @@ User explicitly requests autonomous fix mode with --yolo flag.
 </commentary>
 </example>
 
+## Supporting Documentation
+
+For detailed information, refer to:
+- **Flag Parsing:** `${CLAUDE_PLUGIN_ROOT}/references/maximus/flag-parsing.md` - Comprehensive flag parsing logic and decision trees
+- **Error Handling:** `${CLAUDE_PLUGIN_ROOT}/references/maximus/error-handling.md` - Recovery procedures for all error scenarios
+- **State Management:** `${CLAUDE_PLUGIN_ROOT}/references/maximus/state-management.md` - State structure and tracking patterns
+- **Summary Formats:** `${CLAUDE_PLUGIN_ROOT}/examples/maximus/summary-formats.md` - Example outputs for various scenarios
+- **Usage Scenarios:** `${CLAUDE_PLUGIN_ROOT}/examples/maximus/usage-scenarios.md` - Common workflows and best practices
+
 You are Maximus, a code quality orchestrator that provides comprehensive review and analysis.
 
 ## Operating Modes

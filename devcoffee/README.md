@@ -9,14 +9,14 @@ A collection of productivity tools for Claude Code focused on code quality and d
 | Command | Description |
 |---------|-------------|
 | `/devcoffee:buzzminson` | Feature implementation with planning, feedback loops, and quality assurance |
-| `/devcoffee:maximus` | Full review cycle: code-reviewer loop + code-simplifier |
+| `/devcoffee:maximus` | Code quality review (review-only by default, use `--yolo` for autonomous fixes) |
 
 ### Agents (can be spawned or mentioned)
 
 | Agent | Description |
 |-------|-------------|
 | `@devcoffee:buzzminson` | Feature implementation agent with structured workflow |
-| `@devcoffee:maximus` | Full review cycle as a subagent |
+| `@devcoffee:maximus` | Code quality review and analysis (safe by default, `--yolo` for fixes) |
 
 Both invoke the same workflow - use whichever is more convenient:
 - `/devcoffee:command` - Type the slash command directly
@@ -210,19 +210,29 @@ These documents include:
 
 ## Maximus
 
-Full automated review cycle: runs code-reviewer in a loop until clean, then finishes with code-simplifier.
+Comprehensive code quality review and analysis tool. By default, runs in **review-only mode** (safe, no changes). Use `--yolo` flag for autonomous fix mode.
 
 ### Basic Usage
 
 ```bash
-# After implementing a feature, run the full cycle
+# Review code without making changes (default)
 /devcoffee:maximus
+
+# Autonomous fix mode (review → fix → simplify)
+/devcoffee:maximus --yolo
 ```
 
-### Flags
+### Modes & Flags
+
+**Operating Modes:**
+- **Default (Review-Only):** Analyze code quality without making changes. Provides comprehensive recommendations.
+- **YOLO Mode (`--yolo`):** Autonomous fixes. Review → fix → simplify cycle with automatic changes.
+
+**Flags (apply to YOLO mode only):**
 
 | Flag | Default | Description |
 |------|---------|-------------|
+| `--yolo` | off | Enable autonomous fix mode (otherwise review-only) |
 | `--pause-reviews` | off | Pause after each code-reviewer round |
 | `--pause-simplifier` | off | Pause before running code-simplifier |
 | `--pause-major` | off | Pause only when critical/major issues found |
@@ -232,23 +242,26 @@ Full automated review cycle: runs code-reviewer in a loop until clean, then fini
 ### Examples
 
 ```bash
-# Default: fully autonomous, 5 max rounds
+# Review-only mode (default - no changes)
 /devcoffee:maximus
 
-# Interactive mode - pause at every step
-/devcoffee:maximus --interactive
+# Autonomous fix mode
+/devcoffee:maximus --yolo
 
-# Custom max rounds
-/devcoffee:maximus --max-rounds 10
+# Autonomous with interactive pauses
+/devcoffee:maximus --yolo --interactive
 
-# Only pause if something serious is found
-/devcoffee:maximus --pause-major
+# Autonomous with custom max rounds
+/devcoffee:maximus --yolo --max-rounds 10
 
-# Pause before simplification to review changes first
-/devcoffee:maximus --pause-simplifier
+# Autonomous - only pause if critical/major issues
+/devcoffee:maximus --yolo --pause-major
 
-# Combine flags
-/devcoffee:maximus --pause-simplifier --max-rounds 3
+# Autonomous - pause before simplification
+/devcoffee:maximus --yolo --pause-simplifier
+
+# Combine flags (autonomous mode with controls)
+/devcoffee:maximus --yolo --pause-simplifier --max-rounds 3
 ```
 
 ### What Gets Reviewed
@@ -264,6 +277,35 @@ If you have 2 commits ahead of origin but no uncommitted changes, maximus will r
 
 ### Workflow
 
+**Review-Only Mode (Default):**
+```
+┌─────────────────────────────────────┐
+│ Detect changed files                │
+│ (uncommitted → unpushed commits)    │
+└─────────────────────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────┐
+│ Parallel Analysis:                  │
+│ → code-reviewer (find issues)       │
+│ → code-simplifier (find improve)    │
+└─────────────────────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────┐
+│ Synthesize Results                  │
+│ → Deduplicate findings              │
+│ → Resolve conflicts                 │
+└─────────────────────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────┐
+│ Unified Report                      │
+│ (No changes made)                   │
+└─────────────────────────────────────┘
+```
+
+**YOLO Mode (--yolo flag):**
 ```
 ┌─────────────────────────────────────┐
 │ Detect changed files                │
@@ -286,7 +328,7 @@ If you have 2 commits ahead of origin but no uncommitted changes, maximus will r
               │ No
               ▼
 ┌─────────────────────────────────────┐
-│ code-simplifier                     │
+│ code-simplifier (with fixes)        │
 └─────────────────────────────────────┘
               │
               ▼
