@@ -1,5 +1,4 @@
 ---
-name: video-analysis
 description: Analyze video files and provide visual feedback by extracting strategic frames and using Claude's vision capabilities. Trigger when user mentions "analyze video", "review video", "video feedback", "check video quality", or asks questions like "what do you think of this video?", "can you review my video?", "how does this video look?". Also trigger when user provides a video file path and asks for analysis.
 metadata:
   tags: video, analysis, feedback, ffmpeg, vision, quality-review
