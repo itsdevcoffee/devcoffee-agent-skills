@@ -1,11 +1,11 @@
 ---
-name: video-analysis
+name: analyze
 description: Analyze video files and provide comprehensive visual feedback using FFmpeg frame extraction and Claude vision API. Extracts strategic frames and analyzes quality, UI/UX, aesthetics, and technical execution.
 examples:
-  - /video-analysis path/to/video.mp4
-  - /video-analysis examples/my-video.mp4 --mode quick
-  - /video-analysis path/to/video.mp4 --focus ui
-  - /video-analysis path/to/video.mp4 --frames 0,10,20,30
+  - /video-analysis:analyze path/to/video.mp4
+  - /video-analysis:analyze examples/my-video.mp4 --mode quick
+  - /video-analysis:analyze path/to/video.mp4 --focus ui
+  - /video-analysis:analyze path/to/video.mp4 --frames 0,10,20,30
 ---
 
 # Video Analysis Command
