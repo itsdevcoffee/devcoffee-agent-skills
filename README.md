@@ -21,8 +21,10 @@
 /plugin install code-simplifier@claude-plugins-official
 
 # 4. Install FFmpeg (if using video-analysis)
-brew install ffmpeg  # Mac
-# sudo apt install ffmpeg  # Linux
+brew install ffmpeg                # Mac
+# sudo apt install ffmpeg         # Debian/Ubuntu
+# sudo dnf install ffmpeg         # Fedora/RHEL
+# sudo pacman -S ffmpeg           # Arch Linux
 
 # 5. Try them out
 /video-analysis path/to/video.mp4   # Analyze videos
@@ -258,7 +260,10 @@ Install only what you need:
 ```bash
 # Install FFmpeg (if not already installed)
 # Mac: brew install ffmpeg
-# Linux: sudo apt install ffmpeg
+# Linux (Debian/Ubuntu): sudo apt install ffmpeg
+# Linux (Fedora/RHEL): sudo dnf install ffmpeg
+# Linux (Arch): sudo pacman -S ffmpeg
+# Windows: https://ffmpeg.org/download.html
 ```
 
 **Why these dependencies?**

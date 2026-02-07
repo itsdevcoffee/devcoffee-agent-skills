@@ -13,7 +13,9 @@ AI-powered video analysis using FFmpeg frame extraction and Claude vision API.
 
 # Install FFmpeg (if not already installed)
 # Mac: brew install ffmpeg
-# Linux: sudo apt install ffmpeg
+# Linux (Debian/Ubuntu): sudo apt install ffmpeg
+# Linux (Fedora/RHEL): sudo dnf install ffmpeg
+# Linux (Arch): sudo pacman -S ffmpeg
 ```
 
 ## Quick Start

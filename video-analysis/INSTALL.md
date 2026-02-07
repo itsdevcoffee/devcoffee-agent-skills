@@ -25,17 +25,26 @@
 brew install ffmpeg
 ```
 
-**Linux (Ubuntu/Debian):**
+**Linux:**
 ```bash
+# Debian/Ubuntu
 sudo apt install ffmpeg
-```
 
-**Linux (Fedora):**
-```bash
+# Fedora/RHEL/CentOS
 sudo dnf install ffmpeg
+
+# Arch Linux
+sudo pacman -S ffmpeg
+
+# openSUSE
+sudo zypper install ffmpeg
 ```
 
-**Verify:**
+**Windows:**
+- Download from https://ffmpeg.org/download.html
+- Add to PATH
+
+**Verify installation:**
 ```bash
 ffmpeg -version
 ```
