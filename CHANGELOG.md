@@ -5,6 +5,90 @@ All notable changes to Dev Coffee Agent Skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added - Automation Scripts
+
+**Health Check Script (doctor.sh)**
+- Comprehensive health check script that validates all devcoffee plugin dependencies and configuration
+- Checks Claude CLI installation, required plugins (feature-dev, code-simplifier), optional dependencies (ffmpeg, jq)
+- Smart plugin detection with suffix matching (e.g., matches "feature-dev@claude-plugins-official")
+- Color-coded output with clear indicators (✓ ✗ ⚠ ℹ)
+- Validates plugin structure and configuration files (settings.json, installed_plugins.json)
+- Shows only relevant plugins by default with `--verbose` flag for full list
+- Exit codes: 0 (success), 1 (critical issues), 2 (warnings only)
+- Location: `scripts/doctor.sh`
+
+**Setup Script (setup.sh)**
+- Automated installation of all devcoffee plugin dependencies with cross-platform support
+- Detects OS and package manager (macOS/Homebrew, Ubuntu/apt, Fedora/dnf, Arch/pacman)
+- Multiple operation modes: interactive (default), `--auto`, `--dry-run`, `--minimal`
+- Installs system dependencies (ffmpeg, jq) with OS-specific commands
+- Installs required Claude plugins (feature-dev, code-simplifier)
+- Installs devcoffee plugin from local directory
+- Comprehensive edge case handling (no Homebrew, no sudo, unknown OS, install failures)
+- Integrates with doctor.sh for pre-flight checks and post-install verification
+- Graceful degradation with manual fallback instructions
+- Exit codes: 0 (full success), 1 (critical failure), 2 (partial success with warnings)
+- Location: `scripts/setup.sh`
+
+### Added - Maximus Progressive Disclosure
+
+**Reference Documentation**
+- `devcoffee/references/maximus/flag-parsing.md` (1,200 words) - Complete flag documentation with decision trees and edge cases
+- `devcoffee/references/maximus/error-handling.md` (2,100 words) - Comprehensive error recovery procedures for all scenarios
+- `devcoffee/references/maximus/state-management.md` (1,800 words) - State structure and tracking patterns for both modes
+
+**Examples Documentation**
+- `devcoffee/examples/maximus/summary-formats.md` (2,400 words) - Output examples for review-only and YOLO modes
+- `devcoffee/examples/maximus/usage-scenarios.md` (3,200 words) - 10 common workflows, decision matrix, pro tips, anti-patterns
+
+**Documentation Expansion**
+- Total maximus documentation expanded from 4,850 to 15,550 words (3.2x increase)
+- Core agent and command files now reference supporting documentation via `${CLAUDE_PLUGIN_ROOT}`
+- Progressive disclosure pattern improves maintainability and user navigation
+
+### Changed - Shell Script Organization
+
+**Directory Restructure**
+- Moved 10 shell scripts from repository root to organized `scripts/` directory structure
+- Created subdirectories: `scripts/plugin/`, `scripts/marketplace/`, `scripts/utils/`
+- Renamed scripts with clearer, shorter names following verb-noun pattern
+- Added comprehensive `scripts/README.md` (11KB) with usage examples and troubleshooting
+- Added `scripts/RUN.md` quick reference guide
+
+**Script Reorganization**
+- `install-local-plugin.sh` → `scripts/plugin/install.sh`
+- `uninstall-local-plugin.sh` → `scripts/plugin/uninstall.sh`
+- `reinstall-plugin.sh` → `scripts/plugin/reinstall.sh`
+- `diagnose-plugin.sh` → `scripts/plugin/diagnose.sh`
+- `test-plugin.sh` → `scripts/plugin/test-local.sh`
+- `fix-marketplace-structure.sh` → `scripts/marketplace/fix-structure.sh`
+- `install-from-marketplace.sh` → `scripts/marketplace/install-devcoffee.sh`
+- `register-plugin-correct.sh` → `scripts/utils/register-no-local-suffix.sh`
+
+### Fixed - Critical Script Bugs
+
+**setup.sh Critical Fixes**
+- Fixed sudo prompt in dry-run mode - now properly skips sudo check when `--dry-run` flag is present
+- Added error logging for apt update with proper output redirection
+- Changed to POSIX-compliant redirection (`2>&1` instead of bash-specific `&>`)
+
+**doctor.sh Improvements**
+- Fixed plugin detection to match keys containing plugin name (handles @marketplace, @official suffixes)
+- Fixed escape code rendering in summary section (added `-e` flag to echo)
+- Reduced verbosity - shows only 3 relevant plugins by default instead of all 15
+- Made validation warnings non-critical (extra metadata fields are harmless)
+
+### Removed
+
+**Redundant Scripts**
+- `scripts/utils/register-manual.sh` - Redundant registration script (correct version kept)
+- `scripts/marketplace/add-remotion.sh` - One-off setup script (task already completed)
+
+**Cleanup**
+- Removed `devcoffee/agents/buzzminson.md.backup` backup file from agents directory
+
 ## [0.4.0] - 2026-02-07
 
 ### Added - CLAUDE.md Improvements
