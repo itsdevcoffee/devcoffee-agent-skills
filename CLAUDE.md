@@ -39,3 +39,121 @@ When evaluating TLDR command outputs (user says "rate this tldr" or shares sampl
 - Individual samples: `docs/tldr-evaluation/samples/`
 
 **Scoring criteria:** Completeness, Conciseness, Actionability, Accuracy (0.0-10.0 scale)
+
+## CHANGELOG Maintenance
+
+This project follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/spec/v2.0.0.html). Treat agents as versioned software requiring rigorous lifecycle controls.
+
+### When to Update CHANGELOG
+
+**ALWAYS update CHANGELOG.md for:**
+- ✅ New features (Added)
+- ✅ Changes to existing functionality (Changed)
+- ✅ Bug fixes (Fixed)
+- ✅ Deprecated features (Deprecated)
+- ✅ Removed features (Removed)
+- ✅ Security fixes (Security)
+- ✅ Breaking changes (highlight in description)
+
+**DO NOT update CHANGELOG for:**
+- ❌ Internal refactoring with no user impact
+- ❌ Test updates
+- ❌ Documentation typos
+- ❌ Build/CI configuration changes
+
+### Version Numbering (Semantic Versioning)
+
+**Format:** MAJOR.MINOR.PATCH
+
+- **MAJOR** (1.0.0 → 2.0.0): Breaking changes, incompatible API changes
+- **MINOR** (0.1.0 → 0.2.0): New features, backward compatible
+- **PATCH** (0.1.0 → 0.1.1): Bug fixes, backward compatible
+
+**Examples:**
+- New agent added → MINOR bump
+- Agent behavior changed (breaking) → MAJOR bump
+- Bug fix in existing agent → PATCH bump
+
+### Update Process
+
+**1. Update CHANGELOG.md:**
+```markdown
+## [Unreleased]
+
+### Added
+- New feature description with context
+
+### Changed
+- Description of what changed and why
+
+### Fixed
+- Bug fix description with impact
+```
+
+**2. Update version files when releasing:**
+- `devcoffee/.claude-plugin/plugin.json`
+- `.claude-plugin/marketplace.json`
+
+**3. Move Unreleased to versioned section:**
+```markdown
+## [0.3.1] - 2026-02-07
+
+### Added
+- ...
+```
+
+### Entry Format
+
+**Good entries:**
+```markdown
+### Added
+- **Video analysis skill** - AI-powered frame extraction and vision analysis using Claude 4.x
+- **Success criteria checkboxes** in buzzminson agent for self-validation at each phase
+```
+
+**Bad entries:**
+```markdown
+### Added
+- Added stuff (❌ too vague)
+- Fixed bug (❌ no context, wrong category)
+```
+
+**For breaking changes, highlight prominently:**
+```markdown
+## [2.0.0] - 2026-02-07
+
+### Changed
+- **BREAKING:** Maximus now runs in review-only mode by default
+  - Old: `/devcoffee:maximus` automatically fixes issues
+  - New: `/devcoffee:maximus` reviews only, use `--yolo` for auto-fix
+  - Migration: Add `--yolo` flag for autonomous fixes
+
+### Migration Guide
+[Detailed migration instructions]
+```
+
+### Automation Guidelines
+
+**When making commits:**
+1. Check if changes are user-facing
+2. If yes → add CHANGELOG entry BEFORE committing
+3. Group related changes in single version entry
+4. Use present tense ("Add feature", not "Added feature")
+
+**When releasing:**
+1. Update CHANGELOG: Unreleased → [X.Y.Z]
+2. Update version in plugin.json and marketplace.json
+3. Commit: `chore: bump version to X.Y.Z`
+4. Tag: `git tag vX.Y.Z`
+5. Push: `git push origin main --tags`
+
+### Research-Backed Best Practices
+
+**Agent versioning principles:**
+- AI agents are production infrastructure requiring CI/CD discipline
+- Every change should be tracked, tested, and deployed with confidence
+- Tool versioning causes 60% of production agent failures - maintain strict API contracts
+
+**Key insight:** Agents should be treated with the same rigor as traditional software, combining Keep a Changelog and semantic versioning with modern automation workflows.
+
+**Reference:** This section follows industry best practices as documented in [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), [Semantic Versioning](https://semver.org/spec/v2.0.0.html), and [AI agent lifecycle management](https://medium.com/@nraman.n6/versioning-rollback-lifecycle-management-of-ai-agents-treating-intelligence-as-deployable-deac757e4dea) patterns.
