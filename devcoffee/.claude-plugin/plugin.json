@@ -1,12 +1,12 @@
 {
   "name": "devcoffee",
-  "version": "0.2.1",
-  "description": "Dev Coffee productivity skills for Claude Code - feature implementation with buzzminson and code quality with maximus",
+  "version": "0.3.0",
+  "description": "Dev Coffee productivity skills for Claude Code - feature implementation with buzzminson, code quality with maximus, and conversation summarization with tldr",
   "author": {
     "name": "Dev Coffee",
     "url": "https://github.com/itsdevcoffee"
   },
   "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
-  "keywords": ["code-quality", "review", "automation", "productivity"],
+  "keywords": ["code-quality", "review", "automation", "productivity", "summarization"],
   "license": "MIT"
 }
