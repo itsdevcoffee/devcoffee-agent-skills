@@ -29,3 +29,6 @@ yarn-error.log*
 # Temporary files
 *.tmp
 .cache/
+
+# Generated README sections (temp file for manual review)
+.readme-plugins-section.md
