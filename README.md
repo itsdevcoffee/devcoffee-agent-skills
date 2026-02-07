@@ -32,7 +32,7 @@
 
 > **Plugin:** `devcoffee`
 
-The star of the show: an autonomous agent that runs code reviews in a loop until your code is clean, then polishes it with automatic simplification.
+An autonomous agent that runs code reviews in a loop until your code is clean, then polishes it with automatic simplification.
 
 **When to use:**
 - ✅ After implementing a feature
@@ -105,23 +105,75 @@ Complete toolkit for [Remotion](https://remotion.dev) video creation combining b
 
 ---
 
+### 🎬 Video Analysis - AI-Powered Video Feedback
+
+> **Plugin:** `devcoffee`
+
+Analyze videos and get comprehensive visual feedback using FFmpeg frame extraction and Claude's vision API.
+
+**When to use:**
+- ✅ Review Remotion video output
+- ✅ Get UI/UX feedback on video prototypes
+- ✅ Check visual quality and consistency
+- ✅ Validate technical execution
+
+**What it does:**
+1. Extracts strategic frames from your video (5-20 frames based on mode)
+2. Analyzes each frame with Claude vision API
+3. Provides scene-by-scene analysis with scores
+4. Identifies strengths and improvement areas
+5. Generates comprehensive markdown report
+
+**Basic usage:**
+```bash
+# Just ask naturally
+"Can you analyze this video and give me feedback?"
+path/to/video.mp4
+
+# Or be specific about mode
+"Give me a quick analysis" → 5 frames, ~15 min
+"Detailed analysis please" → 20 frames, ~60 min
+```
+
+**Modes:**
+- **Quick** (5 frames) - Fast overview in ~15 minutes
+- **Standard** (10 frames) - Balanced analysis in ~30 minutes
+- **Detailed** (20 frames) - Thorough review in ~60 minutes
+- **Custom** - Specify exact timestamps to analyze
+
+**Focus areas:**
+- UI/UX - Readability, layout, navigation
+- Aesthetics - Visual style, color, composition
+- Technical - Quality, artifacts, performance
+- Storytelling - Narrative flow, pacing
+
+[View video-analysis documentation →](./devcoffee/skills/video-analysis/README.md)
+
+---
+
 ## Available Plugins
 
-| Plugin | Components | Description | When to Use |
-|--------|-----------|-------------|-------------|
-| `devcoffee` | Command + Agent | Automated code review cycles | After coding, before commit |
-| `remotion-max` | Skill + Agents + Commands | Remotion video creation toolkit | Building Remotion projects |
+### `devcoffee`
+Automated code quality and video analysis workflows
 
-### Commands & Agents
+**Components:**
+- **Agent:** `maximus` - Automated code review cycles
+- **Agent:** `buzzminson` - Feature implementation with QA
+- **Command:** `/devcoffee:maximus` - Run review cycle
+- **Skill:** `video-analysis` - AI-powered video feedback
 
-**devcoffee:**
-- **Command**: `/devcoffee:maximus` - Run code review cycle
-- **Agent**: `maximus` - Triggers on "run maximus" or "review my code"
+**When to use:** After coding, before commit, or reviewing videos
 
-**remotion-max:**
-- **Commands**: `/remotion-max:builder`, `/remotion-max:setup` - Generate components, initialize projects
-- **Agents**: `remotion-builder`, `remotion-setup` - Activate on "create Remotion component" or "set up Remotion"
-- **Skill**: `remotion-best-practices` - Automatically loads when discussing Remotion
+### `remotion-max`
+Complete Remotion video creation toolkit
+
+**Components:**
+- **Skill:** `remotion-best-practices` - 29+ guides and patterns
+- **Agent:** `remotion-builder` - Generate components
+- **Agent:** `remotion-setup` - Initialize projects
+- **Commands:** `/remotion-max:builder`, `/remotion-max:setup`
+
+**When to use:** Building Remotion video projects
 
 ---
 
@@ -142,25 +194,32 @@ Or use the local path if you've cloned the repo:
 ### Step 2: Install Plugins
 
 ```bash
-# Install devcoffee (code review automation)
+# Install devcoffee (code review + video analysis)
 /plugin install devcoffee@devcoffee-marketplace
 
 # Install remotion-max (if you work with Remotion)
 /plugin install remotion-max@devcoffee-marketplace
 ```
 
-### Step 3: Install Dependencies (for devcoffee only)
+### Step 3: Install Dependencies
 
-Maximus requires these official plugins:
-
+**For maximus (code review):**
 ```bash
 /plugin install feature-dev@claude-plugins-official
 /plugin install code-simplifier@claude-plugins-official
 ```
 
+**For video-analysis:**
+```bash
+# Install FFmpeg (if not already installed)
+# Mac: brew install ffmpeg
+# Linux: sudo apt install ffmpeg
+```
+
 **Why these dependencies?**
 - `feature-dev` provides the `code-reviewer` agent (finds bugs and issues)
 - `code-simplifier` provides the `code-simplifier` agent (polishes code)
+- `ffmpeg` enables frame extraction for video analysis
 
 ### Verify Installation
 
@@ -451,7 +510,33 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
+## Examples
+
+### Speedrun Game Video
+**Location:** `examples/devcoffee-speedrun-game/`
+
+A 45-second retro gaming video (9.3/10 quality) showcasing Buzzminson and Maximus agents in authentic 16-bit SNES/Genesis style.
+
+**Highlights:**
+- 100% CSS-based sprites (no image assets!)
+- 4 platformer levels + 3 shooter phases
+- CRT scanlines and pixel-perfect rendering
+- Complete Remotion project (ready to customize)
+
+[View example →](./examples/devcoffee-speedrun-game/README.md)
+
+---
+
 ## Changelog
+
+### v0.3.0 (2026-02-06)
+- 🎬 **NEW:** Video analysis skill - AI-powered video feedback via frame extraction
+- 🎮 **NEW:** Speedrun game example - 45s retro gaming video (9.3/10 quality)
+- ✨ Added 4 sampling modes (quick/standard/detailed/custom)
+- ✨ Added 5 focus areas (UI/aesthetics/technical/storytelling/all)
+- 🔧 Comprehensive error handling (10+ cases)
+- 📚 Complete documentation with test cases and quick start guides
+- ✅ Production-ready quality (validated by maximus)
 
 ### v0.2.0 (2026-02-04)
 - Added `remotion-max` plugin (renamed from remotion-best-practices)
