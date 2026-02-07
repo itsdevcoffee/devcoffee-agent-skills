@@ -5,7 +5,22 @@ All notable changes to Dev Coffee Agent Skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.4.0] - 2026-02-07
+
+### Added - CLAUDE.md Improvements
+
+**Essential Sections Added:**
+- **Project Overview** - Clear description of marketplace purpose, plugins, and repository
+- **Quick Start** - Installation and update commands for local development
+- **Architecture** - Comprehensive directory structure map with descriptions
+- **Development Commands** - Plugin management, README automation, testing, and git workflows
+- **Result:** Passed cclint validation (0 errors, 6 warnings) - improved from 68/100 (C+) baseline
+
+**CLAUDE.md Management Guidelines:**
+- Complete CHANGELOG maintenance section with Keep a Changelog and Semantic Versioning
+- When to update, version numbering rules, entry format examples
+- Automation workflow for commits and releases
+- Research-backed best practices for agent versioning
 
 ### Added - README Automation System
 

@@ -1,5 +1,81 @@
 # Dev Coffee Agent Skills
 
+## Project Overview
+
+**Dev Coffee Agent Skills** is a Claude Code plugin marketplace providing production-ready tools for automated feature development and code quality workflows.
+
+**Plugins:**
+- `devcoffee` - buzzminson (feature implementation) + maximus (code review)
+- `video-analysis` - AI-powered video analysis with Claude vision
+- `remotion-max` - Remotion video creation toolkit
+- `tldr` - Message summarization skill
+
+**Repository:** https://github.com/itsdevcoffee/devcoffee-agent-skills
+
+## Quick Start
+
+```bash
+# Install devcoffee plugin
+claude plugin install devcoffee@devcoffee-marketplace
+
+# Update plugin after pulling changes
+git pull origin main
+claude plugin update devcoffee@devcoffee-marketplace
+
+# Validate plugin metadata
+npm run readme:validate
+
+# Generate README sections from metadata
+npm run readme:generate
+```
+
+## Architecture
+
+```
+devcoffee-agent-skills/          # Plugin marketplace monorepo
+├── devcoffee/                   # Main plugin (buzzminson + maximus)
+│   ├── agents/                  # Agent definitions (.md)
+│   ├── commands/                # Slash commands (.md)
+│   ├── skills/                  # Invocable skills (.md)
+│   └── references/              # Templates and examples
+├── video-analysis/              # Video analysis plugin
+├── remotion-max/                # Remotion toolkit
+├── tldr/                        # Standalone summarization skill
+├── scripts/                     # Automation (validation, generation)
+│   ├── validate-plugins.js      # Metadata validation
+│   └── generate-readme-plugins.js  # README generation
+├── docs/                        # Project documentation
+│   ├── buzzminson/              # Implementation logs
+│   ├── research/                # Technical research
+│   ├── guides/                  # Development guides
+│   └── templates/               # Documentation templates
+└── examples/                    # Demo projects
+```
+
+**Plugin Structure:** Each plugin follows Claude Code conventions with agents/, commands/, skills/, and .claude-plugin/plugin.json
+
+## Development Commands
+
+```bash
+# Plugin management
+claude plugin install devcoffee@devcoffee-marketplace
+claude plugin update devcoffee@devcoffee-marketplace
+claude plugin uninstall devcoffee@devcoffee-marketplace
+
+# README automation
+npm run readme:validate    # Validate plugin metadata
+npm run readme:generate    # Generate README sections
+npm run readme:check       # Validate + generate
+
+# Testing
+npm test                   # Run validation tests
+
+# Git workflow
+git pull origin main       # Update from remote
+git push origin main       # Push changes
+git push origin main --tags  # Push with version tags
+```
+
 ## Documentation
 
 Files go in `docs/` except for obvious exceptions: README.md, CLAUDE.md, LICENSE.md, CONTRIBUTING.md, AGENT.md, ... (root only).
@@ -156,4 +232,4 @@ This project follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) an
 
 **Key insight:** Agents should be treated with the same rigor as traditional software, combining Keep a Changelog and semantic versioning with modern automation workflows.
 
-**Reference:** This section follows industry best practices as documented in [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), [Semantic Versioning](https://semver.org/spec/v2.0.0.html), and [AI agent lifecycle management](https://medium.com/@nraman.n6/versioning-rollback-lifecycle-management-of-ai-agents-treating-intelligence-as-deployable-deac757e4dea) patterns.
+**Reference:** This section follows industry best practices as documented in [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), [Semantic Versioning](https://semver.org/spec/v2.0.0.html), and AI agent lifecycle management research on treating agents as deployable software.
