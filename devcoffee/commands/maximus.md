@@ -1,4 +1,5 @@
 ---
+name: maximus
 description: Comprehensive code quality review and analysis - review-only by default, use --yolo for autonomous fixes
 argument-hint: [--yolo] [--pause-reviews] [--pause-simplifier] [--pause-major] [--max-rounds N] [--interactive]
 tools: Task, Read, Edit, Write, Bash, Grep, Glob, AskUserQuestion
