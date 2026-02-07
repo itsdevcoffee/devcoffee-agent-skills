@@ -170,7 +170,13 @@ AI-powered video feedback and quality analysis
 **Installation:**
 ```bash
 /plugin install video-analysis@devcoffee-marketplace
-brew install ffmpeg  # External dependency
+
+# Install FFmpeg (external dependency)
+brew install ffmpeg                # Mac
+sudo apt install ffmpeg            # Debian/Ubuntu
+sudo dnf install ffmpeg            # Fedora/RHEL
+sudo pacman -S ffmpeg              # Arch Linux
+# Windows: https://ffmpeg.org/download.html
 ```
 
 **When to use:** Review videos, get UI/UX feedback, check visual quality
