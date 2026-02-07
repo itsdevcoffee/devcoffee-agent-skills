@@ -165,20 +165,24 @@ function main() {
       continue;
     }
 
+    // Try plugin-metadata.json first (extended fields), fallback to plugin.json
+    const pluginMetadataPath = path.join(pluginPath, '.claude-plugin/plugin-metadata.json');
     const pluginJsonPath = path.join(pluginPath, '.claude-plugin/plugin.json');
 
-    if (!fs.existsSync(pluginJsonPath)) {
+    const metadataPath = fs.existsSync(pluginMetadataPath) ? pluginMetadataPath : pluginJsonPath;
+
+    if (!fs.existsSync(metadataPath)) {
       log(`\n${colors.bold}Validating: ${plugin.name}${colors.reset}`, 'blue');
-      error(plugin.name, `plugin.json not found at ${pluginJsonPath}`);
+      error(plugin.name, `plugin metadata not found at ${pluginMetadataPath} or ${pluginJsonPath}`);
       continue;
     }
 
     let pluginData;
     try {
-      pluginData = JSON.parse(fs.readFileSync(pluginJsonPath, 'utf8'));
+      pluginData = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
     } catch (err) {
       log(`\n${colors.bold}Validating: ${plugin.name}${colors.reset}`, 'blue');
-      error(plugin.name, `Failed to parse plugin.json: ${err.message}`);
+      error(plugin.name, `Failed to parse plugin metadata: ${err.message}`);
       continue;
     }
 

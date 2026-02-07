@@ -172,13 +172,17 @@ function main() {
       continue;
     }
 
+    // Try plugin-metadata.json first (extended fields), fallback to plugin.json
+    const pluginMetadataPath = path.join(pluginPath, '.claude-plugin/plugin-metadata.json');
     const pluginJsonPath = path.join(pluginPath, '.claude-plugin/plugin.json');
 
-    if (!fs.existsSync(pluginJsonPath)) {
-      console.error(`✗ plugin.json not found for ${plugin.name} at ${pluginJsonPath}`);
+    const metadataPath = fs.existsSync(pluginMetadataPath) ? pluginMetadataPath : pluginJsonPath;
+
+    if (!fs.existsSync(metadataPath)) {
+      console.error(`✗ plugin metadata not found for ${plugin.name} at ${pluginMetadataPath} or ${pluginJsonPath}`);
       output.push(`### \`${plugin.name}\``);
       output.push('');
-      output.push('**ERROR:** Failed to generate section - plugin.json not found');
+      output.push('**ERROR:** Failed to generate section - plugin metadata not found');
       output.push('');
       output.push('---');
       output.push('');
@@ -187,12 +191,12 @@ function main() {
 
     let pluginData;
     try {
-      pluginData = JSON.parse(fs.readFileSync(pluginJsonPath, 'utf8'));
+      pluginData = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
     } catch (err) {
-      console.error(`✗ Failed to parse plugin.json for ${plugin.name}: ${err.message}`);
+      console.error(`✗ Failed to parse plugin metadata for ${plugin.name}: ${err.message}`);
       output.push(`### \`${plugin.name}\``);
       output.push('');
-      output.push(`**ERROR:** Failed to generate section - plugin.json parse error: ${err.message}`);
+      output.push(`**ERROR:** Failed to generate section - plugin metadata parse error: ${err.message}`);
       output.push('');
       output.push('---');
       output.push('');

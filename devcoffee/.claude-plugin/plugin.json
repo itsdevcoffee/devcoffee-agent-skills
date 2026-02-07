@@ -8,25 +8,5 @@
   },
   "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
   "keywords": ["code-quality", "review", "automation", "productivity"],
-  "license": "MIT",
-  "tagline": "Automated code quality workflows",
-  "category": "code-quality",
-  "components": {
-    "agents": ["maximus", "buzzminson"],
-    "commands": ["maximus"],
-    "skills": [],
-    "hooks": []
-  },
-  "dependencies": {
-    "plugins": ["feature-dev@claude-plugins-official", "code-simplifier@claude-plugins-official"],
-    "external": []
-  },
-  "installation": {
-    "marketplace": "devcoffee-marketplace",
-    "setup": []
-  },
-  "usage": {
-    "when": "After coding, before commit, quality assurance",
-    "examples": ["/devcoffee:maximus", "/devcoffee:maximus --interactive"]
-  }
+  "license": "MIT"
 }

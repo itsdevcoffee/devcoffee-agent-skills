@@ -8,25 +8,5 @@
   },
   "repository": "https://github.com/itsdevcoffee/tldr",
   "keywords": ["summarization", "tldr", "productivity", "conversation", "utility"],
-  "license": "MIT",
-  "tagline": "Hyper-condensed conversation summaries",
-  "category": "standalone",
-  "components": {
-    "commands": ["tldr"],
-    "skills": ["tldr"],
-    "agents": [],
-    "hooks": []
-  },
-  "dependencies": {
-    "plugins": [],
-    "external": []
-  },
-  "installation": {
-    "marketplace": "devcoffee-marketplace",
-    "setup": []
-  },
-  "usage": {
-    "when": "After long Claude responses, reviewing conversation history",
-    "examples": ["/tldr"]
-  }
+  "license": "MIT"
 }

@@ -1,0 +1,32 @@
+{
+  "name": "remotion-max",
+  "version": "1.0.0",
+  "description": "Complete toolkit for Remotion video creation - best practices, agents, and automation",
+  "author": {
+    "name": "Dev Coffee",
+    "url": "https://github.com/itsdevcoffee"
+  },
+  "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
+  "keywords": ["remotion", "video", "react", "animation", "composition"],
+  "license": "MIT",
+  "tagline": "Complete Remotion video creation toolkit",
+  "category": "development",
+  "components": {
+    "skills": ["remotion-best-practices"],
+    "agents": ["remotion-builder", "remotion-setup"],
+    "commands": ["builder", "setup"],
+    "hooks": []
+  },
+  "dependencies": {
+    "plugins": [],
+    "external": []
+  },
+  "installation": {
+    "marketplace": "devcoffee-marketplace",
+    "setup": []
+  },
+  "usage": {
+    "when": "Building Remotion video projects",
+    "examples": ["/remotion-max:builder text-reveal"]
+  }
+}

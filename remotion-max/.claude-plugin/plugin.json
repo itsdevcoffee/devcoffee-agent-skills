@@ -8,25 +8,5 @@
   },
   "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
   "keywords": ["remotion", "video", "react", "animation", "composition"],
-  "license": "MIT",
-  "tagline": "Complete Remotion video creation toolkit",
-  "category": "development",
-  "components": {
-    "skills": ["remotion-best-practices"],
-    "agents": ["remotion-builder", "remotion-setup"],
-    "commands": ["builder", "setup"],
-    "hooks": []
-  },
-  "dependencies": {
-    "plugins": [],
-    "external": []
-  },
-  "installation": {
-    "marketplace": "devcoffee-marketplace",
-    "setup": []
-  },
-  "usage": {
-    "when": "Building Remotion video projects",
-    "examples": ["/remotion-max:builder text-reveal"]
-  }
+  "license": "MIT"
 }

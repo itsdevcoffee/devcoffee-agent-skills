@@ -1,0 +1,36 @@
+{
+  "name": "video-analysis",
+  "version": "1.0.0",
+  "description": "AI-powered video analysis using FFmpeg frame extraction and Claude vision API",
+  "tagline": "AI-powered video feedback and quality analysis",
+  "category": "media",
+  "components": {
+    "commands": ["video-analysis"],
+    "skills": ["video-analysis"],
+    "agents": [],
+    "hooks": []
+  },
+  "dependencies": {
+    "external": ["ffmpeg"],
+    "plugins": []
+  },
+  "installation": {
+    "marketplace": "devcoffee-marketplace",
+    "setup": [
+      "# Mac",
+      "brew install ffmpeg",
+      "# Debian/Ubuntu",
+      "sudo apt install ffmpeg",
+      "# Fedora/RHEL",
+      "sudo dnf install ffmpeg",
+      "# Arch Linux",
+      "sudo pacman -S ffmpeg",
+      "# Windows",
+      "https://ffmpeg.org/download.html"
+    ]
+  },
+  "usage": {
+    "when": "Review videos, get UI/UX feedback, check visual quality",
+    "examples": ["/video-analysis path/to/video.mp4"]
+  }
+}
