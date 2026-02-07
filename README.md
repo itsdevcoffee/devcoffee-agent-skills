@@ -12,8 +12,8 @@
 /plugin marketplace add itsdevcoffee/devcoffee-agent-skills
 
 # 2. Install plugins
-/plugin install devcoffee@devcoffee-agent-skills
-/plugin install remotion-max@devcoffee-agent-skills
+/plugin install devcoffee@devcoffee-marketplace
+/plugin install remotion-max@devcoffee-marketplace
 
 # 3. Install devcoffee dependencies
 /plugin install feature-dev@claude-plugins-official
@@ -143,10 +143,10 @@ Or use the local path if you've cloned the repo:
 
 ```bash
 # Install devcoffee (code review automation)
-/plugin install devcoffee@devcoffee-agent-skills
+/plugin install devcoffee@devcoffee-marketplace
 
 # Install remotion-max (if you work with Remotion)
-/plugin install remotion-max@devcoffee-agent-skills
+/plugin install remotion-max@devcoffee-marketplace
 ```
 
 ### Step 3: Install Dependencies (for devcoffee only)
@@ -169,8 +169,8 @@ Maximus requires these official plugins:
 /plugin list | grep devcoffee
 
 # Should show:
-# ✔ devcoffee@devcoffee-agent-skills
-# ✔ remotion-max@devcoffee-agent-skills
+# ✔ devcoffee@devcoffee-marketplace
+# ✔ remotion-max@devcoffee-marketplace
 
 # Check available commands
 /help | grep devcoffee
@@ -368,7 +368,7 @@ claude
 
 Should show:
 ```
-✔ devcoffee@devcoffee-agent-skills
+✔ devcoffee@devcoffee-marketplace
 ```
 
 ---
@@ -386,7 +386,7 @@ cd devcoffee-agent-skills
 /plugin marketplace add $(pwd)
 
 # Install
-/plugin install devcoffee@devcoffee-agent-skills
+/plugin install devcoffee@devcoffee-marketplace
 ```
 
 ### Project Structure
