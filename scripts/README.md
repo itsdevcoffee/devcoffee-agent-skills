@@ -6,11 +6,185 @@ Shell scripts for managing Dev Coffee plugins, marketplace, and development work
 
 ```
 scripts/
-├── plugin/          # Plugin installation and management
-├── marketplace/     # Marketplace setup and configuration
-├── utils/           # Manual registration and debugging utilities
-└── README.md        # This file
+├── plugin/                    # Plugin installation and management
+├── marketplace/               # Marketplace setup and configuration
+├── utils/                     # Manual registration and debugging utilities
+├── doctor.sh                  # Health check and diagnostics
+├── validate-plugins.js        # Plugin metadata validation (Node.js)
+├── generate-readme-plugins.js # README section generation (Node.js)
+└── README.md                  # This file
 ```
+
+## Health Check
+
+### `doctor.sh`
+
+Comprehensive health check for the devcoffee plugin and all its dependencies.
+
+**Usage:**
+```bash
+./scripts/doctor.sh
+```
+
+**What it checks:**
+
+1. **Claude CLI** - Verifies installation and version
+2. **Required Plugins** - Checks if feature-dev and code-simplifier are installed (needed by maximus)
+3. **Optional Dependencies** - Checks for ffmpeg (video-analysis) and jq (utility scripts)
+4. **Plugin Status** - Validates plugin structure and installation
+5. **Configuration Health** - Verifies settings.json and installed_plugins.json
+
+**Exit codes:**
+- `0` - All checks passed (ready to use)
+- `1` - Critical issues found (requires fixes)
+- `2` - Warnings only (functional but incomplete)
+
+**Example output:**
+```
+🏥 Dev Coffee Plugin Health Check
+=====================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Claude CLI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ Claude CLI installed: 2.1.34
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. Required Plugins (for maximus)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ feature-dev plugin installed (version: 0.1.0)
+✓ code-simplifier plugin installed (version: 0.1.0)
+```
+
+**Use when:**
+- Initial setup (verify all dependencies)
+- Troubleshooting plugin issues
+- Before running maximus (ensure required plugins installed)
+- Verifying video-analysis setup (ffmpeg check)
+- CI/CD health checks
+
+---
+
+## README Automation (Node.js)
+
+Metadata-driven README generation where `plugin.json` files are the single source of truth.
+
+### `validate-plugins.js`
+
+Validates all plugins in the marketplace against metadata requirements.
+
+**Usage:**
+```bash
+npm run readme:validate
+
+# Or directly:
+node scripts/validate-plugins.js
+```
+
+**What it checks:**
+- **Required fields:** name, version, description, tagline
+- **Format validation:**
+  - Name must be kebab-case (lowercase, hyphens only)
+  - Version must be semantic versioning (X.Y.Z)
+  - Description minimum 20 characters
+  - Tagline maximum 80 characters
+- **Recommended fields:** category, components, dependencies, installation, usage
+- **Structure validation:** Components and dependencies must be valid arrays/objects
+
+**Exit codes:**
+- `0` - All valid (may have warnings)
+- `1` - Validation errors found (must fix)
+
+**Example output:**
+```
+✅ All plugins valid! (4 plugins checked)
+
+# Or with errors:
+✗ Missing required field: tagline
+✗ Invalid version format: "1.0" (must be semantic version: X.Y.Z)
+⚠ Missing recommended field: category
+```
+
+**Use when:**
+- Before committing plugin changes
+- After adding new plugins
+- CI/CD validation checks
+- Verifying metadata completeness
+
+---
+
+### `generate-readme-plugins.js`
+
+Generates the "Available Plugins" section for README.md from metadata.
+
+**Usage:**
+```bash
+npm run readme:generate
+
+# Or directly:
+node scripts/generate-readme-plugins.js
+```
+
+**What it does:**
+1. Reads `.claude-plugin/marketplace.json`
+2. For each plugin, loads `plugin.json` with extended metadata
+3. Generates formatted markdown sections with:
+   - Plugin description
+   - Components (agents, commands, skills, hooks)
+   - Installation instructions (including dependencies and setup)
+   - When to use
+   - Usage examples
+4. Writes to `.readme-plugins-section.md` for manual review
+
+**Output format:**
+```markdown
+## Available Plugins
+
+### `plugin-name`
+Description here
+
+**Components:**
+- **Agents:** `agent1`, `agent2`
+- **Commands:** `/plugin:command`
+
+**Installation:**
+```bash
+/plugin install plugin-name@marketplace
+# Dependencies and setup commands...
+```
+
+**When to use:** Description
+
+**Examples:**
+```bash
+/plugin:command example
+```
+```
+
+**After running:**
+1. Review `.readme-plugins-section.md`
+2. Manually copy into README.md between HTML markers
+3. Commit changes
+
+**Use when:**
+- Adding new plugins
+- Updating plugin metadata
+- Ensuring README consistency
+- Generating documentation
+
+---
+
+### Combined Check
+
+Run both validation and generation in sequence:
+
+```bash
+npm run readme:check
+```
+
+This runs `npm run readme:validate && npm run readme:generate`.
+
+---
 
 ## Plugin Management (`plugin/`)
 
@@ -313,6 +487,12 @@ Register plugin WITHOUT `@local` suffix (legacy compatibility).
 
 ### Common Workflows
 
+**Health check (run first):**
+```bash
+./scripts/doctor.sh
+# Comprehensive diagnostics and dependency check
+```
+
 **Fresh plugin installation:**
 ```bash
 ./scripts/plugin/install.sh devcoffee ./devcoffee
@@ -343,19 +523,28 @@ pkill -f claude && claude
 
 **Debugging issues:**
 ```bash
-./scripts/plugin/diagnose.sh
-# Comprehensive diagnostics output
+./scripts/doctor.sh           # Check all dependencies and config
+./scripts/plugin/diagnose.sh  # Deep dive into plugin discovery issues
 ```
 
 ### Dependencies
 
-All scripts require:
-- `bash`
-- `jq` - JSON processor (`sudo apt-get install jq` or `brew install jq`)
+**Required:**
+- `bash` - Shell interpreter
 - `claude` - Claude Code CLI
 
-Some scripts also use:
-- `tree` - Directory visualization (optional, falls back to `find`)
+**Recommended:**
+- `jq` - JSON processor (required by most scripts)
+  - Install: `sudo apt-get install jq` or `brew install jq`
+
+**Optional:**
+- `ffmpeg` - Video processing (for video-analysis skill)
+- `tree` - Directory visualization (diagnostic scripts fall back to `find`)
+
+**Check all dependencies:**
+```bash
+./scripts/doctor.sh  # Shows what's installed and what's missing
+```
 
 ### File Paths
 
@@ -388,11 +577,12 @@ Scripts reference these Claude Code config files:
 
 ### Commands not showing up after installation
 
-1. Run diagnostics: `./scripts/plugin/diagnose.sh`
-2. Verify plugin is in `installed_plugins.json`
-3. Verify plugin is enabled in `settings.json`
-4. Ensure Claude Code was completely restarted
-5. Try reinstall: `./scripts/plugin/reinstall.sh`
+1. Run health check: `./scripts/doctor.sh`
+2. Run diagnostics: `./scripts/plugin/diagnose.sh`
+3. Verify plugin is in `installed_plugins.json`
+4. Verify plugin is enabled in `settings.json`
+5. Ensure Claude Code was completely restarted
+6. Try reinstall: `./scripts/plugin/reinstall.sh`
 
 ### "Plugin not found" errors
 
