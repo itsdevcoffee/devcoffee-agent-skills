@@ -21,14 +21,14 @@ export const ClarifyPanel: React.FC = () => {
   return (
     <AbsoluteFill
       style={{opacity, transform: `scale(${scale})`}}
-      className="flex flex-col items-center justify-center p-8"
+      className="flex flex-col items-center justify-center p-2"
     >
-      <div className="text-8xl mb-4">❓</div>
-      <h3 className="text-5xl font-bold text-white mb-4">Clarify</h3>
-      <p className="text-purple-300 text-center mb-6 text-3xl">Ask questions first</p>
+      <div style={{fontSize: 205}} className="mb-2">❓</div>
+      <h3 style={{fontSize: 96}} className="font-bold text-white mb-2">Clarify</h3>
+      <p className="text-purple-300 text-center mb-4 text-6xl">Ask questions first</p>
 
       {/* Question to checkmark animation */}
-      <div className="flex gap-4">
+      <div className="flex gap-8">
         {questions.map((q, index) => {
           const checkFrame = 30 + index * 15;
           const showCheck = frame > checkFrame;
@@ -42,8 +42,8 @@ export const ClarifyPanel: React.FC = () => {
           return (
             <div
               key={index}
-              className="text-6xl"
               style={{
+                fontSize: 115,
                 transform: showCheck ? `scale(${checkScale})` : 'scale(1)',
               }}
             >

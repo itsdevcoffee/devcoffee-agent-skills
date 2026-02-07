@@ -16,41 +16,43 @@ export const HandoffPanel: React.FC = () => {
   });
 
   // Baton passing animation
-  const batonX = interpolate(frame, [30, 60], [-100, 100], {
+  const batonX = interpolate(frame, [30, 60], [-150, 150], {
     extrapolateRight: 'clamp',
   });
 
   return (
     <AbsoluteFill
       style={{opacity, transform: `scale(${scale})`}}
-      className="flex flex-col items-center justify-center p-8"
+      className="flex flex-col items-center justify-center p-2"
     >
-      <div className="text-8xl mb-4">🤝</div>
-      <h3 className="text-5xl font-bold text-white mb-4">Handoff</h3>
-      <p className="text-purple-300 text-center mb-6 text-3xl">Pass to Maximus</p>
+      <div style={{fontSize: 205}} className="mb-2">🤝</div>
+      <h3 style={{fontSize: 96}} className="font-bold text-white mb-2">Handoff</h3>
+      <p className="text-purple-300 text-center mb-4 text-6xl">Pass to Maximus</p>
 
       {/* Passing animation */}
-      <div className="relative w-full max-w-xs h-20 flex items-center justify-center">
-        <div className="absolute left-0 text-6xl">🌚</div>
+      <div className="relative w-full max-w-lg h-36 flex items-center justify-center">
+        <div className="absolute left-0" style={{fontSize: 115}}>🌚</div>
         <div
           style={{
+            fontSize: 96,
             transform: `translateX(${batonX}px)`,
           }}
-          className="absolute text-5xl"
+          className="absolute"
         >
           🏃
         </div>
-        <div className="absolute right-0 text-6xl opacity-50">💪</div>
+        <div className="absolute right-0 opacity-50" style={{fontSize: 115}}>💪</div>
       </div>
 
       {/* Arrow pointing to Maximus */}
       <div
         style={{
+          fontSize: 64,
           opacity: interpolate(frame, [60, 75], [0, 1], {
             extrapolateRight: 'clamp',
           }),
         }}
-        className="mt-4 text-green-400 text-4xl animate-bounce"
+        className="mt-4 text-green-400"
       >
         ↓
       </div>

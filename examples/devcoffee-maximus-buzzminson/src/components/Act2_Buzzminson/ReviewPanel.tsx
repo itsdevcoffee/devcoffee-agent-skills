@@ -23,29 +23,29 @@ export const ReviewPanel: React.FC = () => {
   return (
     <AbsoluteFill
       style={{opacity, transform: `scale(${scale})`}}
-      className="flex flex-col items-center justify-center p-8"
+      className="flex flex-col items-center justify-center p-2"
     >
-      <div className="text-8xl mb-4">🔄</div>
-      <h3 className="text-5xl font-bold text-white mb-4">Review</h3>
-      <p className="text-purple-300 text-center mb-6 text-3xl">Iterate until perfect</p>
+      <div style={{fontSize: 205}} className="mb-2">🔄</div>
+      <h3 style={{fontSize: 96}} className="font-bold text-white mb-2">Review</h3>
+      <p className="text-purple-300 text-center mb-4 text-6xl">Iterate until perfect</p>
 
-      {/* Iteration loop visualization */}
-      <div className="relative">
+      {/* Iteration loop with feedback bubble side by side */}
+      <div className="flex items-center gap-8">
         <div
-          style={{transform: `rotate(${rotation}deg)`}}
-          className="text-6xl"
+          style={{fontSize: 115, transform: `rotate(${rotation}deg)`}}
         >
           🔄
         </div>
 
-        {/* User feedback bubble */}
+        {/* User feedback bubble - positioned beside the spinning icon */}
         <div
           style={{
             opacity: interpolate(frame, [40, 55], [0, 1], {
               extrapolateRight: 'clamp',
             }),
+            transform: `translateX(${interpolate(frame, [40, 55], [30, 0], {extrapolateRight: 'clamp'})  }px)`,
           }}
-          className="absolute -top-8 -right-12 bg-purple-600 text-white px-4 py-2 rounded-full text-xl"
+          className="bg-purple-600 text-white px-6 py-4 rounded-full text-4xl whitespace-nowrap"
         >
           👤 Feedback
         </div>
