@@ -5,6 +5,24 @@ All notable changes to Dev Coffee Agent Skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed - TLDR Skill
+
+**Standalone Skill Structure**
+- **Fixed namespace issue:** Converted tldr from plugin command to standalone skill
+- **Before:** `/tldr:tldr` (double namespace from command structure)
+- **After:** `/tldr` (clean invocation as standalone skill)
+- **Installation:** Users copy to `~/.claude/skills/tldr/` for direct installation
+- **Structure:** `skills/tldr/SKILL.md` following le-redditor pattern
+- **Trade-off:** Clean invocation vs marketplace distribution (standalone skills aren't marketplace-installable)
+- **Result:** Matches user expectations for simple, single-purpose skills
+
+**Documentation Updates**
+- Added evaluation system with first sample scored 9.7/10.0
+- Created comprehensive EVALUATION.md with scoring criteria (Completeness, Conciseness, Actionability, Accuracy)
+- Sample collection workflow for data-driven v1.1 improvements
+
 ## [0.3.0] - 2026-02-06
 
 ### Major Changes - Buzzminson Agent
