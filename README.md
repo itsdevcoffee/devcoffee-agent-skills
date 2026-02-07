@@ -11,17 +11,22 @@
 # 1. Add this marketplace to Claude Code
 /plugin marketplace add itsdevcoffee/devcoffee-agent-skills
 
-# 2. Install plugins
-/plugin install devcoffee@devcoffee-marketplace
-/plugin install remotion-max@devcoffee-marketplace
+# 2. Install the plugin(s) you want
+/plugin install video-analysis@devcoffee-marketplace  # Video feedback
+/plugin install devcoffee@devcoffee-marketplace       # Code review
+/plugin install remotion-max@devcoffee-marketplace    # Remotion tools
 
-# 3. Install devcoffee dependencies
+# 3. Install dependencies (if using devcoffee)
 /plugin install feature-dev@claude-plugins-official
 /plugin install code-simplifier@claude-plugins-official
 
-# 4. Try them out
-/devcoffee:maximus                  # Run code review cycle
-# Or work with Remotion - skill loads automatically
+# 4. Install FFmpeg (if using video-analysis)
+brew install ffmpeg  # Mac
+# sudo apt install ffmpeg  # Linux
+
+# 5. Try them out
+/video-analysis path/to/video.mp4   # Analyze videos
+/devcoffee:maximus                  # Run code review
 ```
 
 ---
@@ -107,7 +112,7 @@ Complete toolkit for [Remotion](https://remotion.dev) video creation combining b
 
 ### 🎬 Video Analysis - AI-Powered Video Feedback
 
-> **Plugin:** `devcoffee`
+> **Plugin:** `video-analysis` (standalone)
 
 Analyze videos and get comprehensive visual feedback using FFmpeg frame extraction and Claude's vision API.
 
@@ -153,16 +158,41 @@ path/to/video.mp4
 
 ## Available Plugins
 
+### `video-analysis`
+AI-powered video feedback and quality analysis
+
+**Components:**
+- **Command:** `/video-analysis` - Analyze any video file
+- **Skill:** `video-analysis` - Auto-activates on video analysis requests
+
+**Installation:**
+```bash
+/plugin install video-analysis@devcoffee-marketplace
+brew install ffmpeg  # External dependency
+```
+
+**When to use:** Review videos, get UI/UX feedback, check visual quality
+
+---
+
 ### `devcoffee`
-Automated code quality and video analysis workflows
+Automated code quality workflows
 
 **Components:**
 - **Agent:** `maximus` - Automated code review cycles
 - **Agent:** `buzzminson` - Feature implementation with QA
 - **Command:** `/devcoffee:maximus` - Run review cycle
-- **Skill:** `video-analysis` - AI-powered video feedback
 
-**When to use:** After coding, before commit, or reviewing videos
+**Installation:**
+```bash
+/plugin install devcoffee@devcoffee-marketplace
+/plugin install feature-dev@claude-plugins-official
+/plugin install code-simplifier@claude-plugins-official
+```
+
+**When to use:** After coding, before commit, quality assurance
+
+---
 
 ### `remotion-max`
 Complete Remotion video creation toolkit
@@ -172,6 +202,11 @@ Complete Remotion video creation toolkit
 - **Agent:** `remotion-builder` - Generate components
 - **Agent:** `remotion-setup` - Initialize projects
 - **Commands:** `/remotion-max:builder`, `/remotion-max:setup`
+
+**Installation:**
+```bash
+/plugin install remotion-max@devcoffee-marketplace
+```
 
 **When to use:** Building Remotion video projects
 
@@ -193,11 +228,21 @@ Or use the local path if you've cloned the repo:
 
 ### Step 2: Install Plugins
 
+Install only what you need:
+
 ```bash
-# Install devcoffee (code review + video analysis)
+# Video analysis only
+/plugin install video-analysis@devcoffee-marketplace
+
+# Code review automation only
 /plugin install devcoffee@devcoffee-marketplace
 
-# Install remotion-max (if you work with Remotion)
+# Remotion toolkit only
+/plugin install remotion-max@devcoffee-marketplace
+
+# Or install all
+/plugin install video-analysis@devcoffee-marketplace
+/plugin install devcoffee@devcoffee-marketplace
 /plugin install remotion-max@devcoffee-marketplace
 ```
 

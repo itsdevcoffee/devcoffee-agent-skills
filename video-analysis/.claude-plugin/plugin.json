@@ -1,0 +1,12 @@
+{
+  "name": "video-analysis",
+  "version": "1.0.0",
+  "description": "AI-powered video analysis using FFmpeg frame extraction and Claude vision API",
+  "author": {
+    "name": "Dev Coffee",
+    "url": "https://github.com/itsdevcoffee/devcoffee-agent-skills"
+  },
+  "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
+  "license": "MIT",
+  "keywords": ["video", "analysis", "feedback", "ffmpeg", "vision", "quality-review"]
+}
