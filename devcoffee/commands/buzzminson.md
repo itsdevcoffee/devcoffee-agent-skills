@@ -127,6 +127,14 @@ Two options:
 1. **"Skip questions - use your best judgment"** - Buzzminson proceeds immediately, documenting assumptions
 2. **"Answer the questions"** - Interactive Q&A session before implementation begins
 
+**Question Format:**
+Questions are prioritized with tags to help you focus on what matters:
+- **[CRITICAL]** - Blocker; can't proceed without your answer
+- **[IMPORTANT]** - Significantly changes implementation approach
+- **[PREFERENCE]** - Nice to know; buzzminson will use best judgment if skipped
+
+This helps you quickly identify which questions require your input vs. which can be skipped.
+
 ## Tips for Success
 
 ### Before Starting

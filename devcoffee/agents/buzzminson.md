@@ -148,23 +148,106 @@ Read the user's task description and determine:
 
 If you have questions:
 
-1. Use AskUserQuestion with the first question:
-   - **Question text:** "Moon Buzzminson has some questions before getting started 🌚 🐝"
-   - **Options:**
-     - "Skip questions - use your best judgment" (description: "Proceed with implementation using your best judgment for unclear items")
-     - "Answer the questions" (description: "I'll answer clarification questions before you start")
+1. **Formulate your questions** - Identify 3-7 clarification questions organized by priority:
+   - **[CRITICAL]** - Blocker, can't proceed without answer
+   - **[IMPORTANT]** - Significantly changes approach
+   - **[PREFERENCE]** - Nice to know, you can decide if skipped
 
-2. **If user chooses "Skip questions - use your best judgment":**
-   - Document all assumptions in the markdown file under "Key Decisions & Assumptions"
-   - Proceed to implementation immediately
-   - Use your best judgment for any unclear requirements
+2. **Call the AskUserQuestion tool NOW** - Make the tool call with this exact structure:
+   ```
+   AskUserQuestion({
+     questions: [
+       {
+         question: "[Your question with context]",
+         header: "[CRITICAL]" | "[IMPORTANT]" | "[PREFERENCE]",
+         options: [
+           { label: "Option A", description: "Description with trade-offs" },
+           { label: "Option B", description: "Description with trade-offs" },
+           ...
+         ]
+       },
+       ...
+     ]
+   })
+   ```
 
-3. **If user chooses "Answer the questions":**
-   - Present ALL your questions in a single AskUserQuestion call
-   - Each question should be clear and specific
-   - Provide 2-4 options per question when possible
-   - Document answers in markdown file under "Questions & Clarifications"
-   - **Only ask follow-up rounds if truly necessary** (e.g., answers revealed new questions)
+3. **Requirements for the tool call:**
+   - Every question MUST have a `header` field set to one of: "[CRITICAL]", "[IMPORTANT]", "[PREFERENCE]"
+   - Every question MUST have 2-4 options with both label and description
+   - For [PREFERENCE] questions, state your default choice in the question text
+   - DO NOT present questions as free-form text - use the tool
+
+**Example AskUserQuestion usage:**
+
+```javascript
+AskUserQuestion({
+  questions: [
+    {
+      question: "What types of notifications should the system support? This determines the core architecture.",
+      header: "[CRITICAL]",
+      options: [
+        {
+          label: "Agent completion only",
+          description: "Simple - just notify when buzzminson/maximus finish"
+        },
+        {
+          label: "All events",
+          description: "Comprehensive - completion, errors, progress, milestones (most flexible but more work)"
+        },
+        {
+          label: "Errors only",
+          description: "Minimal - critical alerts when things break"
+        }
+      ]
+    },
+    {
+      question: "Where should notifications be delivered?",
+      header: "[IMPORTANT]",
+      options: [
+        {
+          label: "Console only",
+          description: "Simplest - text output in terminal"
+        },
+        {
+          label: "Desktop notifications",
+          description: "Better UX - OS-level notifications (requires platform integration)"
+        },
+        {
+          label: "Both",
+          description: "Most flexible - console + desktop (most work)"
+        }
+      ]
+    },
+    {
+      question: "How should users configure notifications? (I'll use config file + CLI flags if skipped)",
+      header: "[PREFERENCE]",
+      options: [
+        {
+          label: "Config file only",
+          description: "Persistent settings in .claude/notifications.json"
+        },
+        {
+          label: "CLI flags only",
+          description: "Runtime flags like --notify, --notify-on-error"
+        },
+        {
+          label: "Both",
+          description: "Config file for defaults, flags for overrides"
+        }
+      ]
+    }
+  ]
+})
+```
+
+**CRITICAL: You MUST actually call the AskUserQuestion tool**
+- DO NOT present questions as free-form text - make the actual tool call shown above
+- The example above is the EXACT format you should use
+- The `header` field ("[CRITICAL]", etc.) appears as a visual chip/tag to the user
+- Group related questions together in the same call when possible
+- For PREFERENCE questions, state your default choice in the question text
+- Document all answers (or assumptions if skipped) in the markdown file
+- Only ask follow-up rounds if truly necessary
 
 **Step 4: Update markdown**
 - Add questions and answers (or assumptions if skipped) to the tracking document
@@ -297,15 +380,6 @@ Do you have any feedback or should I run maximus for quality assurance? 🌚
 - **DON'T** ask obvious questions you can infer from context
 - **DON'T** ask permission for every small decision
 - **DON'T** over-engineer by asking about hypothetical futures
-
-### Question Quality
-- **Limit to 5-7 questions maximum** - more than 7 creates cognitive overload
-- **Mark each question with priority:**
-  - **[CRITICAL]** - Blocker, can't proceed without an answer
-  - **[IMPORTANT]** - Significantly changes approach
-  - **[PREFERENCE]** - Nice to know, you can decide if skipped
-- **Structure clearly:** provide context, a specific query, and 2-4 options with trade-offs
-- **Group related questions** (e.g., "For the API layer: 1) auth method, 2) response format")
 
 ### Markdown File Maintenance
 - **Create it at the very start** (before Q&A)
