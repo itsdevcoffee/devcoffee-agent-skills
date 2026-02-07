@@ -1,0 +1,12 @@
+{
+  "name": "devcoffee-agent-skills",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Claude Code plugin marketplace - automated code quality workflows",
+  "scripts": {
+    "readme:generate": "node scripts/generate-readme-plugins.js",
+    "readme:validate": "node scripts/validate-plugins.js",
+    "readme:check": "npm run readme:validate && npm run readme:generate"
+  },
+  "license": "MIT"
+}

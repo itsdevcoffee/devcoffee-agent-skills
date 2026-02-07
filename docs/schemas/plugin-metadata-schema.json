@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Claude Plugin Metadata Schema",
+  "description": "Extended metadata schema for Claude Code plugins with documentation generation support",
+  "type": "object",
+  "required": ["name", "version", "description", "tagline"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Plugin name in kebab-case"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version (X.Y.Z)"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 20,
+      "description": "Detailed plugin description"
+    },
+    "tagline": {
+      "type": "string",
+      "maxLength": 80,
+      "description": "Short one-liner description"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["media", "code-quality", "automation", "development", "standalone"],
+      "description": "Plugin category for organization"
+    },
+    "components": {
+      "type": "object",
+      "description": "Plugin components (agents, commands, skills, hooks)",
+      "properties": {
+        "agents": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of agent names"
+        },
+        "commands": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of command names (without slash prefix)"
+        },
+        "skills": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of skill names"
+        },
+        "hooks": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of hook names"
+        }
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "description": "Plugin dependencies",
+      "properties": {
+        "plugins": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Required Claude plugins (format: name@marketplace)"
+        },
+        "external": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Required external tools (e.g., ffmpeg)"
+        }
+      }
+    },
+    "installation": {
+      "type": "object",
+      "description": "Installation instructions",
+      "properties": {
+        "marketplace": {
+          "type": "string",
+          "description": "Marketplace name for plugin installation"
+        },
+        "setup": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Additional setup steps (shell commands or instructions)"
+        }
+      }
+    },
+    "usage": {
+      "type": "object",
+      "description": "Usage guidance",
+      "properties": {
+        "when": {
+          "type": "string",
+          "description": "When to use this plugin"
+        },
+        "examples": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Usage examples"
+        }
+      }
+    },
+    "repository": {
+      "type": "string",
+      "format": "uri",
+      "description": "Repository URL"
+    }
+  }
+}

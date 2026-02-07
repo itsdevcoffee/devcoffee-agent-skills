@@ -67,6 +67,26 @@
       ],
       "category": "Development Tools",
       "license": "MIT"
+    },
+    {
+      "name": "tldr",
+      "source": "./tldr",
+      "description": "Conversation summarization for Claude Code - creates hyper-condensed bullet-point summaries of Claude's messages",
+      "version": "1.0.0",
+      "author": {
+        "name": "Dev Coffee",
+        "url": "https://github.com/itsdevcoffee"
+      },
+      "repository": "https://github.com/itsdevcoffee/tldr",
+      "keywords": [
+        "summarization",
+        "tldr",
+        "productivity",
+        "conversation",
+        "utility"
+      ],
+      "category": "Standalone Tools",
+      "license": "MIT"
     }
   ]
 }

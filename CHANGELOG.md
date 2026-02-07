@@ -7,6 +7,85 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - README Automation System
+
+**Metadata-Driven Documentation**
+- **Automation scripts** for plugin metadata validation and README generation
+  - `scripts/validate-plugins.js` - Validates all plugin metadata against schema (required fields, formats, structure)
+  - `scripts/generate-readme-plugins.js` - Generates "Available Plugins" section from plugin.json metadata
+  - NPM scripts: `readme:validate`, `readme:generate`, `readme:check`
+- **JSON schema** for plugin metadata standardization (`docs/schemas/plugin-metadata-schema.json`)
+- **Plugin template** for consistent documentation (`docs/templates/PLUGIN-README-TEMPLATE.md`)
+- **Extended metadata fields** in all plugin.json files:
+  - `tagline` - Short one-liner description (max 80 chars)
+  - `category` - Plugin category (media, code-quality, automation, development, standalone)
+  - `components` - Lists of agents, commands, skills, hooks
+  - `dependencies` - Plugin and external tool dependencies
+  - `installation` - Marketplace name and setup instructions
+  - `usage` - When to use and usage examples
+
+**Documentation**
+- **Plugin Development Guide** (`docs/guides/PLUGIN-DEVELOPMENT.md`) - Complete workflow for adding new plugins (11KB, 500+ lines)
+- **CONTRIBUTING.md** - Contribution guidelines with plugin development section
+- **scripts/README.md** - Updated with automation script documentation
+
+**Workflow Improvements**
+- **Single source of truth:** plugin.json files contain all metadata
+- **Automated validation:** Catches missing fields, invalid formats, structure errors
+- **Automated generation:** Creates README sections from metadata
+- **Manual review step:** Generated content saved to `.readme-plugins-section.md` for review before merging
+- **Time savings:** ~30 minutes per plugin (vs ~60 minutes manual)
+
+### Added - tldr Plugin to Marketplace
+
+- Added tldr plugin entry to `.claude-plugin/marketplace.json`
+- Category: "Standalone Tools"
+- Full metadata: tagline, components, installation, usage examples
+- Now discoverable and installable via marketplace
+
+### Changed - Plugin Metadata
+
+**All Plugins Extended:**
+- **devcoffee** - Added metadata: tagline "Automated code quality workflows", category "code-quality"
+- **video-analysis** - Added metadata including FFmpeg installation instructions across all platforms
+- **remotion-max** - Added repository field and complete metadata
+- **tldr** - Added full metadata with category "standalone"
+
+**HTML Markers in README:**
+- Added `<!-- BEGIN AUTO-GENERATED PLUGIN SECTIONS -->` and `<!-- END AUTO-GENERATED PLUGIN SECTIONS -->` markers
+- Clear boundaries for automated vs manual content
+- Prevents accidental overwrites during regeneration
+
+### Fixed - Security
+
+**Path Traversal Vulnerability (Critical)**
+- **Issue:** `plugin.source` paths from marketplace.json were used directly without validation
+- **Attack vector:** Malicious marketplace.json could use `../../../etc/passwd` to read arbitrary files
+- **Fix:** Added path validation in both scripts to ensure resolved paths stay within repository root
+- **Security check:**
+  ```javascript
+  const repoRoot = path.resolve(__dirname, '..');
+  if (!pluginPath.startsWith(repoRoot)) {
+    error('path traversal detected');
+  }
+  ```
+
+### Fixed - Command Generation Bug
+
+**Incorrect Command Formatting**
+- **Issue:** Commands where name equals plugin name generated incorrectly
+  - Before: `/video-analysis:video-analysis`, `/tldr:tldr` ❌
+  - After: `/video-analysis`, `/tldr` ✅
+- **Fix:** Generator now detects when command name equals plugin name and omits redundant prefix
+- **Impact:** README now shows correct command invocations for all plugins
+
+### Fixed - Error Handling
+
+**Generation Script Resilience**
+- **Error markers:** When plugin.json parsing fails, error markers now added to output file
+- **User visibility:** Failed plugins clearly marked in generated content instead of silent skipping
+- **Type validation:** Added `typeof` check for components object to prevent runtime errors
+
 ### Fixed - TLDR Skill
 
 **Standalone Skill Structure**
