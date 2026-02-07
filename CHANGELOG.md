@@ -5,6 +5,146 @@ All notable changes to Dev Coffee Agent Skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-02-06
+
+### Major Changes - Buzzminson Agent
+
+**Research-Backed Simplification**
+- **Simplified agent definition from 453 to 172 lines (62% reduction)** based on research showing agents perform better with concise prompts (<150 lines recommended)
+- **Added XML tags** (`<instructions>`, `<success-criteria>`, `<formatting>`, `<context>`, `<error-handling>`) creating clear structural boundaries that Claude respects better than plain text
+- **Implemented success criteria checkboxes** for self-validation at each phase (Clarify, Implement, Review, Assure)
+- **Progressive disclosure pattern** - moved detailed examples and templates to reference files
+- **Result:** Priority markers `[CRITICAL]`, `[IMPORTANT]`, `[PREFERENCE]` now consistently showing in agent output
+
+**Research Documentation**
+- Created `docs/research/2026-02-06-community-patterns-and-updates.md` (41KB) - comprehensive analysis of Claude 4.x behavioral shifts, structured output techniques, and agent design patterns from 2025-2026
+- Research revealed instruction priority hierarchy: formatting instructions are Level 4 (advisory), XML tags create Level 3 "contracts"
+- Documented Claude Sonnet 4.5's pragmatic reasoning shift: "context wins over literal compliance"
+
+### Added - Buzzminson Agent
+
+- **New reference files for progressive disclosure:**
+  - `devcoffee/references/buzzminson-tracking-template.md` - comprehensive template with examples for implementation tracking documents
+  - `devcoffee/references/buzzminson-question-examples.md` - examples of proper AskUserQuestion usage with priority markers
+- **AskUserQuestion integration examples** showing proper tool usage with header field for priority markers
+- **Comprehensive question quality guidelines** - limit 5-7 questions, use priority markers, provide context and trade-offs
+
+### Changed - Buzzminson Agent
+
+- Agent structure reorganized with XML-tagged sections for clarity
+- Mission statement condensed to 4 phases with essential steps only
+- Guidelines section restructured with `<context>` and `<error-handling>` tags
+- Removed verbose inline examples (moved to reference files)
+- Streamlined workflow descriptions focusing on actionable steps
+- Updated references to point to detailed documentation files
+
+### Major Changes - Maximus Agent
+
+**Review-Only Default Mode**
+- **Switched to review-only mode by default** - analyzes code quality and identifies issues without making changes
+- **Added `--yolo` flag** for autonomous fix mode when user wants automatic corrections
+- **Progressive disclosure pattern** - uses sub-agents to offload context and provide detailed analysis without overwhelming main conversation
+- Agent description updated to reflect new default behavior
+
+**Benefits:**
+- Users can review findings before authorizing fixes
+- Safer default for production code
+- Clear opt-in for autonomous changes
+- Better aligns with user expectations of "review" vs "fix"
+
+### Added - New Skills
+
+**Video Analysis Skill (Production-Ready)**
+- `devcoffee/skills/video-analysis.md` - AI-powered video analysis using Claude's vision capabilities
+- Frame extraction with ffmpeg (configurable intervals: 1s, 2s, 5s, 10s, or custom)
+- Multi-image vision analysis with Claude 4.x
+- Comprehensive reporting with timestamped findings, themes, notable moments
+- Configurable analysis focus: content, technical quality, narrative flow, emotions, or custom
+- Scene detection and content categorization
+- Production-ready with error handling and validation
+- **Packaged for marketplace** with complete skill structure
+
+**TLDR Command Evolution**
+- Split into standalone plugin structure for potential marketplace release
+- Added evaluation system in `docs/tldr-evaluation/EVALUATION.md` for data-driven improvement
+- Scoring criteria: Completeness, Conciseness, Actionability, Accuracy (0.0-10.0 scale)
+- Sample collection and analysis workflow
+- LICENSE and .gitignore files for plugin packaging
+
+### Added - Examples & Documentation
+
+**Examples:**
+- `examples/devcoffee-speedrun-game/` - retro gaming speedrun video showcasing Buzzminson and Maximus workflow
+- Video analysis report for speedrun game demonstrating new video analysis skill
+- Explainer video context documents for agent handoff
+
+**Research & Context:**
+- `docs/research/2026-02-06-ai-video-analysis-capabilities.md` - comprehensive research on AI video analysis techniques
+- `docs/research/2026-02-06-video-analysis-implementation-research.md` - implementation patterns and best practices
+- `docs/research/2026-02-06-tldr-*.md` - TLDR design review and critical fixes checklist
+- `docs/context/video-analysis-skill-specification.md` - detailed skill spec
+- Quick test guide for video analysis skill
+
+**Documentation Updates:**
+- README updated with video analysis skill and speedrun example
+- Comprehensive video analysis skill launch summary
+- Buzzminson tracking template research and examples
+
+### Fixed
+
+- **Marketplace name corrections** in install commands (consistency across docs)
+- **Explainer video scaling** - quadrant panels scaled to 1.6x, fixed feedback overlap
+- **Plugin structure** - cleaned up and removed devcoffee-explainer example project
+
+### Research Insights Applied
+
+**Claude 4.x Behavioral Understanding:**
+- Claude Sonnet 4.5 prioritizes pragmatic reasoning over literal instruction following
+- Structured output with XML tags works better than verbose plain text
+- Context window pressure causes formatting adherence to degrade after ~60k tokens
+- Empowerment-based prompting beats prohibition (give decision frameworks, not rigid rules)
+
+**Agent Design Best Practices:**
+- Keep system prompts <150 lines for better adherence
+- Use XML tags for critical sections (creates "contracts")
+- Implement success criteria with checkboxes for self-validation
+- Progressive disclosure: surface detailed info only when needed
+- Filesystem for context offloading in complex agents
+
+**Community Patterns:**
+- Multi-agent systems outperform single agents by 90.2%
+- Task scoping is critical: specific tasks succeed, vague ones fail
+- Hooks are the solution for deterministic enforcement (Level 3 priority)
+- Agent teams work best with clear handoff protocols
+
+### Breaking Changes
+
+**Maximus Agent:**
+- Default behavior changed from autonomous fixes to review-only
+- Users must explicitly use `--yolo` flag for autonomous fix mode
+- This is a safer default but requires behavioral adjustment for users expecting automatic fixes
+
+### Deprecated
+
+- Removed devcoffee-explainer example project (consolidated into other examples)
+
+### Dependencies
+
+- Video analysis skill requires `ffmpeg` for frame extraction
+- All existing dependencies remain (feature-dev, code-simplifier)
+
+### Migration Guide
+
+**For Maximus Users:**
+- **Old behavior:** `/devcoffee:maximus` would automatically fix issues
+- **New behavior:** `/devcoffee:maximus` reviews and reports issues
+- **To get old behavior:** Use `/devcoffee:maximus --yolo`
+
+**For Buzzminson Users:**
+- No breaking changes - improvements are backward compatible
+- New reference files provide better guidance for question formatting
+- Tracking documents now have comprehensive template with examples
+
 ## [0.2.1] - 2026-02-04
 
 ### Improved - Maximus Agent

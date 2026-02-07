@@ -12,7 +12,7 @@
       "name": "devcoffee",
       "source": "./devcoffee",
       "description": "Feature implementation and code quality automation - buzzminson for planned development, maximus for autonomous review cycles",
-      "version": "0.2.1",
+      "version": "0.3.0",
       "author": {
         "name": "Dev Coffee",
         "url": "https://github.com/itsdevcoffee"
@@ -24,6 +24,28 @@
         "automation",
         "productivity"
       ],
+      "license": "MIT"
+    },
+    {
+      "name": "video-analysis",
+      "source": "./video-analysis",
+      "description": "AI-powered video analysis using FFmpeg frame extraction and Claude vision API - get comprehensive visual feedback on any video",
+      "version": "1.0.0",
+      "author": {
+        "name": "Dev Coffee",
+        "url": "https://github.com/itsdevcoffee"
+      },
+      "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
+      "keywords": [
+        "video",
+        "analysis",
+        "feedback",
+        "ffmpeg",
+        "vision",
+        "quality-review",
+        "ui-ux"
+      ],
+      "category": "Media Tools",
       "license": "MIT"
     },
     {
