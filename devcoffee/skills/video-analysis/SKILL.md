@@ -239,46 +239,47 @@ fi
 
 ### Step 4: Extract Frames Using FFmpeg
 
-**Method 1: Extract individual frames (recommended for <15 frames):**
+**Recommended approach (individual frame extraction):**
 ```bash
-# Create temp directory
-temp_dir=$(mktemp -d)
+# Create temp directory with error checking
+temp_dir=$(mktemp -d) || {
+  echo "Error: Failed to create temporary directory"
+  exit 1
+}
+
+# Set up cleanup trap for interrupts
+cleanup() {
+  if [ "$keep_frames" = false ] && [ -d "$temp_dir" ]; then
+    rm -rf "$temp_dir"
+  fi
+}
+trap cleanup EXIT INT TERM
 
 # Extract each frame
 for i in "${!timestamps[@]}"; do
   timestamp=${timestamps[$i]}
 
-  # Convert timestamp to HH:MM:SS.MS format
-  time_formatted=$(printf '%02d:%02d:%06.3f' \
-    $((timestamp/3600)) $((timestamp%3600/60)) $(echo "$timestamp%60" | bc -l))
+  # Convert timestamp to HH:MM:SS.MS format using bc for all calculations
+  hours=$(echo "scale=0; $timestamp / 3600" | bc)
+  minutes=$(echo "scale=0; ($timestamp % 3600) / 60" | bc)
+  seconds=$(echo "scale=3; $timestamp - ($hours * 3600) - ($minutes * 60)" | bc)
+
+  time_formatted=$(printf '%02d:%02d:%06.3f' "$hours" "$minutes" "$seconds")
 
   # Extract frame
   ffmpeg -ss "$time_formatted" -i "$video_path" \
     -vframes 1 -q:v 2 \
     "$temp_dir/frame_$(printf '%03d' $i).png" \
     -loglevel error
-done
-```
 
-**Method 2: Extract all frames at once (for many frames):**
-```bash
-# Build frame number list (frame_num = timestamp * fps)
-frame_numbers=""
-for timestamp in "${timestamps[@]}"; do
-  frame_num=$(echo "$timestamp * $fps" | bc | cut -d. -f1)
-  if [ -z "$frame_numbers" ]; then
-    frame_numbers="eq(n\\,$frame_num)"
-  else
-    frame_numbers="$frame_numbers+eq(n\\,$frame_num)"
+  # Check if extraction succeeded
+  if [ ! -f "$temp_dir/frame_$(printf '%03d' $i).png" ]; then
+    echo "Error: Failed to extract frame at timestamp $timestamp"
+    exit 1
   fi
 done
 
-# Extract all frames in one command
-ffmpeg -i "$video_path" \
-  -vf "select='$frame_numbers'" \
-  -vsync vfr \
-  "$temp_dir/frame_%03d.png" \
-  -loglevel error
+echo "Successfully extracted ${#timestamps[@]} frames"
 ```
 
 ### Step 5: Analyze Frames Sequentially
@@ -485,16 +486,23 @@ Generate structured markdown report:
 ### Step 8: Cleanup
 
 ```bash
-# If --keep-frames flag NOT set, delete temporary frames
-if [ "$keep_frames" = false ]; then
-  rm -rf "$temp_dir"
-fi
+# Cleanup is handled by trap set in Step 4
+# The trap ensures cleanup happens even on interrupt/error
 
-# If --keep-frames IS set and --output specified, move frames
+# If --keep-frames IS set and --output specified, move frames before exit
 if [ "$keep_frames" = true ] && [ -n "$output_dir" ]; then
-  mkdir -p "$output_dir"
-  mv "$temp_dir"/* "$output_dir/"
-  rm -rf "$temp_dir"
+  mkdir -p "$output_dir" || {
+    echo "Error: Cannot create output directory: $output_dir"
+    exit 1
+  }
+
+  mv "$temp_dir"/* "$output_dir/" || {
+    echo "Warning: Some frames may not have been moved to $output_dir"
+  }
+
+  echo "Frames saved to: $output_dir"
+else
+  echo "Temporary frames cleaned up"
 fi
 ```
 
@@ -527,91 +535,125 @@ Please check:
 Tip: Use absolute paths or paths relative to current directory.
 ```
 
-**3. Invalid video format:**
+**3. Audio-only file (no video stream):**
 ```
-Error: Unable to process video file.
+Error: File does not contain a video stream.
 
-This might be due to:
-- Unsupported video format
-- Corrupted video file
-- File is not a video (audio-only, image, etc.)
-
+This appears to be an audio-only file or invalid video.
 Supported formats: MP4, MOV, AVI, WebM, MKV
-Try converting your video to MP4 format.
-```
 
-**4. Frame extraction failed:**
-```
-Error: Failed to extract frames from video.
-
-Possible causes:
-- Video file is corrupted
-- Insufficient disk space
-- Invalid timestamps specified
-- FFmpeg error (see details below)
-
-FFmpeg output:
-[Include stderr from ffmpeg command]
-```
-
-**5. Insufficient disk space:**
-```
-Error: Not enough disk space for frame extraction.
-
-Frame extraction requires temporary storage:
-- Quick mode (5 frames): ~10-25 MB
-- Standard mode (10 frames): ~20-50 MB
-- Detailed mode (20 frames): ~40-100 MB
-
-Estimated space needed: X MB
-Available space: Y MB
-
-Free up disk space and try again.
-```
-
-**6. Permission denied:**
-```
-Error: Cannot write to output directory: [path]
-
-Please check:
-- Directory exists
-- You have write permissions
-- Parent directory allows file creation
-
+If this is an audio file, this tool only analyzes video content.
 Try:
-- Using a different output directory
-- Running with appropriate permissions
-- Creating the directory first: mkdir -p [path]
+- Providing a video file instead
+- Converting audio to video format with visualizations
+- Using an audio analysis tool
 ```
 
-**7. Invalid timestamps:**
+**4. Invalid video format or corrupted file:**
 ```
-Error: Custom timestamps are invalid.
-
-Issue: [specific problem - e.g., "timestamp 65s exceeds video duration of 45s"]
-
-Requirements for --frames parameter:
-- Comma-separated values: "0,10,20,30"
-- Timestamps in seconds (can include decimals)
-- All timestamps must be within video duration
-- Timestamps should be in ascending order
-
-Example: --frames 0,5.5,10,15.25,20
-```
-
-**8. FFprobe failed:**
-```
-Error: Unable to read video metadata.
+Error: Unable to read video duration.
+The file may be corrupted or in an unsupported format.
 
 This usually indicates:
 - Corrupted or incomplete video file
-- Unsupported codec
-- File is not a valid video
+- Unsupported codec or container
+- File is not actually a video file
 
 Try:
-- Playing the video in a media player to verify it works
-- Converting to a standard format (H.264 MP4)
+- Playing the video in VLC or another media player to verify it works
+- Re-encoding to a standard format: ffmpeg -i input.mov -c:v libx264 -c:a aac output.mp4
 - Using a different video file
+```
+
+**5. Temporary directory creation failed:**
+```
+Error: Failed to create temporary directory
+
+This usually indicates:
+- Insufficient disk space
+- Permission issues with /tmp directory
+- System resource limitations
+
+Try:
+- Freeing up disk space
+- Checking /tmp directory permissions
+- Using --output to specify an alternative directory
+```
+
+**6. Frame extraction failed:**
+```
+Error: Failed to extract frame at timestamp X.XXs
+
+Possible causes:
+- Video file is corrupted at that timestamp
+- Insufficient disk space during extraction
+- Invalid timestamp (beyond video duration)
+- FFmpeg encoding error
+
+Try:
+- Using different timestamps with --frames
+- Checking video file integrity
+- Freeing up disk space
+- Re-encoding video: ffmpeg -i input.mp4 -c copy output.mp4
+```
+
+**7. Invalid custom timestamps (non-numeric):**
+```
+Error: Invalid timestamp 'abc' - must be numeric
+
+Requirements for --frames parameter:
+- Comma-separated numeric values: "0,10,20,30"
+- Timestamps in seconds
+- Can include decimals: "0,5.5,10,15.25,20"
+- Must be within video duration
+
+Example: --frames 0,5,10,15,20
+```
+
+**8. Timestamp exceeds video duration:**
+```
+Error: Timestamp 65s exceeds video duration of 45s
+
+All timestamps must be within the video duration.
+
+To fix:
+- Use timestamps <= 45s
+- Remove the invalid timestamp
+- Use automatic modes (quick/standard/detailed) instead
+
+Valid example for this video: --frames 0,10,20,30,40
+```
+
+**9. Too many frames requested:**
+```
+Error: Too many frames requested (150)
+Maximum: 100 frames. Consider using standard or detailed mode.
+
+Why the limit?
+- Processing 100+ frames takes hours
+- Storage requirements become excessive
+- Analysis quality plateaus beyond ~20 frames
+
+Recommended:
+- Quick mode (5 frames): Fast overview
+- Standard mode (10 frames): Balanced analysis
+- Detailed mode (20 frames): Thorough review
+- Custom mode: Target specific moments (max 100)
+```
+
+**10. Output directory creation failed:**
+```
+Error: Cannot create output directory: [path]
+
+Possible causes:
+- Parent directory doesn't exist
+- No write permissions
+- Invalid path characters
+
+Try:
+- Creating parent directories first: mkdir -p /path/to/parent
+- Using a different output path
+- Checking directory permissions
 ```
 
 ## Performance Expectations
