@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Task API Integration
+
+**Visual Progress Tracking for Buzzminson**
+- Integrated Claude Code Task API into buzzminson agent for visual progress tracking
+- Users now see real-time phase progress with checkboxes, spinners, and time/token tracking
+- Visual indicators: `◼` (in_progress), `◻` (pending), `✔` (completed), `✶` (spinner with activeForm text)
+- Four tracked phases: Clarify → Implement → Review → Assure (Maximus)
+- Task status updates automatically as buzzminson progresses through workflow
+- Benefits: Clear visual feedback, time tracking, token awareness, progress clarity
+
+**Comprehensive Task API Documentation**
+- Created `docs/context/2026-02-13-task-api-visual-progress-tracking.md` (17KB, 600+ lines)
+- Complete API reference for TaskCreate, TaskUpdate, TaskList, TaskGet
+- Implementation patterns: basic workflow, multi-phase dependencies, agent team coordination, dynamic task creation
+- Best practices: subject vs activeForm, task granularity, dependency management, status lifecycle
+- Integration examples for Buzzminson and Maximus agents
+- Error handling patterns and recovery strategies
+- Storage/persistence details and multi-session coordination
+
+**File Changes:**
+- `devcoffee/agents/buzzminson.md` - Added Task API integration throughout all 4 phases
+- `docs/context/2026-02-13-task-api-visual-progress-tracking.md` - New comprehensive reference
+
 ### Fixed - TLDR Skill
 
 **Critical Bug Fix: File-Reading Approach**
