@@ -40,7 +40,9 @@ maximus-loop/
 ├── .claude-plugin/plugin.json    # Plugin manifest
 ├── agents/maximus-plan.md        # Auto-trigger agent definition
 ├── commands/maximus-plan.md      # /maximus-plan slash command
-├── skills/maximus-plan.md        # Core skill (conversation flow + rules)
+├── skills/
+│   └── maximus-plan/
+│       └── SKILL.md              # Core skill (conversation flow + rules)
 ├── references/
 │   ├── plan-schema.md            # plan.json field reference
 │   ├── anti-patterns.md          # 8 failure patterns to avoid

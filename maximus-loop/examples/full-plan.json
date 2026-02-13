@@ -205,7 +205,7 @@
       ],
       "passes": false,
       "file": "README.md",
-      "complexity_level": "simple",
+      "complexity_level": "medium",
       "testing_steps": [
         "bun run typecheck"
       ]
