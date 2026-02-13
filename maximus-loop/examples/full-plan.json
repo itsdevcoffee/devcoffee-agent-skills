@@ -1,0 +1,214 @@
+{
+  "version": "1.0.0",
+  "tasks": [
+    {
+      "id": 1,
+      "phase": 1,
+      "category": "database",
+      "feature": "Create users table migration",
+      "description": "Add a database migration that creates the users table with id (UUID primary key), email (unique, not null), password_hash (not null), created_at (timestamp with default), and updated_at (timestamp). Use the project's existing migration tool.",
+      "acceptance_criteria": [
+        "Migration file exists in migrations/ directory",
+        "Users table has columns: id, email, password_hash, created_at, updated_at",
+        "Email column has unique constraint",
+        "Migration runs without errors: bun run migrate",
+        "Migration can be rolled back: bun run migrate:rollback"
+      ],
+      "passes": false,
+      "file": "migrations/001_create_users.ts",
+      "complexity_level": "simple",
+      "testing_steps": [
+        "bun run migrate",
+        "bun run migrate:rollback",
+        "bun run migrate"
+      ]
+    },
+    {
+      "id": 2,
+      "phase": 1,
+      "category": "feature",
+      "feature": "Add bcrypt password hashing utility",
+      "description": "Create a utility module for hashing and comparing passwords using bcrypt. Export two functions: hashPassword(plain) and comparePassword(plain, hash). Use cost factor 10.",
+      "acceptance_criteria": [
+        "Module exports hashPassword and comparePassword functions",
+        "hashPassword returns a bcrypt hash string",
+        "comparePassword returns true for matching passwords",
+        "comparePassword returns false for non-matching passwords",
+        "Uses bcrypt cost factor 10"
+      ],
+      "passes": false,
+      "file": "server/utils/password.ts",
+      "complexity_level": "simple",
+      "testing_steps": [
+        "bun test server/utils/password.test.ts"
+      ]
+    },
+    {
+      "id": 3,
+      "phase": 1,
+      "category": "database",
+      "feature": "Add User model with Drizzle ORM",
+      "description": "Define the User model using Drizzle ORM schema. Map to the users table created in task #1. Include methods for findByEmail and create.",
+      "acceptance_criteria": [
+        "User model defined in server/models/user.ts",
+        "Schema maps to users table with all columns",
+        "findByEmail returns user or null",
+        "create inserts a new user and returns the record",
+        "TypeScript types are exported for use in routes"
+      ],
+      "passes": false,
+      "file": "server/models/user.ts",
+      "complexity_level": "simple",
+      "testing_steps": [
+        "bun run typecheck",
+        "bun test server/models/user.test.ts"
+      ]
+    },
+    {
+      "id": 4,
+      "phase": 2,
+      "category": "api",
+      "feature": "Implement registration endpoint",
+      "description": "Create POST /auth/register endpoint that validates email format, checks for duplicate emails, hashes password with bcrypt utility from task #2, creates user via User model from task #3, and returns a JWT token.",
+      "acceptance_criteria": [
+        "POST /auth/register with valid email/password returns 201 with JWT token",
+        "Duplicate email returns 409 Conflict with error message",
+        "Missing email or password returns 400 Bad Request",
+        "Invalid email format returns 400 Bad Request",
+        "Password is hashed before storing (never stored in plain text)",
+        "JWT token contains user id and email in payload"
+      ],
+      "passes": false,
+      "file": "server/routes/auth.ts",
+      "complexity_level": "medium",
+      "testing_steps": [
+        "bun test server/routes/auth.test.ts",
+        "curl -X POST http://localhost:3000/auth/register -H 'Content-Type: application/json' -d '{\"email\":\"test@example.com\",\"password\":\"secure123\"}'"
+      ]
+    },
+    {
+      "id": 5,
+      "phase": 2,
+      "category": "api",
+      "feature": "Implement login endpoint",
+      "description": "Create POST /auth/login endpoint that validates credentials against stored password hash using bcrypt comparePassword, and returns a JWT token on success.",
+      "acceptance_criteria": [
+        "POST /auth/login with valid credentials returns 200 with JWT token",
+        "Invalid email returns 401 Unauthorized",
+        "Wrong password returns 401 Unauthorized",
+        "Missing fields return 400 Bad Request",
+        "JWT token has 24h expiration"
+      ],
+      "passes": false,
+      "file": "server/routes/auth.ts",
+      "complexity_level": "medium",
+      "testing_steps": [
+        "bun test server/routes/auth.test.ts"
+      ]
+    },
+    {
+      "id": 6,
+      "phase": 2,
+      "category": "api",
+      "feature": "Implement token refresh endpoint",
+      "description": "Create POST /auth/refresh endpoint that accepts a valid JWT, verifies it, and returns a new token with a fresh expiration. Reject expired or invalid tokens.",
+      "acceptance_criteria": [
+        "POST /auth/refresh with valid token returns 200 with new JWT",
+        "Expired token returns 401 Unauthorized",
+        "Invalid/malformed token returns 401 Unauthorized",
+        "New token has fresh 24h expiration",
+        "Original token's user data is preserved in new token"
+      ],
+      "passes": false,
+      "file": "server/routes/auth.ts",
+      "complexity_level": "simple",
+      "testing_steps": [
+        "bun test server/routes/auth.test.ts"
+      ]
+    },
+    {
+      "id": 7,
+      "phase": 3,
+      "category": "feature",
+      "feature": "Create JWT verification middleware",
+      "description": "Create an Express middleware that extracts JWT from the Authorization header (Bearer scheme), verifies it, and attaches the decoded user payload to req.user. Return 401 for missing or invalid tokens.",
+      "acceptance_criteria": [
+        "Middleware extracts token from Authorization: Bearer <token> header",
+        "Valid token: req.user is set with user id and email",
+        "Missing Authorization header returns 401",
+        "Invalid token returns 401",
+        "Expired token returns 401",
+        "Middleware is exported for use in route files"
+      ],
+      "passes": false,
+      "file": "server/middleware/auth.ts",
+      "complexity_level": "medium",
+      "testing_steps": [
+        "bun test server/middleware/auth.test.ts"
+      ]
+    },
+    {
+      "id": 8,
+      "phase": 3,
+      "category": "feature",
+      "feature": "Apply auth middleware to protected routes",
+      "description": "Add the JWT verification middleware to all POST, PUT, and DELETE routes for the existing blog endpoints. GET routes remain public. Import the middleware from task #7.",
+      "acceptance_criteria": [
+        "GET /posts returns 200 without authentication",
+        "POST /posts without token returns 401",
+        "POST /posts with valid token returns 201",
+        "PUT /posts/:id without token returns 401",
+        "DELETE /posts/:id without token returns 401",
+        "Existing blog route tests still pass"
+      ],
+      "passes": false,
+      "file": "server/routes/posts.ts",
+      "complexity_level": "medium",
+      "testing_steps": [
+        "bun test server/routes/posts.test.ts",
+        "curl -X POST http://localhost:3000/posts -H 'Content-Type: application/json' -d '{\"title\":\"test\"}'"
+      ]
+    },
+    {
+      "id": 9,
+      "phase": 4,
+      "category": "testing",
+      "feature": "Add integration tests for auth flow",
+      "description": "Write end-to-end integration tests covering the full auth flow: register → login → access protected route → refresh token → access again. Test both success and failure paths.",
+      "acceptance_criteria": [
+        "Test file at server/tests/integration/auth-flow.test.ts",
+        "Tests full happy path: register → login → access protected route",
+        "Tests token refresh flow",
+        "Tests rejection of expired tokens",
+        "Tests rejection of unauthenticated requests to protected routes",
+        "All integration tests pass: bun test server/tests/integration/"
+      ],
+      "passes": false,
+      "file": "server/tests/integration/auth-flow.test.ts",
+      "complexity_level": "medium",
+      "testing_steps": [
+        "bun test server/tests/integration/auth-flow.test.ts"
+      ]
+    },
+    {
+      "id": 10,
+      "phase": 4,
+      "category": "documentation",
+      "feature": "Add auth API documentation",
+      "description": "Add JSDoc comments to all auth route handlers and middleware. Update the existing API section in README.md with auth endpoint documentation including request/response examples for register, login, and refresh.",
+      "acceptance_criteria": [
+        "All exported functions in server/routes/auth.ts have JSDoc comments",
+        "All exported functions in server/middleware/auth.ts have JSDoc comments",
+        "README.md has an Authentication section with endpoint documentation",
+        "Each endpoint shows method, path, request body, and response format",
+        "Includes example curl commands for each endpoint"
+      ],
+      "passes": false,
+      "file": "README.md",
+      "complexity_level": "simple",
+      "testing_steps": [
+        "bun run typecheck"
+      ]
+    }
+  ]
+}

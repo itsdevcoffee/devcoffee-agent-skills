@@ -1,0 +1,44 @@
+{
+  "version": "1.0.0",
+  "tasks": [
+    {
+      "id": 1,
+      "phase": 1,
+      "category": "feature",
+      "feature": "Add health check endpoint",
+      "description": "Create a GET /health endpoint that returns 200 OK with a JSON body containing server uptime and version. This is a simple single-file addition to the existing Express router.",
+      "acceptance_criteria": [
+        "GET /health returns 200 with JSON body { status: 'ok', uptime: number, version: string }",
+        "Response includes Content-Type: application/json header",
+        "Uptime is in seconds since server start",
+        "Version is read from package.json"
+      ],
+      "passes": false,
+      "file": "server/routes/health.ts",
+      "complexity_level": "simple",
+      "testing_steps": [
+        "curl http://localhost:3000/health",
+        "bun test server/routes/health.test.ts"
+      ]
+    },
+    {
+      "id": 2,
+      "phase": 1,
+      "category": "testing",
+      "feature": "Add health endpoint tests",
+      "description": "Write unit tests for the health check endpoint covering success response, correct content type, and uptime accuracy.",
+      "acceptance_criteria": [
+        "Test file exists at server/routes/health.test.ts",
+        "Tests verify 200 status code and JSON content type",
+        "Tests verify response body has status, uptime, and version fields",
+        "All tests pass with bun test"
+      ],
+      "passes": false,
+      "file": "server/routes/health.test.ts",
+      "complexity_level": "simple",
+      "testing_steps": [
+        "bun test server/routes/health.test.ts"
+      ]
+    }
+  ]
+}
