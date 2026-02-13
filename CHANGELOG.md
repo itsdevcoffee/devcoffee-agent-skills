@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - TLDR Skill
+
+**Critical Bug Fix: File-Reading Approach**
+- **Issue:** Skill instructed Claude to read `~/.claude/history.jsonl` which doesn't exist, causing wild goose chase through various `.jsonl` files until giving up
+- **Root cause:** Misunderstanding of conversation history architecture - actual files at `~/.claude/projects/[hash]/conversations/[id].jsonl` and Claude can't reliably find them
+- **Fix:** Completely removed file-reading approach - Claude now uses conversation context window (already available) to access previous messages
+- **Impact:** TLDR now works instantly and reliably with zero tool calls instead of multiple failed file reads
+- **Result:** Skill went from "hunt through filesystem" to "just look at what's in front of you"
+
+**Feature Enhancement: Argument Support**
+- Added two-mode operation: `/tldr` (no args) summarizes previous Claude message, `/tldr [topic]` summarizes whatever user specifies
+- Improved description with specific trigger phrases: "summarize that", "recap", "give me the tldr", "shorten your last response"
+- Lowered minimum message threshold from 100 to 50 words with graceful handling instead of refusal
+- Updated error handling for context-relevant cases (no previous message, ambiguous topic) instead of impossible file scenarios
+- Added Example 3 demonstrating with-arguments mode
+
+**File Changes:**
+- `tldr/skills/tldr/SKILL.md` - Complete rewrite from file-based to context-based approach
+- Removed `allowed-tools: [Read]` from frontmatter (no longer needed)
+
 ### Added - Automation Scripts
 
 **Health Check Script (doctor.sh)**

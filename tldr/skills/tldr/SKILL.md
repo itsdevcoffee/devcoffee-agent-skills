@@ -1,43 +1,73 @@
 ---
-description: Create hyper-condensed bullet-point summary of the last Claude message
-allowed-tools: [Read]
+description: >-
+  This skill should be used when the user asks for a TLDR, summary, recap,
+  or condensed version of content. Invoked as "/tldr" with no arguments to
+  summarize the previous Claude message from conversation context, or as
+  "/tldr [topic]" to summarize whatever the user specifies. Handles requests
+  like "summarize that", "give me the tldr", "recap what you just said",
+  "shorten your last response", or "tldr of the error analysis".
 ---
 
 # TLDR Command
 
-Create a concise bullet-point summary of Claude's most recent message in the conversation.
+Create a concise bullet-point summary of content from the current conversation.
 
 ## Task
 
-1. **Access conversation history:**
-   - Use Read tool on `~/.claude/history.jsonl`
-   - This file contains all conversation messages in JSONL format (one JSON object per line)
-   - Each line has: `{"role": "user"|"assistant", "content": [...], "timestamp": ...}`
+### Mode 1: No arguments (`/tldr`)
 
-2. **Extract last assistant message:**
-   - Read the file and find the last line where `role == "assistant"`
-   - Extract the text content from `content[0].text`
-   - If the content array has multiple blocks, concatenate them
+Summarize the previous Claude assistant message.
 
-3. **Validate message:**
-   - If the message has fewer than 100 words: Respond "Last message too short to summarize (N words)."
-   - If the message is empty or contains only tool results: Respond "No text content to summarize."
-   - If history file doesn't exist: Respond "Conversation history not found. Ensure you're in an active Claude Code session."
+1. **Recall the previous assistant message from conversation context.**
+   You already have the full conversation history in your context window.
+   Identify the last substantial assistant message — the one immediately
+   before the user's `/tldr` invocation. Skip any messages that are only
+   tool calls with no text output.
 
-4. **Analyze and extract key information:**
-   Focus on actionable and factual content:
-   - **Critical findings** - Root causes, discoveries, issues identified
-   - **Actions recommended** - Categorize by urgency (immediate/medium/long-term)
-   - **Decisions made** - Choices, options presented, recommendations
-   - **Deliverables created** - Files, documents, code written
-   - **Next steps** - User choices, follow-up actions required
+2. **Validate:**
+   - If the last assistant message is very short (under 50 words), respond:
+     "Last message is only N words — here it is in brief:" followed by a
+     one-line summary.
+   - If there is no previous assistant message (conversation just started),
+     respond: "No previous message to summarize. Use `/tldr [topic]` to
+     summarize specific content."
 
-5. **Format as bullets:**
-   - Maximum 8 bullet points total
-   - Each bullet: 1-2 sentences maximum
-   - Focus on "what" and "action" - omit explanations of "why"
-   - Use **bold** for category headers when grouping (optional)
-   - Prioritize: findings → actions → deliverables → next steps
+3. **Analyze and extract key information** (see guidelines below).
+
+4. **Format as bullets** (see formatting below).
+
+### Mode 2: With arguments (`/tldr [what to tldr]`)
+
+Summarize whatever the user specifies.
+
+1. **Identify what to summarize.** The user's argument describes or contains
+   the content to summarize. This could be:
+   - A topic discussed earlier: `/tldr the error analysis`
+   - A reference to a specific message: `/tldr your second response`
+   - Inline content the user pasted after the command
+
+2. **Locate the relevant content** in the conversation context.
+
+3. **Analyze and extract key information** (see guidelines below).
+
+4. **Format as bullets** (see formatting below).
+
+## Extraction Guidelines
+
+Focus on actionable and factual content:
+- **Critical findings** — Root causes, discoveries, issues identified
+- **Actions recommended** — Categorize by urgency (immediate/medium/long-term)
+- **Decisions made** — Choices, options presented, recommendations
+- **Deliverables created** — Files, documents, code written
+- **Next steps** — User choices, follow-up actions required
+
+## Formatting Rules
+
+- Maximum 8 bullet points total
+- Each bullet: 1-2 sentences maximum
+- Focus on "what" and "action" — omit explanations of "why"
+- Use **bold** for category headers when grouping (optional)
+- Prioritize: findings → actions → deliverables → next steps
 
 ## Output Format
 
@@ -71,26 +101,27 @@ Create a concise bullet-point summary of Claude's most recent message in the con
 - Next: Deploy to staging and test with production data
 ```
 
-### Example 3: Short Message
+### Example 3: With Arguments
 ```
-Last message too short to summarize (43 words).
+User: /tldr the database migration discussion
+
+**TLDR:**
+- Migrating from PostgreSQL 14 to 16 requires pg_dump/pg_restore path
+- Three tables need schema changes: users, sessions, audit_log
+- Estimated downtime: 15 minutes with blue-green deployment
+- Next: Run migration script on staging first
 ```
 
 ## Error Handling
 
-Handle these cases gracefully:
-
-- **History file missing:** "Conversation history not found at ~/.claude/history.jsonl"
-- **Corrupted JSON:** "Unable to parse conversation history. File may be corrupted."
-- **No assistant messages:** "No Claude messages found in history."
-- **Message too short:** "Last message too short to summarize (N words)."
-- **Only tool results:** "Last message contains only tool results, no text to summarize."
+- **No previous message:** "No previous message to summarize. Use `/tldr [topic]` to summarize specific content."
+- **Very short message:** Still produce a one-line summary instead of refusing.
+- **Ambiguous argument:** "I found multiple discussions about [topic]. Which one? [list options]"
+- **Topic not found:** "I don't see a discussion about [topic] in this conversation."
 
 ## Implementation Notes
 
-- Do NOT execute external scripts - implement the logic directly using your reasoning
-- Do NOT call external APIs - analyze the message using your own capabilities
-- Use the Read tool to access the history file
-- Parse the JSONL format carefully (each line is a separate JSON object)
-- Consider message length before attempting summarization
-- Be concise - this command exists to save the user time
+- Do NOT read files to access conversation history — use your context window
+- Do NOT call external APIs — analyze using your own capabilities
+- Do NOT execute external scripts
+- Be concise — this command exists to save the user time
