@@ -92,7 +92,7 @@
       "name": "tldr",
       "source": "./tldr",
       "description": "Conversation summarization for Claude Code - creates hyper-condensed bullet-point summaries of Claude's messages",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "Dev Coffee",
         "url": "https://github.com/itsdevcoffee"
@@ -106,6 +106,29 @@
         "utility"
       ],
       "category": "Standalone Tools",
+      "license": "MIT"
+    },
+    {
+      "name": "opentui-dev",
+      "source": "./opentui-dev",
+      "description": "Build production-quality terminal UIs with @opentui/core - comprehensive patterns from Maximus Loop TUI POC including dual API patterns, component factories, animations, scrolling, and theme systems",
+      "version": "0.1.0",
+      "author": {
+        "name": "Dev Coffee",
+        "url": "https://github.com/itsdevcoffee"
+      },
+      "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
+      "keywords": [
+        "opentui",
+        "tui",
+        "terminal-ui",
+        "bun",
+        "zig",
+        "animations",
+        "patterns",
+        "development"
+      ],
+      "category": "Development Tools",
       "license": "MIT"
     }
   ]

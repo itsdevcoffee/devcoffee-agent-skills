@@ -7,6 +7,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - OpenTUI Dev Plugin
+
+**New Plugin for Terminal UI Development**
+- Added `opentui-dev` plugin to marketplace with comprehensive OpenTUI patterns
+- Production-tested patterns extracted from Maximus Loop TUI POC (4,100+ LOC)
+- Comprehensive skill documentation (700+ lines) covering:
+  - Dual API patterns (declarative VNodes + imperative Renderables)
+  - Component factory pattern with cleanup discipline
+  - Screen pattern with lifecycle management
+  - Animation patterns (timeline, interval, cascade)
+  - Pool-based scrolling for performance
+  - Theme system architecture (base palette + semantic tokens)
+  - Type safety guides for pre-1.0 framework
+  - Performance best practices and common pitfalls
+- Working examples with pinned dependency versions
+- Framework dependency tracking with version compatibility matrix
+- Experimental status with quarterly maintenance schedule
+
+**Maintenance Strategy Documentation**
+- Created `docs/context/2026-02-13-skill-maintenance-strategy.md` (16KB)
+- Best practices for maintaining framework-dependent skills
+- Metadata strategy for version tracking and compatibility
+- Status lifecycle (experimental → stable → maintenance → deprecated → archived)
+- Documentation patterns (version badges, migration guides, compatibility matrices)
+- Quarterly maintenance workflow and automation guidelines
+- Deprecation and archival processes
+
+**Plugin Files:**
+- `opentui-dev/.claude-plugin/plugin.json` - Base plugin configuration
+- `opentui-dev/.claude-plugin/plugin-metadata.json` - Extended metadata with framework tracking
+- `opentui-dev/README.md` - Comprehensive documentation with compatibility matrix
+- `opentui-dev/CHANGELOG.md` - Version history and maintenance notes
+- `opentui-dev/MIGRATION.md` - Version-specific migration guides
+- `opentui-dev/skills/opentui-builder/SKILL.md` - Main skill with 700+ lines of patterns
+- `opentui-dev/skills/opentui-builder/examples/package.json` - Pinned dependencies for examples
+
+**Framework Compatibility:**
+- Tested with @opentui/core v0.1.79
+- Compatible with v0.1.70 - v0.1.x
+- Pre-1.0 framework status with clear warnings
+- Quarterly review schedule for compatibility updates
+
+**Installation:**
+```bash
+claude plugin install opentui-dev@devcoffee-marketplace
+bun add @opentui/core
+```
+
 ### Added - Task API Integration
 
 **Visual Progress Tracking for Buzzminson**

@@ -1,0 +1,19 @@
+{
+  "name": "opentui-builder-examples",
+  "version": "0.1.0",
+  "description": "Working examples for OpenTUI Builder skill patterns",
+  "type": "module",
+  "dependencies": {
+    "@opentui/core": "0.1.79"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  },
+  "scripts": {
+    "scrollable-list": "bun run scrollable-list.ts",
+    "theme-system": "bun run theme-system.ts"
+  }
+}
