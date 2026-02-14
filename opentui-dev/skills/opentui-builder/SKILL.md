@@ -1,5 +1,5 @@
 ---
-name: OpenTUI Builder
+name: opentui-builder
 description: This skill should be used when the user asks to "create an OpenTUI component", "build a TUI screen", "implement terminal UI", "use @opentui/core", "create renderables", "add OpenTUI animation", "build imperative UI", or mentions OpenTUI framework patterns. Provides comprehensive guidance for building terminal UIs with @opentui/core following established best practices from the Maximus Loop TUI POC.
 version: 0.1.0
 framework:
