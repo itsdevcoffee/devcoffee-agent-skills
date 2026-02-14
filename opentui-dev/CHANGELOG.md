@@ -69,6 +69,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Plugin.json author field** - Changed from string to object format required by Claude plugin schema
   - Added repository, keywords, and license fields
 
+## [0.2.0] - 2026-02-14
+
+### Added
+- **File Watcher pattern** (SKILL.md + advanced-patterns.md) — Production-grade `TuiFileWatcher` with:
+  - 50ms debounce to collapse duplicate fs.watch events
+  - `.on("error")` handlers (prevents process crash on deleted files)
+  - 5s fallback poll for unreliable filesystems (NFS, Docker volumes)
+  - Shared watcher wiring pattern for multi-screen apps
+- **Detail Drilldown pattern** (SKILL.md + advanced-patterns.md) — List-to-detail navigation with:
+  - Container swapping (mainBox removes list, adds detail)
+  - Unified scrollable pool for all detail content sections
+  - Keyboard routing split by mode (detail swallows keys)
+  - Async data loading with `unmounted` guards after every `await`
+- **Shared Config + Watcher Wiring pattern** (SKILL.md) — Multi-screen app infrastructure:
+  - `AppConfig` interface with 3-tier priority (explicit > env var > CWD default)
+  - Config created once in main, passed to all screen factories
+  - Watcher started after first render, shared across all screens
+- **Reload with Concurrency Guards pattern** (SKILL.md) — Prevents race conditions:
+  - `isReloading` flag prevents overlapping async reloads
+  - Mode-aware rendering (don't update list while in detail view)
+  - try/finally to always release guard
+- **CLI Integration pattern** (advanced-patterns.md) — Zero-dependency CLI command:
+  - Env var bridge for TUI config (`await import()` blocks until exit)
+  - Replaced fictional `commander` example with actual production pattern
+
+### Changed
+- **Known Type Issues** — Updated to reflect current state:
+  - Only remaining workaround: `CliRenderer as RenderContext` cast (1 location)
+  - Cleaned up stale `@ts-expect-error` / `as any` guidance
+- **Best Practices Summary** — Added 5 new DO items and 4 new DON'T items
+- **Production Checklist** — Expanded from 12 to 20 items organized by category
+- **Additional Resources** — Removed references to nonexistent files (`api-reference.md`, `migration-guide.md`, `live-stream.ts`)
+
+### Fixed
+- Removed references to nonexistent skill files in Additional Resources section
+
 ## [Unreleased]
 
 ### Planned for Future Versions
@@ -104,6 +140,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | Version | Release Date | OpenTUI Version | Status | Notes |
 |---------|--------------|-----------------|--------|-------|
 | 0.1.0 | 2026-02-13 | 0.1.70 - 0.1.79 | 🧪 Experimental | Initial release from Maximus Loop POC |
+| 0.2.0 | 2026-02-14 | 0.1.70 - 0.1.79 | 🧪 Experimental | Production patterns: file watcher, detail drilldown, config wiring |
 | TBD | TBD | 0.2.x | 🚧 Future | Breaking changes expected |
 | TBD | TBD | 1.0.x | 🎯 Goal | Skill graduates to stable |
 

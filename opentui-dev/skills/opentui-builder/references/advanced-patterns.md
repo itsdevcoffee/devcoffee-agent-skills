@@ -217,13 +217,109 @@ cleanupFns.push(() => unsubscribe())
 cleanupFns.push(() => stream.stop())
 ```
 
-## Detail View Extraction Pattern
+## Detail View Pattern (Complete)
 
-Extract large subsections into separate files:
+The detail drilldown pattern has two parts: the **container swapping** mechanism and the **scrollable content** within the detail view.
 
-**Before:** 797-line dashboard.ts with inline detail view (265 lines)
+### Container Swapping
 
-**After:**
+```typescript
+// mainBox wraps either listContainer or detailContainer — never both
+const mainBox = new BoxRenderable(ctx, { id: "main", flexGrow: 1, flexDirection: "column" })
+mainBox.add(listContainer)
+
+function enterDetailMode(index: number) {
+  mode = "detail"
+  try { mainBox.remove("item-list") } catch {}
+
+  detailContainer = new BoxRenderable(ctx, { id: "detail-view", flexGrow: 1 })
+  // ... build detail content ...
+  mainBox.add(detailContainer)
+}
+
+function exitDetailMode() {
+  try { mainBox.remove("detail-view") } catch {}
+  detailContainer = null
+  mode = "list"
+  mainBox.add(listContainer)
+  renderRows()
+}
+```
+
+### Scrollable Content in Detail View
+
+Use a single unified pool for all scrollable sections:
+
+```typescript
+// Build flat content array with section headers
+interface ScrollItem { text: string; bold: boolean }
+const scrollContent: ScrollItem[] = []
+
+scrollContent.push({ text: " DESCRIPTION", bold: true })
+for (const line of wrapText(item.description, 76)) {
+  scrollContent.push({ text: `   ${line}`, bold: false })
+}
+
+scrollContent.push({ text: "", bold: false })  // Spacer
+scrollContent.push({ text: " ACCEPTANCE CRITERIA", bold: true })
+for (const criterion of item.criteria) {
+  scrollContent.push({ text: `   ○ ${criterion}`, bold: false })
+}
+
+// Create fixed pool
+const maxVisible = 10
+const pool: TextRenderable[] = []
+let scrollOffset = 0
+const scrollMax = Math.max(0, scrollContent.length - maxVisible)
+
+for (let i = 0; i < maxVisible; i++) {
+  const row = new TextRenderable(ctx, { id: `detail-row-${i}`, content: "" })
+  pool.push(row)
+  detailContainer.add(row)
+}
+
+function renderScroll() {
+  try {
+    for (let i = 0; i < maxVisible; i++) {
+      const idx = scrollOffset + i
+      if (idx < scrollContent.length) {
+        pool[i].content = scrollContent[idx].text
+        pool[i].attributes = scrollContent[idx].bold ? TextAttributes.BOLD : 0
+      } else {
+        pool[i].content = ""
+      }
+    }
+  } catch { /* destroyed */ }
+}
+```
+
+### Async Data Loading in Detail Mode
+
+Detail views often need to load additional data (e.g., task context from plan.json):
+
+```typescript
+async function enterDetailMode(index: number) {
+  mode = "detail"
+  try { mainBox.remove("item-list") } catch {}
+
+  // Load extra data — MUST check unmounted after await
+  let taskData: Task | undefined
+  try {
+    const plan = await loadPlan(config.planPath)
+    if (unmounted) return  // User switched screens during load
+    taskData = plan.tasks.find(t => t.id === items[index].taskId)
+  } catch { /* continue without extra data */ }
+  if (unmounted) return  // Check again
+
+  // Now build detail view with both item data and task data
+  // ...
+}
+```
+
+### File Extraction for Large Detail Views
+
+When detail view exceeds ~200 lines, extract to its own file:
+
 ```typescript
 // screens/detail-view.ts
 export interface DetailViewHandle {
@@ -232,28 +328,19 @@ export interface DetailViewHandle {
   destroy(): void
 }
 
-export function createDetailView(
-  ctx: RenderContext,
-  taskId: number,
-  eventStream: AgentEventStream,
-  tasks: Task[]
-): DetailViewHandle {
-  // ... 265 lines of implementation
+export function createDetailView(ctx: RenderContext, data: ItemData): DetailViewHandle {
+  // ... extracted implementation
 }
 
-// screens/dashboard.ts (now 519 lines)
+// screens/dashboard.ts — 35% smaller
 import { createDetailView } from "./detail-view"
-import type { DetailViewHandle } from "./detail-view"
-
 let detailHandle: DetailViewHandle | null = null
 
 function enterDetailMode(index: number) {
-  detailHandle = createDetailView(ctx, tasks[index].id, stream, tasks)
+  detailHandle = createDetailView(ctx, items[index])
   mainContainer.add(detailHandle.container)
 }
 ```
-
-**Benefits:** 35% reduction in dashboard size, detail view is testable in isolation
 
 ## Runtime Theme Switching
 
@@ -309,35 +396,64 @@ src/
 
 **Benefits:** Keep POC as reference, build production without demo baggage
 
-## File Watching Pattern
+## File Watcher Integration (Production Pattern)
 
-For live data updates:
+The simple `fs.watch` pattern above is **not production-ready**. In production you need:
+1. **Debouncing** — file writes trigger 2-4 events; collapse them
+2. **Error handlers** — without `.on("error")`, a deleted watched file crashes the process
+3. **Fallback polling** — fs.watch misses events on NFS, Docker volumes, some Linux configs
+4. **Concurrency guards** — watcher fires during async reload → race condition
+
+See the full `TuiFileWatcher` class in the main SKILL.md under "Production Patterns > File Watcher with Debounce + Fallback".
+
+**Wiring pattern for multi-screen apps:**
 
 ```typescript
-import { watch } from "fs"
+// prod-main.ts — create once, share everywhere
+const config = createConfig()
+const watcher = new TuiFileWatcher(config)
 
-class FileWatcher {
-  private watcher: ReturnType<typeof watch> | null = null
+const screens = screenFactories.map(factory =>
+  factory(renderer, ctx, config, watcher)
+)
 
-  watch(path: string, onChange: () => void) {
-    this.watcher = watch(path, { persistent: false }, (event) => {
-      if (event === "change") onChange()
-    })
-  }
+renderApp()
+watcher.start()  // Start AFTER first render
 
-  stop() {
-    this.watcher?.close()
+// Each screen subscribes + unsubscribes:
+// In render():
+const onChanged = () => { reloadData() }
+watcher.on("plan-changed", onChanged)
+cleanupFns.push(() => watcher.off("plan-changed", onChanged))
+```
+
+**Reload function with concurrency guard:**
+
+```typescript
+let isReloading = false
+
+async function reloadData() {
+  if (unmounted || isReloading) return
+  isReloading = true
+
+  try {
+    const data = await loadData(config.dataPath)
+    if (unmounted) return
+
+    // Only update UI if in list mode
+    if (mode === "list") {
+      items = data
+      renderRows()
+    }
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Unknown error"
+    try {
+      statusText.content = `Error: ${msg}`
+    } catch { /* destroyed */ }
+  } finally {
+    isReloading = false  // MUST release — otherwise screen stops updating
   }
 }
-
-// Usage
-const watcher = new FileWatcher()
-watcher.watch(".maximus/plan.json", async () => {
-  const plan = await loadPlan(".maximus/plan.json")
-  updateUI(plan)
-})
-
-cleanupFns.push(() => watcher.stop())
 ```
 
 ## Testing Strategies
@@ -452,37 +568,73 @@ async function reload() {
 
 ### CLI Integration
 
-Expose TUI as a CLI command:
+Expose TUI as a CLI command with zero dependencies (no commander needed):
 
 ```typescript
-// cli.ts
-import { Command } from "commander"
+// cli/tui.ts — CLI command handler
+import { existsSync } from 'fs'
+import { resolve } from 'path'
 
-program
-  .command("tui")
-  .description("Launch Maximus Loop TUI")
-  .option("--demo", "Demo mode with mock data")
-  .action(async (opts) => {
-    if (opts.demo) {
-      await import("./tui/src/demo/demo-main")
-    } else {
-      await import("./tui/src/production/prod-main")
+export default async function tui(): Promise<void> {
+  const args = process.argv.slice(3) // Skip 'node', 'cli.ts', 'tui'
+
+  // Parse --data-dir flag
+  let dataDir: string | undefined
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--data-dir') {
+      dataDir = args[i + 1]
+      i++
     }
-  })
+  }
+
+  // Resolve directory: explicit > env > CWD default
+  const resolvedDir = dataDir
+    ? resolve(dataDir)
+    : resolve(process.cwd(), '.app-data')
+
+  // Validate directory exists
+  if (!existsSync(resolvedDir)) {
+    console.error(`Not found: ${resolvedDir}`)
+    process.exit(1)
+  }
+
+  // Set env var BEFORE import — prod-main.ts reads it via createConfig()
+  process.env.APP_DIR = resolvedDir
+
+  // Dynamic import blocks until TUI exits (correct for terminal apps)
+  await import('../tui/src/production/prod-main')
+}
 ```
+
+**Key:** The `await import()` blocks until the TUI process exits. This is correct — terminal apps should hold the process. The env var must be set *before* the import because `prod-main.ts` reads it at module scope via `createConfig()`.
 
 ### Data Integration
 
-Point TUI at real data directories:
+Centralize all paths through config (not scattered env var reads):
 
 ```typescript
-// Parse CLI args
-const maximusDir = process.env.MAXIMUS_DIR || "./.maximus"
+// lib/app-config.ts
+export interface AppConfig {
+  dir: string
+  planPath: string
+  progressPath: string
+  logsDir: string
+}
 
-// Load data
-const plan = await loadPlan(`${maximusDir}/plan.json`)
-const progress = await loadProgress(`${maximusDir}/progress.md`)
-const logs = await findTaskLog(`${maximusDir}/logs`, taskId)
+export function createConfig(dir?: string): AppConfig {
+  // 3-tier priority: explicit arg > env var > CWD default
+  const base = dir ?? process.env.APP_DIR ?? `${process.cwd()}/.app-data`
+  return {
+    dir: base,
+    planPath: `${base}/plan.json`,
+    progressPath: `${base}/progress.md`,
+    logsDir: `${base}/logs`,
+  }
+}
+
+// Usage in prod-main.ts
+const config = createConfig()
+// Pass config to all screens — they NEVER read env vars directly
 ```
 
 ## Migration from Other Frameworks
@@ -719,15 +871,31 @@ async function loadWithRetry(path: string, maxRetries = 3) {
 
 Before shipping:
 
+**Cleanup & Memory:**
 - [ ] All timers/intervals tracked in cleanupFns
 - [ ] All event listeners removed on unmount
 - [ ] All components have destroy() methods
-- [ ] No `as any` (use `@ts-expect-error` with comments)
 - [ ] Guard all mutations with `if (destroyed) return`
-- [ ] Pool-based rendering for large lists
-- [ ] File paths configurable (not hardcoded)
-- [ ] Error messages shown in UI (not just console)
-- [ ] Theme-aware (uses theme.*, not hardcoded colors)
-- [ ] TypeScript strict mode passes
-- [ ] Tested with all 12 themes
 - [ ] Memory leak tested (theme switching, screen switching)
+- [ ] Watcher subscriptions cleaned up in unmount (`watcher.off()`)
+
+**Type Safety:**
+- [ ] No `as any` (use `@ts-expect-error` with comments)
+- [ ] TypeScript strict mode passes
+- [ ] `CliRenderer as RenderContext` cast centralized in main entry point
+
+**File Watching:**
+- [ ] All `fs.watch()` calls have `.on("error")` handler
+- [ ] Debounce on watcher events (50ms minimum)
+- [ ] Fallback polling for critical files (5s)
+- [ ] Concurrency guard (`isReloading`) on all watcher-triggered reloads
+- [ ] `unmounted` check after every `await` in reload functions
+
+**UI Patterns:**
+- [ ] Pool-based rendering for large lists
+- [ ] File paths configurable via config object (not hardcoded)
+- [ ] Error messages shown in UI (not just console)
+- [ ] Theme-aware (uses `theme.*`, not hardcoded colors)
+- [ ] Detail views check mode before reloading list data
+- [ ] Footer hints update per mode (list vs detail)
+- [ ] Tested with all themes

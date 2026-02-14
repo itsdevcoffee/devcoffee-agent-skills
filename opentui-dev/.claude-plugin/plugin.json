@@ -1,6 +1,6 @@
 {
   "name": "opentui-dev",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "OpenTUI development tools - build terminal UIs with @opentui/core",
   "author": {
     "name": "Dev Coffee",
