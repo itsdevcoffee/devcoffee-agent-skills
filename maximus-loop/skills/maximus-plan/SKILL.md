@@ -9,6 +9,42 @@ You are an expert software architect designing task plans for the Maximus Loop a
 
 **Announce:** "I'll help you design a task plan for the Maximus Loop engine."
 
+**Create progress tasks:**
+
+```
+TaskCreate:
+  subject: "Explore the codebase"
+  description: "Read CLAUDE.md, package config, file tree, and recent git history to understand project structure and conventions"
+  activeForm: "Exploring the codebase"
+
+TaskCreate:
+  subject: "Understand user requirements"
+  description: "Ask clarifying questions to determine scope, approach, testing strategy, and constraints"
+  activeForm: "Understanding user requirements"
+
+TaskCreate:
+  subject: "Propose task structure"
+  description: "Present phased task groupings with cost estimates and gather user feedback on overall approach"
+  activeForm: "Proposing task structure"
+
+TaskCreate:
+  subject: "Detail task specifications"
+  description: "Define each task with acceptance criteria, complexity assignments, and testing steps"
+  activeForm: "Detailing task specifications"
+
+TaskCreate:
+  subject: "Validate plan quality"
+  description: "Run pre-write verification checklist to ensure plan follows all quality rules"
+  activeForm: "Validating plan quality"
+
+TaskCreate:
+  subject: "Write plan.json file"
+  description: "Generate and save the final plan.json with all validated tasks"
+  activeForm: "Writing plan.json file"
+```
+
+Reference the Task API patterns in `${CLAUDE_PLUGIN_ROOT}/references/task-api.md` for details.
+
 ## Supporting Documentation
 
 Load these reference files at the specified phases:
@@ -51,6 +87,12 @@ Complete these phases IN ORDER. Do not skip or combine phases.
 
 ## Phase 1: Explore
 
+```
+TaskUpdate:
+  taskId: "task-1"
+  status: "in_progress"
+```
+
 Silently read these files (do not ask the user for permission):
 
 1. `CLAUDE.md` — Project conventions, tech stack, coding standards **(read first, always)**
@@ -70,9 +112,21 @@ Then present a brief context summary:
 If an existing plan.json is found with completed tasks, mention it:
 > "I see an existing plan with N tasks (M completed). Would you like to extend it, replace it, or remove specific tasks?"
 
+```
+TaskUpdate:
+  taskId: "task-1"
+  status: "completed"
+```
+
 ---
 
 ## Phase 2: Understand
+
+```
+TaskUpdate:
+  taskId: "task-2"
+  status: "in_progress"
+```
 
 **Conversation rules:**
 - Ask **one question per message** — do not overwhelm with a list of 5 questions
@@ -89,9 +143,21 @@ If an existing plan.json is found with completed tasks, mention it:
 
 If the user provided a feature description with the command, skip the "what do you want" question and go straight to clarifying questions. If the user gave enough context upfront, you may need only 1-2 questions.
 
+```
+TaskUpdate:
+  taskId: "task-2"
+  status: "completed"
+```
+
 ---
 
 ## Phase 3: Propose
+
+```
+TaskUpdate:
+  taskId: "task-3"
+  status: "in_progress"
+```
 
 Present the plan as phases with task summaries (not full details yet):
 
@@ -124,9 +190,21 @@ Ask: "Does this approach work? Any phases to add, remove, or reorder?"
 
 Iterate until the user approves the overall structure.
 
+```
+TaskUpdate:
+  taskId: "task-3"
+  status: "completed"
+```
+
 ---
 
 ## Phase 4: Detail
+
+```
+TaskUpdate:
+  taskId: "task-4"
+  status: "in_progress"
+```
 
 Present tasks in batches of 3-5 for review. For each task show:
 
@@ -154,9 +232,21 @@ After each batch, ask: "Any changes to these tasks before I continue?"
 - Include happy path, error cases, and edge cases
 - Reference actual file paths, commands, and expected outputs
 
+```
+TaskUpdate:
+  taskId: "task-4"
+  status: "completed"
+```
+
 ---
 
 ## Phase 5: Validate
+
+```
+TaskUpdate:
+  taskId: "task-5"
+  status: "in_progress"
+```
 
 Before writing, run through this checklist SILENTLY. Only report failures to the user.
 
@@ -191,9 +281,21 @@ Ready to write to .maximus/plan.json?
 
 Wait for explicit "yes" before proceeding.
 
+```
+TaskUpdate:
+  taskId: "task-5"
+  status: "completed"
+```
+
 ---
 
 ## Phase 6: Write
+
+```
+TaskUpdate:
+  taskId: "task-6"
+  status: "in_progress"
+```
 
 1. Create `.maximus/` directory if it doesn't exist
 2. Write plan.json with the validated tasks
@@ -219,6 +321,12 @@ Next steps:
      (Agents may run git commands that revert uncommitted changes)
   3. Run the engine: maximus run
   4. Monitor: maximus ui
+```
+
+```
+TaskUpdate:
+  taskId: "task-6"
+  status: "completed"
 ```
 
 ---
