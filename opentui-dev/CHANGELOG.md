@@ -60,6 +60,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update frequency: Quarterly
 - Next review: Q2 2026 (April)
 
+## [0.1.1] - 2026-02-13
+
+### Fixed
+- **Skill name format** - Changed from `OpenTUI Builder` to `opentui-builder` for correct slash command format
+  - Before: `/OpenTUI Builder` (autocomplete showed capitalized with space)
+  - After: `/opentui-builder` (correct lowercase hyphenated format)
+- **Plugin.json author field** - Changed from string to object format required by Claude plugin schema
+  - Added repository, keywords, and license fields
+
 ## [Unreleased]
 
 ### Planned for Future Versions

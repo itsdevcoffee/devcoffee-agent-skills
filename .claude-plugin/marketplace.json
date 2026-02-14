@@ -112,7 +112,7 @@
       "name": "opentui-dev",
       "source": "./opentui-dev",
       "description": "Build production-quality terminal UIs with @opentui/core - comprehensive patterns from Maximus Loop TUI POC including dual API patterns, component factories, animations, scrolling, and theme systems",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "author": {
         "name": "Dev Coffee",
         "url": "https://github.com/itsdevcoffee"
