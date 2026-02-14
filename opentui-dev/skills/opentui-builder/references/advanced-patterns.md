@@ -822,6 +822,7 @@ const timeline = createTimeline({
   onComplete: () => cleanup()
 })
 
+// @ts-expect-error OpenTUI timeline types don't include onUpdate callback
 timeline.add(target, {
   value: 100,
   duration: 2000,
@@ -829,7 +830,7 @@ timeline.add(target, {
   onUpdate: () => {
     progressBar.setProgress(target.value)
   },
-} as any)  // Type workaround
+})
 
 timeline.play()
 ```

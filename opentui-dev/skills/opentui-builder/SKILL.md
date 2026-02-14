@@ -181,6 +181,7 @@ const timeline = createTimeline({
   },
 })
 
+// @ts-expect-error OpenTUI timeline types don't include onUpdate callback
 timeline.add(animTarget, {
   value: 100,
   duration: 2000,
@@ -188,7 +189,7 @@ timeline.add(animTarget, {
   onUpdate: () => {
     progressBar.setProgress(animTarget.value)
   },
-} as any)  // Type issue: onUpdate not in timeline types
+})
 
 renderer.requestLive()
 renderer.setFrameCallback(async (_dt: number) => {
@@ -1099,6 +1100,6 @@ OpenTUI requires interactive terminal (TTY):
 ## Getting Help
 
 For detailed implementations, consult:
-- **Maximus Loop TUI POC** — `/home/maskkiller/dev-coffee/repos/maximus-loop-tui-poc/tui/src/`
+- **Maximus Loop TUI POC** — Reference implementation at `github.com/itsdevcoffee/maximus-loop` (branch: `tui-poc`, directory: `tui/src/`)
 - **`references/advanced-patterns.md`** — Complex patterns from production use
 - **`examples/`** — Working code you can copy and adapt
