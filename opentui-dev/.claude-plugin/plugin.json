@@ -2,5 +2,11 @@
   "name": "opentui-dev",
   "version": "0.1.0",
   "description": "OpenTUI development tools - build terminal UIs with @opentui/core",
-  "author": "Maximus Loop Team"
+  "author": {
+    "name": "Dev Coffee",
+    "url": "https://github.com/itsdevcoffee"
+  },
+  "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
+  "keywords": ["opentui", "tui", "terminal-ui", "bun", "patterns"],
+  "license": "MIT"
 }
