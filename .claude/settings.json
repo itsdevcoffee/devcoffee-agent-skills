@@ -4,6 +4,18 @@
     "typescript-lsp@claude-plugins-official": true
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'marketplace.json'; then echo '⚠️  BLOCK: marketplace.json should only be edited during releases. Use the release workflow skill.'; exit 1; fi",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
     "PreCompact": [
       {
         "matcher": "",
@@ -24,6 +36,18 @@
             "type": "command",
             "command": "scripts/hooks/check-version.sh",
             "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qE 'plugin\\.json|plugin-metadata\\.json'; then cd /home/maskkiller/dev-coffee/repos/devcoffee-agent-skills && node scripts/validate-plugins.js 2>&1 | tail -10 && echo '\n✓ Plugin validation passed'; fi",
+            "timeout": 15
           }
         ]
       }
