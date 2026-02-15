@@ -88,10 +88,11 @@ devcoffee-agent-skills/          # Plugin marketplace monorepo
    - Do NOT duplicate full logic in command files
 
 3. **Skills use ONLY 2 frontmatter fields:** `name` and `description` (max 1024 chars total)
-   - ❌ Forbidden: `version`, `metadata`, `framework`, `status`, `tools`, `tags`
+   - Forbidden: `version`, `metadata`, `framework`, `status`, `tools`, `tags`, `last-updated`
 
-4. **Commands have NO `name` field** - filename IS the command name
+4. **Commands use ONLY `description` and `argument-hint`** - filename IS the command name
    - `commands/action.md` → `/plugin:action`
+   - Forbidden: `name`, `tools`, `examples`, `disable-model-invocation`
 
 5. **Skill descriptions = triggers ONLY** - NEVER summarize workflow
    - ✅ Good: `Use when implementing any feature or bugfix, before writing implementation code`
@@ -104,11 +105,11 @@ devcoffee-agent-skills/          # Plugin marketplace monorepo
    - Example: superpowers has 14 skills, only 3 commands
 
 **Quick check before committing plugin changes:**
-- [ ] Commands are thin wrappers (1-2 lines)
-- [ ] Skills have only `name` + `description` in frontmatter
-- [ ] Command frontmatter has NO `name` field
-- [ ] Commands do NOT have `disable-model-invocation: true`
-- [ ] Skill descriptions are "Use when..." (no workflow summary)
+- [ ] Commands are thin wrappers (1-2 lines delegating to skill)
+- [ ] Command frontmatter has ONLY `description` + `argument-hint`
+- [ ] Skills have ONLY `name` + `description` in frontmatter
+- [ ] Skill descriptions start with "Use when..." (trigger-only, no workflow summary)
+- [ ] No `disable-model-invocation`, `name`, `tools`, or `tags` in command frontmatter
 
 ## Development Commands
 

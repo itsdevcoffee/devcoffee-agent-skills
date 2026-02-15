@@ -1,8 +1,6 @@
 ---
 name: remotion-best-practices
 description: This skill should be used when the user is working with Remotion, the React-based video creation framework. Trigger when user mentions "Remotion animations", "Remotion composition", "video in React", "useCurrentFrame", "interpolate animations", "Remotion audio", "Remotion captions", "spring animations in Remotion", or asks questions like "how do I animate in Remotion?", "how to add audio to Remotion?", "how to create video compositions?", "how to use Three.js with Remotion?". Also trigger when user is working on React video projects that use frame-based rendering.
-metadata:
-  tags: remotion, video, react, animation, composition
 ---
 
 ## How to use
