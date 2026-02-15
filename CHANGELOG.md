@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [TLDR v1.1.2] - 2026-02-15
+
+### Fixed
+
+- Add `commands/` directory with thin wrapper files for proper autocomplete registration — skills alone do not create slash command entries
+- Commands follow repo convention with hyphen-prefixed names: `/tldr`, `/tldr-feedback`, `/tldr-note`, `/tldr-review`
+- Each command delegates to its corresponding skill via `Invoke the tldr:<skill> skill`
+
 ## [TLDR v1.1.1] - 2026-02-15
 
 ### Fixed
