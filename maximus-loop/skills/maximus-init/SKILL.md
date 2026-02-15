@@ -1,11 +1,11 @@
 ---
 name: maximus-init
-description: This skill should be used when the user asks to "set up maximus", "configure maximus", "initialize maximus", "create maximus config", "maximus init", or /maximus-init. Provides project-aware setup that analyzes the codebase to generate a tailored config.yml instead of generic boilerplate.
+description: This skill should be used when the user asks to "set up maximus", "configure maximus", "initialize maximus", "create maximus config", "scaffold maximus", "bootstrap maximus", or "maximus init". Provides project-aware setup that analyzes the codebase to generate a tailored config.yml instead of generic boilerplate.
 ---
 
 # Maximus Init — Project-Aware Setup
 
-You are a configuration expert setting up the Maximus Loop autonomous engine for a specific project. This skill provides intelligent initialization that reads the project's codebase to generate a tailored config.yml instead of generic defaults.
+Set up the Maximus Loop autonomous engine for a specific project. Analyze the codebase to generate a tailored config.yml instead of generic defaults.
 
 **Announce:** "I'll set up Maximus Loop for your project by analyzing the codebase and generating a tailored configuration."
 
@@ -172,9 +172,9 @@ TaskUpdate: taskId "task-3", status "in_progress"
 
 Generate tailored config.yml based on analysis:
 
-1. **Run maximus init if needed:**
-   - If `.maximus/` doesn't exist: `maximus init`
-   - This creates the directory structure and default config
+1. **Initialize .maximus/ directory:**
+   - If `.maximus/` does **NOT** exist: run `maximus init` to create directory structure, default config, progress.md, and .gitignore entries
+   - If `.maximus/` **already exists**: do NOT run `maximus init` (it will refuse). Instead, write config.yml directly in the next step. Also ensure `.gitignore` has the required entries (see step 5).
 
 2. **Generate project-specific config:**
    - Use actual project name (not "my-project")
@@ -192,11 +192,12 @@ Generate tailored config.yml based on analysis:
 # Maximus Loop Configuration — [project-name]
 
 project_name: "[actual-project-name]"
-maximus_version: "1.0.0"
 
 loop:
+  # How many iterations to run (-1 for unlimited).
+  # Set to a small number (e.g., 5) for first runs, -1 once confident.
+  max_iterations: -1
   mode: sequential
-  max_iterations: 20
   auto_commit: true
   continue_on_error: false
 
@@ -205,6 +206,8 @@ agent:
   timeout: [calculated-timeout]
   max_retries: 2
 
+  # Model escalation — assigns different models by task complexity_level.
+  # Enabled here for cost efficiency (beyond CLI defaults which leave this commented out).
   escalation:
     enabled: true
     simple: haiku
@@ -227,9 +230,25 @@ git:
   enabled: true
   commit_prefix: "[detected-prefix]"
   auto_push: false
+
+# Code review (future feature)
+# review:
+#   enabled: false
+#   min_severity: "medium"
+#   max_phases: 3
 ```
 
 4. **Write config:** Save to `.maximus/config.yml`
+
+5. **Ensure .gitignore entries:** If `.maximus/` already existed (skipped `maximus init`), check `.gitignore` for these entries and add any that are missing:
+   ```
+   .maximus/.heartbeat
+   .maximus/.stop
+   .maximus/.pause
+   .maximus/.completed-tasks.json
+   .maximus/run-summary.json
+   .maximus/logs/
+   ```
 
 **Present generated config:**
 ```
@@ -261,18 +280,16 @@ TaskUpdate: taskId "task-4", status "in_progress"
 
 Replace example plan.json tasks with empty array:
 
-1. **Read current plan:** `cat .maximus/plan.json`
-2. **Preserve version field:** Extract `version` value
-3. **Generate clean plan:**
+1. **Read current plan:** Read `.maximus/plan.json`
+2. **Generate clean plan:**
 
 ```json
 {
-  "version": "1.0.0",
   "tasks": []
 }
 ```
 
-4. **Write clean plan:** Save to `.maximus/plan.json`
+3. **Write clean plan:** Save to `.maximus/plan.json`
 
 **Note:** This removes any example/boilerplate tasks. User will create their own task plan with `/maximus-plan`.
 
@@ -296,21 +313,24 @@ List installed skills available for task configuration:
    - Skills can be referenced in task `skills` property in plan.json
    - Skills provide specialized knowledge for complex tasks
 
-2. **List installed skills:**
-   - Read skill metadata from Claude Code's skill directory
-   - Format as table with name and description
+2. **Discover installed skills:**
+   - Check `~/.claude/plugins/` for installed plugin directories
+   - For each plugin, read its `plugin.json` or scan `skills/` subdirectory
+   - Also check `~/.claude/skills/` for standalone skills
+   - Format as table with plugin:skill-name and description
 
 **Present suggestions:**
 ```
 Available Skills for Tasks:
-  - superpowers:test-driven-development
-  - superpowers:systematic-debugging
-  - frontend-design:frontend-design
-  - [other installed skills]
+  - [plugin-name:skill-name] — [description]
+  - [plugin-name:skill-name] — [description]
+  - ...
 
 These skills can be added to individual tasks in the plan
 to provide specialized guidance during execution.
 ```
+
+**Note:** Only list skills that are actually installed. Do not guess or hardcode skill names.
 
 **Mark task as completed:**
 ```

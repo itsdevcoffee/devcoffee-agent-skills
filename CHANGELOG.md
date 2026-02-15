@@ -20,6 +20,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - All skills use plugin-root-relative path resolution — works regardless of user's working directory
 - Added `name: TLDR` to main skill frontmatter for consistency across all four skills
 
+## [0.2.1] - 2026-02-15 (maximus-loop)
+
+### Fixed - maximus-init Skill
+
+**Critical: Config Template Alignment**
+- Fixed `max_iterations: 20` to match CLI template default of `-1` (unlimited). Previous value caused unexpected early engine stops for users expecting unlimited iteration.
+- Fixed re-initialization ambiguity — skill now explicitly handles two paths: run `maximus init` when `.maximus/` is missing, write config directly when it already exists (CLI refuses to reinitialize).
+- Added `.gitignore` handling for cases where CLI is bypassed — ensures `.heartbeat`, `.stop`, `.pause`, `.completed-tasks.json`, `run-summary.json`, and `logs/` entries are present.
+
+**Major: Template Corrections**
+- Removed `maximus_version: "1.0.0"` from config template (not in CLI template, engine auto-defaults it).
+- Removed `"version": "1.0.0"` from clean plan.json template (field is optional, actual template omits it).
+- Added commented-out `review` section to match CLI template.
+- Added inline comments explaining that escalation is enabled beyond CLI defaults.
+
+**Minor: Trigger and Description Improvements**
+- Replaced role-play phrasing ("You are a configuration expert") with direct action statement.
+- Added "scaffold maximus" and "bootstrap maximus" trigger phrases to skill description.
+- Replaced hardcoded skill name examples in Phase 5 with dynamic discovery from `~/.claude/plugins/` and `~/.claude/skills/`.
+
+### Fixed - maximus-init Command
+
+- Removed misleading `argument-hint: "[project path] [optional-config]"` — skill does not accept or process arguments.
+- Updated description to accurately reflect project-aware analysis behavior.
+
+### Fixed - maximus-init Agent
+
+- Removed example with non-existent `--enable-auto-commit` flag.
+- Replaced with realistic "Initialize maximus for this project" example.
+- Added "scaffold maximus" trigger phrase, removed "create task plan" (that's `/maximus-plan`).
+
+### Changed - Version Sync
+
+- Synced marketplace.json version from `0.1.0` to `0.2.1` (was out of date since initial plugin creation).
+
 ## [0.5.0] - 2026-02-15
 
 ### Added - Compaction Resilience

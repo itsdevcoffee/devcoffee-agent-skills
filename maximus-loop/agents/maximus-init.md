@@ -1,6 +1,6 @@
 ---
 name: maximus-init
-description: Initialize a Maximus Loop project setup. Triggers on "initialize maximus loop", "set up task automation", "create maximus project", "initialize project tasks", "set up autonomous tasks", "create task plan", or when user wants to start task-driven autonomous development.
+description: Initialize a Maximus Loop project setup. Triggers on "initialize maximus loop", "set up task automation", "create maximus project", "initialize project tasks", "set up autonomous tasks", "scaffold maximus", or when user wants to start task-driven autonomous development.
 model: sonnet
 color: cyan
 tools: Read, Write, Bash, Glob, Grep, AskUserQuestion
@@ -26,10 +26,10 @@ User requesting task automation setup. Trigger maximus-init to create necessary 
 
 <example>
 Context: User explicitly invokes the init command
-user: "/maximus-init my-project --enable-auto-commit"
-assistant: "I'll initialize a Maximus Loop project with the specified configuration."
+user: "Initialize maximus for this project"
+assistant: "I'll analyze the project and set up Maximus Loop with a tailored configuration."
 <commentary>
-Direct invocation of maximus-init command with project name and options. Set up project structure accordingly.
+Direct invocation of maximus-init. Analyze the project first, then generate project-specific configuration.
 </commentary>
 </example>
 

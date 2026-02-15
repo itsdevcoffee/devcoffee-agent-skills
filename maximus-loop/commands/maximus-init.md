@@ -1,7 +1,6 @@
 ---
 name: maximus-init
-description: Initialize a Maximus Loop project with plan.json, progress.md, and task tracking
-argument-hint: "[project path] [optional-config]"
+description: Project-aware Maximus Loop initialization — analyzes codebase to generate tailored config.yml
 tools: Read, Write, Bash, Glob, Grep, AskUserQuestion
 ---
 
