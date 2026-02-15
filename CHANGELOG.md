@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [maximus-loop v0.3.4] - 2026-02-15
+
+### Fixed
+
+- **Critical: Restore "Invoke" in command files** — v0.3.3 changed "Invoke the skill" to "Follow the skill" which prevented the Skill tool from being called, so SKILL.md was never loaded into context. Restored "Invoke" while keeping the anti-delegation `<CRITICAL>` block.
+
 ## [maximus-loop v0.3.3] - 2026-02-15
 
 ### Fixed
