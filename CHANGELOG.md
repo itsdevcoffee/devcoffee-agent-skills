@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [maximus-loop v0.3.5] - 2026-02-15
+
+### Fixed
+
+- **Prevent brainstorming/skill interception in init and validate commands** — Agent was invoking brainstorming skill and exploring the codebase before following init phases. Command files now explicitly state "This is a CONFIGURATION task, not creative work" and "Your VERY FIRST tool call must be: Bash(maximus validate --json)".
+
 ## [maximus-loop v0.3.4] - 2026-02-15
 
 ### Fixed
