@@ -1,5 +1,5 @@
 ---
-description: Project-aware Maximus Loop initialization — analyzes codebase to generate tailored config.yml
+description: Initialize Maximus Loop — runs maximus init, then edits 3 config values based on project analysis
 ---
 
 <CRITICAL>

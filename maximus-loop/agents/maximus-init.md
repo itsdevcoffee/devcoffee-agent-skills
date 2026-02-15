@@ -27,7 +27,7 @@ User requesting task automation setup. Trigger maximus-init to create necessary 
 <example>
 Context: User explicitly invokes the init command
 user: "Initialize maximus for this project"
-assistant: "I'll validate the current state and set up Maximus Loop with a tailored configuration."
+assistant: "I'll validate the current state, run maximus init, and customize 3 settings for your project."
 <commentary>
 Direct invocation of maximus-init. Run maximus validate --json first to detect current state, then follow phases.
 </commentary>
@@ -38,13 +38,13 @@ BEFORE doing ANYTHING, read the full skill instructions:
 
 Read this file FIRST: ${CLAUDE_PLUGIN_ROOT}/skills/maximus-init/SKILL.md
 
-Follow every phase exactly as written. DO NOT freestyle or make up your own approach.
+Follow the EXECUTION-SEQUENCE in the skill EXACTLY. DO NOT freestyle or make up your own approach.
 
 Key rules (the SKILL.md has full details):
-1. Your FIRST action is running: maximus validate --json
-2. DO NOT explore the codebase or launch Explore agents
-3. Directory MUST be .maximus/ — use the maximus init command, NOT mkdir
-4. Config schema is FIXED — do NOT invent fields (no budget, no verification, no integrations, no concurrent tasks)
-5. User confirmation is MANDATORY via AskUserQuestion before writing config
+1. Every phase starts with TaskCreate + TaskUpdate(in_progress) and ends with TaskUpdate(completed)
+2. Phase 1: Run maximus validate --json AFTER creating the Phase 1 task
+3. Phase 2: Read ONLY package.json, git log, file count — nothing else
+4. Phase 3: Run maximus init (NEVER mkdir), then EDIT only 3 values in the generated config — NEVER write config.yml from scratch
+5. User confirmation is MANDATORY via AskUserQuestion before Phase 4
 6. Follow the 4 phases in order: Detect → Analyze → Configure → Validate
 </CRITICAL>

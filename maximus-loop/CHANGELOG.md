@@ -5,6 +5,15 @@ All notable changes to the maximus-loop plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.9] - 2026-02-15
+
+### Changed
+
+- Add explicit EXECUTION-SEQUENCE with numbered tool call order (27 steps across 4 phases) — agents can no longer improvise the flow
+- Rewrite agent CRITICAL block to match Task API flow (TaskCreate before validate, EDIT not Write for config)
+- Update command and skill descriptions to say "edits 3 config values" instead of "generate tailored config"
+- Condense phase headers to single-line TaskCreate + TaskUpdate instructions
+
 ## [0.3.8] - 2026-02-15
 
 ### Fixed
