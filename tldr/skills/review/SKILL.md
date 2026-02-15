@@ -1,5 +1,4 @@
 ---
-name: TLDR Review
 description: >-
   This skill should be used when the user asks to "review tldr notes",
   "triage tldr improvements", "go through tldr backlog", "check my

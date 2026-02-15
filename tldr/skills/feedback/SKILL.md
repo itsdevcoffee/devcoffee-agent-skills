@@ -1,5 +1,4 @@
 ---
-name: TLDR Feedback
 description: >-
   This skill should be used when the user asks to "rate this tldr",
   "evaluate this tldr", "score this summary", "grade this tldr",

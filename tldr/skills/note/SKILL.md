@@ -1,5 +1,4 @@
 ---
-name: TLDR Note
 description: >-
   This skill should be used when the user asks to "note a tldr improvement",
   "log a tldr issue", "capture a tldr idea", "jot down a tldr problem",
