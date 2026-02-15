@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [TLDR v1.1.4] - 2026-02-15
+
+### Fixed
+
+- Rename command files to remove `tldr-` prefix that caused doubled namespace in autocomplete (`/tldr:tldr-feedback` → `/tldr:feedback`, `/tldr:tldr-note` → `/tldr:note`, `/tldr:tldr-review` → `/tldr:review`)
+- Update `plugin-metadata.json` commands list to match new filenames
+
 ## [maximus-loop v0.3.2] - 2026-02-15
 
 ### Fixed
