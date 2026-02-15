@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [TLDR v1.1.3] - 2026-02-15
+
+### Fixed
+
+- Add `disable-model-invocation: true` to all command frontmatter per superpowers convention
+
 ## [TLDR v1.1.2] - 2026-02-15
 
 ### Fixed
