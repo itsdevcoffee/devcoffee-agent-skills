@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - TLDR Plugin (v1.1.0)
+
+**Three new development skills for continuous TLDR improvement:**
+- **`/tldr:feedback`** — Codified evaluation workflow for scoring TLDR samples against 4 quality criteria (Completeness, Conciseness, Actionability, Accuracy). Supports `--no-user-score` flag for agent-only evaluation. Scoring rubrics bundled as `references/EVALUATION.md` using progressive disclosure.
+- **`/tldr:note`** — Fire-and-forget capture of improvement ideas mid-workflow. Appends to centralized catalog (`docs/evaluation/notes.md`) with agent-expanded context. Supports `--ex` flag to include examples, which auto-triggers evaluation via feedback skill.
+- **`/tldr:review`** — Guided triage session through pending notes. Presents items one at a time with Implement/Refine/Defer/Discard options. Implementation-ready — makes changes to TLDR skill files directly during review.
+
+**Architecture improvements:**
+- Consolidated evaluation data into `tldr/docs/evaluation/` (single canonical location inside plugin directory)
+- Removed duplicate `docs/tldr-evaluation/` from repo root
+- All skills use plugin-root-relative path resolution — works regardless of user's working directory
+- Added `name: TLDR` to main skill frontmatter for consistency across all four skills
+
 ## [0.5.0] - 2026-02-15
 
 ### Added - Compaction Resilience

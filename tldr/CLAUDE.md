@@ -2,22 +2,14 @@
 
 ## Command: /tldr
 
-When the user invokes `/tldr`, follow the instructions in `commands/tldr.md`.
+When the user invokes `/tldr`, follow the instructions in `skills/tldr/SKILL.md`.
 
-## TLDR Evaluation
+## TLDR Development Skills
 
-When evaluating TLDR command outputs (user says "rate this tldr" or shares samples), read `docs/evaluation/EVALUATION.md` first for the complete evaluation system, scoring criteria, and workflow instructions.
+The plugin includes three development skills for continuous improvement:
 
-**Quick reference:**
-- Evaluation system: `docs/evaluation/EVALUATION.md`
-- Summary log: `docs/evaluation/evaluation-log.md`
-- Individual samples: `docs/evaluation/samples/`
+- `/tldr:feedback` — Evaluate TLDR samples against quality criteria and log results. Scoring rubrics at `skills/feedback/references/EVALUATION.md`, data at `docs/evaluation/`.
+- `/tldr:note` — Quick-capture improvement ideas mid-workflow. Catalog at `docs/evaluation/notes.md`. Supports `--ex` flag for including examples (auto-triggers evaluation).
+- `/tldr:review` — Guided triage session through pending notes. Discuss, refine, and implement improvements.
 
-**Scoring criteria:** Completeness, Conciseness, Actionability, Accuracy (0.0-10.0 scale)
-
-**Workflow:**
-1. User shares: Original message + TLDR output
-2. Claude scores on four criteria (2.5 points each)
-3. User optionally provides score and feedback
-4. Claude creates sample file and updates log
-5. Pattern analysis after 10-20 samples for v1.1 planning
+**Path convention:** All `docs/evaluation/` paths are relative to this plugin's root directory.

@@ -1,4 +1,5 @@
 ---
+name: TLDR
 description: >-
   This skill should be used when the user asks for a TLDR, summary, recap,
   or condensed version of content. Invoked as "/tldr" with no arguments to
