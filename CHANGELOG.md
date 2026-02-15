@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [maximus-loop v0.3.3] - 2026-02-15
+
+### Fixed
+
+- **Critical: Prevent subagent delegation** — All 4 command files now include `<CRITICAL>` anti-delegation block preventing the outer agent from using the Task tool to spawn subagents with made-up prompts instead of following skill instructions
+- **Agent files: Read-first pattern** — All 4 agent files now instruct subagents to `Read ${CLAUDE_PLUGIN_ROOT}/skills/<name>/SKILL.md` before doing anything, with inline critical rules as a fallback
+- Fix misleading agent example commentary ("Analyze the project first" → "Run maximus validate --json first")
+
 ## [TLDR v1.1.4] - 2026-02-15
 
 ### Fixed

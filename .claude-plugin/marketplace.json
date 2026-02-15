@@ -72,7 +72,7 @@
       "name": "maximus-loop",
       "source": "./maximus-loop",
       "description": "Complete autonomous coding workflow for the Maximus Loop engine - interactive plan generation, project initialization, configuration validation, and intelligent run analysis",
-      "version": "0.3.2",
+      "version": "0.3.3",
       "author": {
         "name": "Dev Coffee",
         "url": "https://github.com/itsdevcoffee"
@@ -142,7 +142,7 @@
       "name": "expo-cunningham",
       "source": "./expo-cunningham",
       "description": "Fine-tuned EAS CLI skill and autonomous agent for managing Expo Application Services - OTA updates, builds, submissions, channels, branches, and more via npx eas",
-      "version": "0.2.4",
+      "version": "0.2.5",
       "author": {
         "name": "Dev Coffee",
         "url": "https://github.com/itsdevcoffee"
@@ -158,6 +158,20 @@
         "over-the-air",
         "mobile"
       ],
+      "category": "Development Tools",
+      "license": "MIT"
+    },
+    {
+      "name": "test-plugin-green",
+      "source": "./test-plugin-green",
+      "description": "Generate unit tests for code",
+      "version": "0.1.0",
+      "author": {
+        "name": "Dev Coffee",
+        "url": "https://github.com/itsdevcoffee"
+      },
+      "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
+      "keywords": ["testing", "unit-tests", "test-generation"],
       "category": "Development Tools",
       "license": "MIT"
     }

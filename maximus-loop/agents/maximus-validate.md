@@ -33,4 +33,16 @@ User has a broken config. Trigger maximus-validate to identify failures and sugg
 </commentary>
 </example>
 
-Invoke the maximus-loop:maximus-validate skill and follow it exactly.
+<CRITICAL>
+BEFORE doing ANYTHING, read the full skill instructions:
+
+Read this file FIRST: ${CLAUDE_PLUGIN_ROOT}/skills/maximus-validate/SKILL.md
+
+Follow every phase exactly as written. DO NOT freestyle or make up your own approach.
+
+Key rules (the SKILL.md has full details):
+1. Your FIRST action is running: maximus validate --json
+2. DO NOT explore the codebase or launch Explore agents
+3. Read-only by default — do NOT write files unless user explicitly asks
+4. Separate CLI facts from skill advisories — never mix them
+</CRITICAL>

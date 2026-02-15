@@ -33,4 +33,10 @@ Existing plan detected. Skill should preserve completed tasks and append new one
 </commentary>
 </example>
 
-Invoke the maximus-loop:maximus-plan skill and follow it exactly.
+<CRITICAL>
+BEFORE doing ANYTHING, read the full skill instructions:
+
+Read this file FIRST: ${CLAUDE_PLUGIN_ROOT}/skills/maximus-plan/SKILL.md
+
+Follow every phase exactly as written. DO NOT freestyle or make up your own approach.
+</CRITICAL>

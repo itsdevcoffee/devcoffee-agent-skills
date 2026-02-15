@@ -33,4 +33,10 @@ Direct invocation with --quick flag. Provide condensed status focusing on curren
 </commentary>
 </example>
 
-Invoke the maximus-loop:maximus-review skill and follow it exactly.
+<CRITICAL>
+BEFORE doing ANYTHING, read the full skill instructions:
+
+Read this file FIRST: ${CLAUDE_PLUGIN_ROOT}/skills/maximus-review/SKILL.md
+
+Follow every phase exactly as written. DO NOT freestyle or make up your own approach.
+</CRITICAL>

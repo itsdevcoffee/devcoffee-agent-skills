@@ -1,6 +1,6 @@
 {
   "name": "maximus-loop",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Maximus Loop plugin providing interactive task planning, project initialization, configuration validation, and run analysis for autonomous coding agents",
   "tagline": "Complete autonomous coding workflow for Maximus Loop",
   "author": {
