@@ -158,7 +158,6 @@ The H1 heading is human-readable and doesn't need to match the slug:
 ```yaml
 ---
 description: Brief tooltip text for autocomplete
-disable-model-invocation: true
 ---
 
 Invoke the plugin-name:skill-name skill and follow it exactly as presented to you.
@@ -171,9 +170,10 @@ Invoke the plugin-name:skill-name skill and follow it exactly as presented to yo
 | Field | Required? | Purpose | Example |
 |-------|-----------|---------|---------|
 | `description` | ✅ YES | Shows in autocomplete tooltip | `Execute plan in batches with review checkpoints` |
-| `disable-model-invocation` | ✅ YES | Prevents auto-invocation by agent | `true` |
 | `tools` | ⚠️ Optional | Claude Code specific - tools available to command | `Read, Write, Bash, Glob, Grep` |
 | `argument-hint` | ⚠️ Optional | Claude Code specific - shows in autocomplete | `[task description or path]` |
+
+> **⚠️ Do NOT use `disable-model-invocation: true`** — it blocks the Skill tool from invoking commands, breaking all `/plugin:command` invocations.
 
 **Forbidden:** `name` field (filename IS the name)
 
@@ -246,7 +246,6 @@ skills/skill-name/SKILL.md (full logic - hundreds of lines)
 ```yaml
 ---
 description: "You MUST use this before any creative work..."
-disable-model-invocation: true
 ---
 
 Invoke the superpowers:brainstorming skill and follow it exactly as presented to you
@@ -358,7 +357,7 @@ Skills reference each other using `plugin:skill` notation:
 | ❌ Full logic in command file | Violates thin wrapper pattern | Move to skill, command delegates in 1 line |
 | ❌ Workflow summary in skill description | Claude shortcuts, doesn't read skill | Trigger conditions only: "Use when..." |
 | ❌ Extra fields in skill frontmatter | Non-standard, may cause issues | Only `name` + `description` (max 1024 chars) |
-| ❌ Missing `disable-model-invocation` | Commands auto-invoke unexpectedly | Add `disable-model-invocation: true` |
+| ❌ Using `disable-model-invocation: true` | Blocks Skill tool, breaks `/plugin:command` | Remove from command frontmatter |
 | ❌ Skills in flat `skills/*.md` | Wrong structure, auto-discovery fails | Use `skills/skill-name/SKILL.md` |
 | ❌ Using `@` refs between skills | Force-loads, wastes tokens | Use skill names: `plugin:skill-name` |
 
@@ -370,7 +369,7 @@ When reviewing plugin code, check for:
 - [ ] Skills in `skills/skill-name/SKILL.md` structure (not flat)
 - [ ] Skill frontmatter has ONLY `name` + `description`
 - [ ] Command frontmatter has NO `name` field
-- [ ] All commands have `disable-model-invocation: true`
+- [ ] Commands do NOT have `disable-model-invocation: true`
 - [ ] Skill descriptions start with "Use when..." (no workflow summary)
 - [ ] No triple registration (same name as skill + command + agent)
 - [ ] Cross-references use `plugin:skill` format (not `@file`)
@@ -499,9 +498,9 @@ Component type?
   │       NO: version, metadata, tools, tags, etc.
   │
   ├─ COMMAND
-  │   └─ Fields: description, disable-model-invocation
+  │   └─ Fields: description
   │       Optional: tools, argument-hint
-  │       NO: name (filename IS name)
+  │       NO: name (filename IS name), disable-model-invocation
   │
   └─ AGENT
       └─ Fields: name, description, model
@@ -519,7 +518,7 @@ Component type?
 3. **Skills = 2 frontmatter fields** - `name` + `description` only
 4. **Commands = NO `name` field** - filename IS the command name
 5. **Descriptions = triggers only** - NEVER workflow summary
-6. **`disable-model-invocation: true`** - on ALL commands
+6. **No `disable-model-invocation`** - it blocks Skill tool invocation
 7. **Not every skill needs a command** - only user-facing entry points
 
 ### File Creation Checklist
@@ -535,7 +534,7 @@ Component type?
 **Creating a new command:**
 - [ ] File: `commands/action.md` (filename = command name)
 - [ ] Frontmatter: NO `name` field
-- [ ] Frontmatter: `disable-model-invocation: true`
+- [ ] Frontmatter: NO `disable-model-invocation` field
 - [ ] Body: One line: `Invoke the plugin:skill skill...`
 - [ ] Create corresponding skill in `skills/action/SKILL.md`
 

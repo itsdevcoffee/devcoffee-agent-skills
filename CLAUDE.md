@@ -98,7 +98,7 @@ devcoffee-agent-skills/          # Plugin marketplace monorepo
    - ❌ Bad: `Use when executing plans - dispatches subagent per task with code review between tasks`
    - Why: Claude shortcuts and doesn't read the full skill when workflow is in description
 
-6. **Use `disable-model-invocation: true`** on all commands to prevent auto-invocation
+6. **Do NOT use `disable-model-invocation: true`** on commands — it blocks the Skill tool from invoking them, breaking all `/plugin:command` invocations
 
 7. **Not every skill needs a command** - only create commands for user-facing entry points
    - Example: superpowers has 14 skills, only 3 commands
@@ -107,7 +107,7 @@ devcoffee-agent-skills/          # Plugin marketplace monorepo
 - [ ] Commands are thin wrappers (1-2 lines)
 - [ ] Skills have only `name` + `description` in frontmatter
 - [ ] Command frontmatter has NO `name` field
-- [ ] All commands have `disable-model-invocation: true`
+- [ ] Commands do NOT have `disable-model-invocation: true`
 - [ ] Skill descriptions are "Use when..." (no workflow summary)
 
 ## Development Commands

@@ -1,5 +1,5 @@
 {
   "name": "expo-cunningham",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Fine-tuned EAS CLI skill and autonomous agent for managing Expo Application Services — OTA updates, builds, submissions, channels, branches, and more."
 }
