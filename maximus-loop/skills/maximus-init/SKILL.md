@@ -18,7 +18,7 @@ These rules are ABSOLUTE. Violating any of them means the setup is broken and th
 
 2. **Config schema is FIXED** — The engine parses config.yml with a strict TypeScript interface. You MUST use the EXACT field names shown in the template below. Do NOT invent fields like `project:`, `stack:`, `verify:`, `guardrails:`, `conventions:`, etc. The engine will crash or silently ignore unknown fields.
 
-3. **Plan schema is FIXED** — plan.json MUST contain `{"tasks": []}` and nothing else. Do NOT add `version`, `project`, `created`, or any other fields.
+3. **Plan schema is FIXED** — plan.json MUST contain `{"tasks": []}` at minimum. An optional `"version"` field (string) is acceptable. Do NOT add `project`, `created`, or any other non-standard fields.
 
 4. **Run `maximus init` first** — When `.maximus/` does not exist, you MUST run the `maximus init` CLI command. Do NOT manually `mkdir`. The CLI creates the correct directory structure, default files, and .gitignore entries.
 
@@ -284,7 +284,7 @@ Replace example plan.json tasks with an empty tasks array:
 }
 ```
 
-That is the COMPLETE file contents. Do NOT add `version`, `project`, `created`, or any other fields.
+That is the COMPLETE file contents. A `"version": "1.0.0"` field is optional and acceptable, but do NOT add `project`, `created`, or any other non-standard fields.
 
 **Mark task as completed.**
 

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [maximus-loop v0.2.3] - 2026-02-15
+
+### Fixed
+
+- Resolved plan.json schema contradiction between maximus-init and maximus-plan — init now allows optional `version` field, aligning with plan-schema.md and both example files
+- Added `TaskCreate`, `TaskUpdate`, `TaskList` to tools list in all 3 commands and all 3 agents (Task API calls would fail without these)
+- Removed hardcoded version from README plugin structure tree to prevent future drift
+
 ## [maximus-loop v0.2.2] - 2026-02-15
 
 ### Fixed

@@ -3,7 +3,7 @@ name: maximus-review
 description: Review progress and status of an active Maximus Loop execution. Triggers on "review the last run", "how is the run going", "check maximus status", "review maximus progress", "what's the current status", "quick status check", or "/maximus-review".
 model: sonnet
 color: blue
-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion
+tools: Read, Write, Bash, Glob, Grep, AskUserQuestion, TaskCreate, TaskUpdate, TaskList
 ---
 
 <example>

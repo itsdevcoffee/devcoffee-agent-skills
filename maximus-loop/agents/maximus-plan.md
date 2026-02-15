@@ -3,7 +3,7 @@ name: maximus-plan
 description: Use when the user wants to create, update, extend, or replace a Maximus Loop task plan. Triggers on "create a plan", "plan this feature", "generate tasks", "break this down into tasks", "add tasks for", "scope this work", "plan the next phase", "update the plan", or "/maximus-plan".
 model: opus
 color: green
-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion
+tools: Read, Write, Bash, Glob, Grep, AskUserQuestion, TaskCreate, TaskUpdate, TaskList
 ---
 
 <example>

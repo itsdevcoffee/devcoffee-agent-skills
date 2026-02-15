@@ -94,7 +94,7 @@ Analyze autonomous run results with full review or quick status. Supports `--qui
 
 ```
 maximus-loop/
-├── .claude-plugin/plugin.json              # Plugin manifest (v0.2.0)
+├── .claude-plugin/plugin.json              # Plugin manifest
 ├── agents/
 │   ├── maximus-plan.md                     # /maximus-plan auto-trigger agent
 │   ├── maximus-init.md                     # /maximus-init auto-trigger agent

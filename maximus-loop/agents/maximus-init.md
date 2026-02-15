@@ -3,7 +3,7 @@ name: maximus-init
 description: Initialize a Maximus Loop project setup. Triggers on "initialize maximus loop", "set up task automation", "create maximus project", "initialize project tasks", "set up autonomous tasks", "scaffold maximus", or when user wants to start task-driven autonomous development.
 model: sonnet
 color: cyan
-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion
+tools: Read, Write, Bash, Glob, Grep, AskUserQuestion, TaskCreate, TaskUpdate, TaskList
 ---
 
 <example>
