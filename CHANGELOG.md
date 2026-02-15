@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [maximus-loop v0.2.2] - 2026-02-15
+
+### Fixed
+
+**maximus-init: Rewrote skill to be agent-proof after testing revealed complete schema violation**
+
+Testing showed the agent:
+- Created `maximus-loop/` instead of `.maximus/`
+- Invented its own config schema (`project: {name, root, description}` instead of flat `project_name`)
+- Added non-existent fields to plan.json (`version`, `project`, `created`)
+- Used `mkdir` instead of `maximus init`
+- Skipped user confirmation, Task API, and all 6 phases
+
+Changes:
+- Added `<CRITICAL-CONSTRAINTS>` block at top with 7 non-negotiable rules
+- Added `<SCHEMA-ENFORCEMENT>` block listing exact TypeScript Config interface fields
+- Explicitly banned common invented field names (`project:`, `stack:`, `verify:`, `guardrails:`, etc.)
+- Made `maximus init` the required path (not optional `mkdir`)
+- Strengthened confirmation checkpoint: "STOP and wait for user confirmation"
+- Removed Best Practices / Configuration Validation sections (redundant, added noise that diluted core instructions)
+- Simplified all phases to be more directive and less descriptive
+
 ## [devcoffee v0.5.1] - 2026-02-15
 
 ### Fixed

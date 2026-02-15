@@ -9,14 +9,25 @@ Set up the Maximus Loop autonomous engine for a specific project. Analyze the co
 
 **Announce:** "I'll set up Maximus Loop for your project by analyzing the codebase and generating a tailored configuration."
 
-<HARD-GATE>
-Do NOT run 'maximus init' or generate config.yml until you have:
-1. Detected whether .maximus/ directory exists
-2. Analyzed the project structure, test runner, and conventions
-3. Presented the proposed configuration and received user approval
+<CRITICAL-CONSTRAINTS>
+## Non-Negotiable Rules
 
-This applies to ALL projects. Even if .maximus/ exists, analyze first to ensure configuration matches the project.
-</HARD-GATE>
+These rules are ABSOLUTE. Violating any of them means the setup is broken and the engine WILL NOT work.
+
+1. **Directory MUST be `.maximus/`** — NOT `maximus-loop/`, NOT `maximus/`, NOT any other name. The engine ONLY reads from `.maximus/`. If you create any other directory name, the engine cannot find its files.
+
+2. **Config schema is FIXED** — The engine parses config.yml with a strict TypeScript interface. You MUST use the EXACT field names shown in the template below. Do NOT invent fields like `project:`, `stack:`, `verify:`, `guardrails:`, `conventions:`, etc. The engine will crash or silently ignore unknown fields.
+
+3. **Plan schema is FIXED** — plan.json MUST contain `{"tasks": []}` and nothing else. Do NOT add `version`, `project`, `created`, or any other fields.
+
+4. **Run `maximus init` first** — When `.maximus/` does not exist, you MUST run the `maximus init` CLI command. Do NOT manually `mkdir`. The CLI creates the correct directory structure, default files, and .gitignore entries.
+
+5. **Ask for user confirmation** — You MUST present the generated config and ask "Does this configuration look correct?" BEFORE writing it. Do NOT skip this step.
+
+6. **Use TaskCreate for progress tracking** — You MUST create all 6 phase tasks upfront using TaskCreate before starting Phase 1.
+
+7. **Complete all 6 phases in order** — Do NOT skip or combine phases. Each phase has a specific purpose.
+</CRITICAL-CONSTRAINTS>
 
 ## Task API Integration
 
@@ -26,22 +37,9 @@ Reference: `${CLAUDE_PLUGIN_ROOT}/references/task-api.md`
 
 ---
 
-## Mandatory Workflow
-
-Complete these phases IN ORDER. Do not skip or combine phases.
-
-1. **Detect** — Check for existing .maximus/, warn about boilerplate defaults
-2. **Analyze** — Read project files to understand structure and conventions
-3. **Configure** — Generate tailored config.yml with project-specific settings
-4. **Clean** — Replace example plan.json with empty tasks array
-5. **Suggest** — List available skills for task configuration
-6. **Handoff** — Display next steps and point to /maximus-plan
-
----
-
 ## Setup: Create Phase Tasks
 
-Before starting Phase 1, create all 6 tasks using TaskCreate:
+Before starting Phase 1, you MUST create all 6 tasks using TaskCreate:
 
 ```
 TaskCreate:
@@ -81,26 +79,25 @@ TaskCreate:
 
 **Mark task as in_progress:**
 ```
-TaskUpdate: taskId "task-1", status "in_progress"
+TaskUpdate: taskId for "Detect existing Maximus configuration", status "in_progress"
 ```
 
 Check for existing Maximus setup:
 
 1. **Directory check:** `ls -la .maximus/`
-   - If missing: Note that 'maximus init' will be run in Phase 3
+   - If missing: Note that `maximus init` will be run in Phase 3
    - If exists: Continue to config validation
 
 2. **Config validation:** Read `.maximus/config.yml` if it exists
-   - Check for boilerplate project_name (e.g., "my-project", "example")
+   - Check for boilerplate project_name (e.g., "My Project", "example")
    - Check for default commit_prefix ("feat:", "chore:")
-   - Check for generic context files
-   - If boilerplate detected: Warn user and offer to regenerate with project-specific values
+   - If boilerplate detected: Warn user and offer to regenerate
 
 3. **Plan validation:** Read `.maximus/plan.json` if it exists
-   - Check if tasks array contains example tasks (tasks with "Example" in description)
+   - Check if tasks array contains example tasks
    - Note example tasks will be replaced in Phase 4
 
-**Present findings:**
+**Present findings to the user:**
 ```
 Maximus Setup Status:
   Directory: [EXISTS | MISSING]
@@ -108,19 +105,13 @@ Maximus Setup Status:
   Plan: [N tasks (M examples) | MISSING]
 ```
 
-**Mark task as completed:**
-```
-TaskUpdate: taskId "task-1", status "completed"
-```
+**Mark task as completed.**
 
 ---
 
 ## Phase 2: Analyze
 
-**Mark task as in_progress:**
-```
-TaskUpdate: taskId "task-2", status "in_progress"
-```
+**Mark task as in_progress.**
 
 Read project files to understand structure and conventions:
 
@@ -133,60 +124,56 @@ Read project files to understand structure and conventions:
    - Read `CLAUDE.md` for project-specific instructions
    - Check `git log --oneline -10` for commit message patterns
    - Look for commit prefixes (e.g., "feat:", "fix:", "maximus:")
-   - Note any testing conventions mentioned in CLAUDE.md
 
 3. **Test runner detection:**
    - Check package.json scripts for test commands
    - Look for: `npm test`, `bun test`, `cargo test`, `go test`, `pytest`
-   - Check for testing framework: jest, vitest, mocha, cargo-test, go-test, pytest
-   - Extract test command pattern
+   - Identify testing framework: jest, vitest, mocha, etc.
 
 4. **Directory structure:**
-   - Run `ls -la` to see top-level directories
-   - Identify source directories: `src/`, `lib/`, `pkg/`, `app/`
-   - Identify test directories: `test/`, `tests/`, `__tests__/`
+   - Run `ls` to see top-level directories
+   - Identify source and test directories
 
-**Present analysis summary:**
+**Present analysis summary to the user:**
 ```
 Project Analysis:
   Name: [project-name]
   Language: [language + framework]
   Test runner: [test command]
   Commit style: [prefix pattern]
-  Source: [directory]
+  Source dirs: [directories]
 ```
 
-**Mark task as completed:**
-```
-TaskUpdate: taskId "task-2", status "completed"
-```
+**Mark task as completed.**
 
 ---
 
 ## Phase 3: Configure
 
-**Mark task as in_progress:**
+**Mark task as in_progress.**
+
+### Step 1: Initialize .maximus/ directory
+
+**If `.maximus/` does NOT exist:**
+Run this command:
+```bash
+maximus init
 ```
-TaskUpdate: taskId "task-3", status "in_progress"
-```
+This creates `.maximus/` with config.yml, plan.json, progress.md, and updates .gitignore.
 
-Generate tailored config.yml based on analysis:
+**If `.maximus/` already exists:**
+Do NOT run `maximus init` (it will refuse). You will overwrite config.yml directly in Step 3. Also ensure `.gitignore` has the required entries (see Step 4).
 
-1. **Initialize .maximus/ directory:**
-   - If `.maximus/` does **NOT** exist: run `maximus init` to create directory structure, default config, progress.md, and .gitignore entries
-   - If `.maximus/` **already exists**: do NOT run `maximus init` (it will refuse). Instead, write config.yml directly in the next step. Also ensure `.gitignore` has the required entries (see step 5).
+### Step 2: Determine config values from Phase 2 analysis
 
-2. **Generate project-specific config:**
-   - Use actual project name (not "my-project")
-   - Set commit_prefix from git log analysis
-   - Configure test runner based on detection
-   - Set appropriate timeouts based on project size:
-     - Small (<100 files): 600s (10 min)
-     - Medium (100-500 files): 900s (15 min)
-     - Large (500+ files): 1200s (20 min)
-   - Configure model escalation (simple→haiku, medium→sonnet, complex→opus)
+From your analysis, determine these values:
+- `project_name` — from package.json name field
+- `timeout` — based on project size: small (<100 files) = 600, medium (100-500) = 900, large (500+) = 1200
+- `commit_prefix` — from git log patterns (e.g., "feat:", "maximus:", etc.)
 
-3. **Configuration template:**
+### Step 3: Write config.yml
+
+Write `.maximus/config.yml` using EXACTLY this schema. Replace only the `[bracketed]` values with real values from Step 2. Do NOT add, remove, rename, or restructure any fields.
 
 ```yaml
 # Maximus Loop Configuration — [project-name]
@@ -203,11 +190,10 @@ loop:
 
 agent:
   default_model: sonnet
-  timeout: [calculated-timeout]
+  timeout: [calculated-timeout-integer]
   max_retries: 2
 
   # Model escalation — assigns different models by task complexity_level.
-  # Enabled here for cost efficiency (beyond CLI defaults which leave this commented out).
   escalation:
     enabled: true
     simple: haiku
@@ -238,50 +224,59 @@ git:
 #   max_phases: 3
 ```
 
-4. **Write config:** Save to `.maximus/config.yml`
+<SCHEMA-ENFORCEMENT>
+The config above is the COMPLETE and EXACT schema. The engine's TypeScript Config interface defines these top-level keys and ONLY these:
+- `project_name` (string)
+- `loop` (object with: max_iterations, mode, auto_commit, continue_on_error)
+- `agent` (object with: default_model, timeout, max_retries, escalation?)
+- `tasks` (object with: source, auto_mark_done)
+- `context` (optional object with: files?)
+- `progress` (object with: file, format)
+- `git` (object with: enabled, commit_prefix, auto_push)
+- `review` (optional object with: enabled, min_severity, max_phases)
 
-5. **Ensure .gitignore entries:** If `.maximus/` already existed (skipped `maximus init`), check `.gitignore` for these entries and add any that are missing:
-   ```
-   .maximus/.heartbeat
-   .maximus/.stop
-   .maximus/.pause
-   .maximus/.completed-tasks.json
-   .maximus/run-summary.json
-   .maximus/logs/
-   ```
+Do NOT invent additional fields. Do NOT nest fields differently. Do NOT add `project:`, `stack:`, `verify:`, `guardrails:`, `conventions:`, `description:`, or any other custom sections. The engine parser will not understand them.
+</SCHEMA-ENFORCEMENT>
 
-**Present generated config:**
+### Step 4: Ensure .gitignore entries
+
+If `.maximus/` already existed (you skipped `maximus init`), check `.gitignore` and add any missing entries:
+```
+.maximus/.heartbeat
+.maximus/.stop
+.maximus/.pause
+.maximus/.completed-tasks.json
+.maximus/run-summary.json
+.maximus/logs/
+```
+
+### Step 5: Present config and ask for confirmation
+
+**Present generated config to the user:**
 ```
 Generated Configuration:
   Project: [name]
   Timeout: [value]s
   Commit prefix: "[prefix]"
-  Test command: [command]
-  Model escalation: enabled
+  Model escalation: haiku / sonnet / opus
+  Max iterations: -1 (unlimited)
 ```
 
-Ask: "Does this configuration look correct?"
+**Ask:** "Does this configuration look correct?"
 
-Wait for user confirmation before proceeding.
+**STOP and wait for user confirmation before proceeding to Phase 4.**
 
-**Mark task as completed:**
-```
-TaskUpdate: taskId "task-3", status "completed"
-```
+**Mark task as completed after user confirms.**
 
 ---
 
 ## Phase 4: Clean
 
-**Mark task as in_progress:**
-```
-TaskUpdate: taskId "task-4", status "in_progress"
-```
+**Mark task as in_progress.**
 
-Replace example plan.json tasks with empty array:
+Replace example plan.json tasks with an empty tasks array:
 
-1. **Read current plan:** Read `.maximus/plan.json`
-2. **Generate clean plan:**
+1. **Write clean plan to `.maximus/plan.json`:**
 
 ```json
 {
@@ -289,37 +284,24 @@ Replace example plan.json tasks with empty array:
 }
 ```
 
-3. **Write clean plan:** Save to `.maximus/plan.json`
+That is the COMPLETE file contents. Do NOT add `version`, `project`, `created`, or any other fields.
 
-**Note:** This removes any example/boilerplate tasks. User will create their own task plan with `/maximus-plan`.
-
-**Mark task as completed:**
-```
-TaskUpdate: taskId "task-4", status "completed"
-```
+**Mark task as completed.**
 
 ---
 
 ## Phase 5: Suggest
 
-**Mark task as in_progress:**
-```
-TaskUpdate: taskId "task-5", status "in_progress"
-```
+**Mark task as in_progress.**
 
 List installed skills available for task configuration:
 
-1. **Check skill availability:**
-   - Skills can be referenced in task `skills` property in plan.json
-   - Skills provide specialized knowledge for complex tasks
-
-2. **Discover installed skills:**
+1. **Discover installed skills:**
    - Check `~/.claude/plugins/` for installed plugin directories
    - For each plugin, read its `plugin.json` or scan `skills/` subdirectory
    - Also check `~/.claude/skills/` for standalone skills
-   - Format as table with plugin:skill-name and description
 
-**Present suggestions:**
+2. **Present suggestions to the user:**
 ```
 Available Skills for Tasks:
   - [plugin-name:skill-name] — [description]
@@ -330,37 +312,30 @@ These skills can be added to individual tasks in the plan
 to provide specialized guidance during execution.
 ```
 
-**Note:** Only list skills that are actually installed. Do not guess or hardcode skill names.
+Only list skills that are actually installed. Do NOT guess or hardcode skill names.
 
-**Mark task as completed:**
-```
-TaskUpdate: taskId "task-5", status "completed"
-```
+**Mark task as completed.**
 
 ---
 
 ## Phase 6: Handoff
 
-**Mark task as in_progress:**
-```
-TaskUpdate: taskId "task-6", status "in_progress"
-```
+**Mark task as in_progress.**
 
-Display next steps and guide to /maximus-plan:
-
-**Present completion message:**
+**Present completion message to the user:**
 
 ```
-✓ Maximus Loop is configured for [project-name]
+Maximus Loop is configured for [project-name]
 
 Configuration saved to:
   .maximus/config.yml — Engine settings
   .maximus/plan.json — Empty task list (ready for planning)
+  .maximus/progress.md — Iteration tracker
 
 Next Steps:
   1. Review config: cat .maximus/config.yml
   2. Commit setup:
-     git add .maximus/
+     git add .maximus/ .gitignore
      git commit -m "[prefix] Initialize Maximus Loop"
   3. Create your first task plan:
      Run /maximus-plan to design tasks for your feature
@@ -368,60 +343,17 @@ Next Steps:
 Your project is configured. Run /maximus-plan to create your first task plan.
 ```
 
-**Mark task as completed:**
-```
-TaskUpdate: taskId "task-6", status "completed"
-```
-
----
-
-## Best Practices
-
-**Project-Specific Configuration:**
-- Always read actual project files, never use generic defaults
-- Extract project name from package.json/Cargo.toml/etc.
-- Detect commit conventions from git history
-- Configure test runner based on actual testing setup
-
-**Timeout Calculation:**
-- Consider project size and complexity
-- Small projects: 10 min per task
-- Medium projects: 15 min per task
-- Large projects: 20 min per task
-- Can be adjusted in config.yml after setup
-
-**Model Escalation:**
-- Always enable escalation for cost efficiency
-- Simple tasks → haiku (~$0.32)
-- Medium tasks → sonnet (~$2.27)
-- Complex tasks → opus (~$5.00+)
-
-**Configuration Validation:**
-- Verify project_name is not boilerplate
-- Verify commit_prefix matches git history
-- Verify test command exists in project
-- Verify timeout is appropriate for project size
+**Mark task as completed.**
 
 ---
 
 ## Red Flags
 
-**Never:**
-- Run 'maximus init' without analyzing the project first
-- Use generic project names like "my-project" or "example"
-- Set commit_prefix to generic values when project has specific conventions
-- Skip reading CLAUDE.md for project-specific requirements
-- Write config.yml without user approval
-- Keep example tasks in plan.json after initialization
-- Skip the handoff message that points to /maximus-plan
-
-**If you catch yourself thinking** "this project looks standard, I'll use defaults":
-STOP. Every project has unique conventions. Read the files.
-
----
-
-## Reference Files
-
-For additional context:
-- **Task API patterns:** `${CLAUDE_PLUGIN_ROOT}/references/task-api.md`
-- **Plan schema:** `${CLAUDE_PLUGIN_ROOT}/references/plan-schema.md`
+**If you catch yourself doing any of these, STOP immediately:**
+- Creating a directory named anything other than `.maximus/`
+- Adding fields to config.yml that aren't in the template above
+- Adding fields to plan.json beyond `{"tasks": []}`
+- Using `mkdir` instead of `maximus init`
+- Writing config without asking the user first
+- Skipping phases or combining them
+- Not using TaskCreate for progress tracking
