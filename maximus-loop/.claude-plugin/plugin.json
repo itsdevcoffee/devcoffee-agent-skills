@@ -1,12 +1,12 @@
 {
   "name": "maximus-loop",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Maximus Loop plugin providing interactive task planning, project initialization, and run analysis for autonomous coding agents",
   "author": {
     "name": "Dev Coffee",
     "url": "https://github.com/itsdevcoffee"
   },
   "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
-  "keywords": ["planning", "automation", "task-generation", "autonomous-coding", "init", "review", "status", "analysis"],
+  "keywords": ["planning", "automation", "task-generation", "autonomous-coding", "init", "review", "validate", "status", "analysis"],
   "license": "MIT"
 }

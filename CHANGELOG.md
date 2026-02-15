@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [maximus-loop v0.3.0] - 2026-02-15
+
+### Added
+
+**New `/maximus-validate` skill — deterministic config validation with project-aware advisories**
+- `maximus validate` CLI command in maximus-loop engine: 6 sequential checks (directory, YAML parse, schema, plan, progress, gitignore), terminal + JSON output modes, exit code 0/1
+- `/maximus-validate` skill: 3-phase workflow — run CLI validation, project-aware analysis (timeout vs project size, context files, escalation status, commit prefix), present findings
+- `config-schema.md` reference: authoritative field reference with types, defaults, valid values, and "Common Mistakes" table of invented fields agents create
+- Command and agent files with yellow color (semantic for validation/caution)
+
+### Changed
+
+**Refactored `/maximus-init` to 4 phases using `maximus validate` for detection and verification**
+- Phase 1 (Detect): runs `maximus validate --json` instead of manual `ls .maximus/` — handles 3 states (missing, invalid, valid)
+- Phase 2 (Analyze): unchanged — reads project files for name, timeout, commit prefix
+- Phase 3 (Configure): uses `maximus init` CLI + modifies only 3 values instead of writing config from scratch
+- Phase 4 (Validate & Handoff): runs `maximus validate --json` as final safety net with max 2 retry attempts
+- Reduced from 6 phases to 4 (merged detect+clean+suggest+handoff)
+- Already-valid configs now show summary and ask about changes instead of re-running full setup
+
 ## [maximus-loop v0.2.3] - 2026-02-15
 
 ### Fixed

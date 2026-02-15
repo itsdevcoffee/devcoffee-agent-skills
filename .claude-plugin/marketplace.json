@@ -71,7 +71,7 @@
     {
       "name": "maximus-loop",
       "source": "./maximus-loop",
-      "description": "Interactive task plan generation for autonomous coding agents - design, validate, and manage structured task plans for the Maximus Loop engine",
+      "description": "Complete autonomous coding workflow for the Maximus Loop engine - interactive plan generation, project initialization, configuration validation, and intelligent run analysis",
       "version": "0.3.0",
       "author": {
         "name": "Dev Coffee",
@@ -83,7 +83,11 @@
         "automation",
         "task-generation",
         "autonomous-coding",
+        "init",
         "validate",
+        "review",
+        "status",
+        "analysis",
         "maximus-loop"
       ],
       "category": "Automation",

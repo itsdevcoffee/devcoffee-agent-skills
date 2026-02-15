@@ -1,12 +1,13 @@
 # Maximus Loop Plugin
 
-Complete autonomous coding workflow for the [Maximus Loop](https://github.com/itsdevcoffee/maximus-loop) engine: interactive plan generation, project initialization, and intelligent run analysis.
+Complete autonomous coding workflow for the [Maximus Loop](https://github.com/itsdevcoffee/maximus-loop) engine: interactive plan generation, project initialization, configuration validation, and intelligent run analysis.
 
 ## What It Does
 
-The Maximus Loop plugin provides three complementary skills for autonomous task execution:
+The Maximus Loop plugin provides four complementary skills for autonomous task execution:
 - **Plan Generation** (`/maximus-plan`) - Design task plans interactively with cost estimates and validation
 - **Project Initialization** (`/maximus-init`) - Smart project setup with codebase-aware configuration
+- **Config Validation** (`/maximus-validate`) - Deterministic CLI checks plus project-aware advisories
 - **Run Analysis** (`/maximus-review`) - Post-execution review and real-time status monitoring
 
 ## Installation
@@ -22,13 +23,16 @@ maximus init  # Auto-suggests plugin installation
 
 ## Skills
 
-The plugin provides three integrated skills:
+The plugin provides four integrated skills:
 
 ### /maximus-plan
 Generate task plans through interactive conversation. Explores your codebase, asks clarifying questions, proposes a phased approach, and generates a validated `plan.json` with cost estimates.
 
 ### /maximus-init
 Smart project initialization that reads your codebase to generate tailored configuration instead of generic boilerplate. Detects project structure, test runners, and git conventions.
+
+### /maximus-validate
+Validate your project configuration before running the engine. Runs 6 deterministic CLI checks (directory, YAML, schema, plan, progress, gitignore) and provides project-aware advisories like timeout vs project size.
 
 ### /maximus-review
 Analyze autonomous run results with full review or quick status. Supports `--quick` flag for real-time progress monitoring without the full analysis report.
@@ -67,6 +71,7 @@ Analyze autonomous run results with full review or quick status. Supports `--qui
 /maximus-plan                          # Start interactive plan session
 /maximus-plan add user authentication  # Start with a feature description
 /maximus-init                          # Initialize project configuration
+/maximus-validate                      # Validate config before running
 /maximus-review                        # Analyze completed run
 /maximus-review --quick                # Quick status check
 ```
@@ -76,17 +81,22 @@ Analyze autonomous run results with full review or quick status. Supports `--qui
 1. **Initialize** - `/maximus-init` sets up your project configuration
    - Analyzes codebase structure, test runners, and conventions
    - Generates tailored `config.yml` instead of generic boilerplate
+   - Uses `maximus validate` for detection and final verification
 
-2. **Plan** - `/maximus-plan` designs your task breakdown
+2. **Validate** - `/maximus-validate` checks your configuration
+   - Runs 6 deterministic CLI checks (directory, YAML, schema, plan, progress, gitignore)
+   - Provides project-aware advisories (timeout vs size, context files, escalation)
+
+3. **Plan** - `/maximus-plan` designs your task breakdown
    - Explores your codebase and clarifies your goals
    - Proposes phased approach with cost estimates
    - Generates validated `plan.json` after your approval
 
-3. **Execute** - `maximus run` runs the autonomous engine
+4. **Execute** - `maximus run` runs the autonomous engine
    - Executes tasks according to your plan
    - Tracks progress and costs in real-time
 
-4. **Review** - `/maximus-review` analyzes results
+5. **Review** - `/maximus-review` analyzes results
    - Full analysis: identifies patterns, failures, and recommendations
    - Quick status: real-time progress with `--quick` flag
 
@@ -98,16 +108,22 @@ maximus-loop/
 ├── agents/
 │   ├── maximus-plan.md                     # /maximus-plan auto-trigger agent
 │   ├── maximus-init.md                     # /maximus-init auto-trigger agent
+│   ├── maximus-validate.md                 # /maximus-validate auto-trigger agent
 │   └── maximus-review.md                   # /maximus-review auto-trigger agent
 ├── commands/
 │   ├── maximus-plan.md                     # /maximus-plan slash command
 │   ├── maximus-init.md                     # /maximus-init slash command
+│   ├── maximus-validate.md                 # /maximus-validate slash command
 │   └── maximus-review.md                   # /maximus-review slash command
 ├── skills/
 │   ├── maximus-plan/
 │   │   └── SKILL.md                        # Plan generation skill
 │   ├── maximus-init/
 │   │   └── SKILL.md                        # Project initialization skill
+│   ├── maximus-validate/
+│   │   ├── SKILL.md                        # Config validation skill
+│   │   └── references/
+│   │       └── config-schema.md            # Config field reference
 │   └── maximus-review/
 │       └── SKILL.md                        # Run analysis skill
 ├── references/
