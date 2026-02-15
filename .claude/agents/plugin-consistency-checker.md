@@ -66,7 +66,7 @@ For each plugin, verify:
 **Commands (`commands/*.md`):**
 - [ ] NO `name` field (filename IS the name)
 - [ ] Has `description` field
-- [ ] Has `disable-model-invocation: true`
+- [ ] Does NOT have `disable-model-invocation: true` (blocks Skill tool invocation)
 - [ ] Body is thin wrapper (1-2 lines delegating to skill)
 
 **Agents (`agents/*.md`):**
@@ -89,6 +89,7 @@ For each plugin, verify:
 - [ ] Commands with full logic (violates thin wrapper pattern)
 - [ ] Skills in flat structure (`skills/*.md` instead of `skills/*/SKILL.md`)
 - [ ] `@` references between skills (should use `plugin:skill` format)
+- [ ] Commands with `disable-model-invocation: true` (blocks Skill tool)
 
 ## Output Format
 

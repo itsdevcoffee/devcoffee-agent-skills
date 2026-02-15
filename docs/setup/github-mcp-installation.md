@@ -5,8 +5,10 @@
 Run this command **outside** of your Claude Code session:
 
 ```bash
-claude mcp add github --global -- npx -y @modelcontextprotocol/server-github
+clu mcp add github -- npx -y @modelcontextprotocol/server-github
 ```
+
+**Note:** If you have a `claude` alias, use `clu` instead. The `--global` flag is not needed.
 
 ## Environment Setup
 
