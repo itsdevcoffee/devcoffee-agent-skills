@@ -68,7 +68,7 @@
       "name": "maximus-loop",
       "source": "./maximus-loop",
       "description": "Complete autonomous coding workflow for the Maximus Loop engine - interactive plan generation, project initialization, configuration validation, and intelligent run analysis",
-      "version": "0.3.9",
+      "version": "0.4.0",
       "author": {
         "name": "Dev Coffee",
         "url": "https://github.com/itsdevcoffee"

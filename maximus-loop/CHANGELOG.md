@@ -5,6 +5,22 @@ All notable changes to the maximus-loop plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-02-15
+
+### Changed
+
+- **Full skill rewrite** based on 5-agent compliance analysis (root cause: "Description Trap")
+- Replace EXECUTION-SEQUENCE code block with H3-header steps — agents follow headers, skip code blocks
+- Remove CRITICAL-CONSTRAINTS section — constraints now embedded in the steps where they execute
+- Remove Red Flags section (17 bullets at bottom never read) — converted to positive instructions inline
+- Linearize State A as default path — State B/C moved to "Alternate Paths" appendix
+- Strip command CRITICAL block — command is now a true thin wrapper (1 line)
+- Strip agent "Key rules" summary (6 points that enabled shortcutting) — agent CRITICAL now says only "read skill, follow every step"
+- Fix skill description: removed workflow summary ("runs init, edits 3 values") — now trigger-only per CLAUDE.md rule #5
+- Fix Announce text: "I'll validate your current setup" instead of "I'll run maximus init" (was priming premature execution)
+- Add STOP conditions in Phase 2 steps to prevent scope creep
+- Each Edit operation is now its own H3 step (Steps 5/6/7 in Phase 3) instead of a numbered list
+
 ## [0.3.9] - 2026-02-15
 
 ### Changed
