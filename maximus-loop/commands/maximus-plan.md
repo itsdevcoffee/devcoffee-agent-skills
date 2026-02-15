@@ -1,8 +1,6 @@
 ---
-name: maximus-plan
 description: Design and generate a task plan for the maximus autonomous engine
 argument-hint: "[feature description] [--extend]"
-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion, TaskCreate, TaskUpdate, TaskList
 ---
 
 <CRITICAL>

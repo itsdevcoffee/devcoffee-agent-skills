@@ -16,7 +16,7 @@ Set up the Maximus Loop autonomous engine for a specific project. Analyze the co
 
 2. **Config schema is FIXED** — Use EXACT field names from the template below. Do NOT invent fields, do NOT add custom comments beyond the template's comments. Reference: `${CLAUDE_PLUGIN_ROOT}/skills/maximus-validate/references/config-schema.md`
 
-3. **Plan schema is FIXED** — plan.json MUST contain `{"tasks": []}` at minimum.
+3. **Plan schema is FIXED** — plan.json MUST contain `{"version": "1.0.0", "tasks": []}` at minimum.
 
 4. **Run `maximus init` first** — When `.maximus/` does not exist, run the CLI command. Do NOT manually `mkdir`. Note: `maximus init` has NO `--help` flag — running `maximus init --help` will execute init. Just run `maximus init` directly.
 
@@ -25,21 +25,22 @@ Set up the Maximus Loop autonomous engine for a specific project. Analyze the co
 6. **Follow the 4 phases in order** — Do NOT launch Explore agents, do NOT do broad codebase exploration. Each phase specifies exactly what to read and run.
 
 7. **Phase 1 is ALWAYS `maximus validate --json`** — This is your FIRST action. Do not read files, explore, or check anything else before running this command.
+
+8. **Task API is MANDATORY** — You MUST use TaskCreate at the START of each phase and TaskUpdate (status: "completed") at the END. This gives the user real-time progress visibility. Never skip this.
 </CRITICAL-CONSTRAINTS>
 
 ---
 
 ## Phase 1: Detect & Validate
 
-**Create Task:**
-```
-TaskCreate:
-  subject: "Detect & validate existing setup"
-  description: "Run maximus validate --json and determine current state"
-  activeForm: "Detecting existing setup"
-```
+**FIRST — Create a task to track this phase.** Call the TaskCreate tool:
+- subject: `Detect & validate existing setup`
+- description: `Run maximus validate --json and determine current state`
+- activeForm: `Detecting existing setup`
 
-**Your FIRST action must be running this command:**
+Then set it to in_progress with TaskUpdate.
+
+**Your FIRST action after creating the task must be running this command:**
 
 ```bash
 maximus validate --json
@@ -90,19 +91,18 @@ Wait for the user's response before proceeding.
 - If no changes → Skip to Phase 4 handoff (skip Phases 2 and 3)
 - If changes → Note what to change, proceed to Phase 2
 
-**Mark task as completed.**
+**Mark the Phase 1 task as completed** using TaskUpdate (status: "completed").
 
 ---
 
 ## Phase 2: Analyze
 
-**Create Task:**
-```
-TaskCreate:
-  subject: "Analyze project structure"
-  description: "Read package files, git log, and count files to determine config values"
-  activeForm: "Analyzing project structure"
-```
+**Create a task for this phase.** Call the TaskCreate tool:
+- subject: `Analyze project structure`
+- description: `Read package files, git log, and count files to determine config values`
+- activeForm: `Analyzing project structure`
+
+Then set it to in_progress with TaskUpdate.
 
 Read these specific files to determine 3 values. Do NOT launch Explore agents or do broad exploration.
 
@@ -119,19 +119,18 @@ Project Analysis:
   Commit prefix:  "[detected-prefix]"
 ```
 
-**Mark task as completed.**
+**Mark the Phase 2 task as completed** using TaskUpdate (status: "completed").
 
 ---
 
 ## Phase 3: Configure
 
-**Create Task:**
-```
-TaskCreate:
-  subject: "Configure Maximus settings"
-  description: "Generate tailored config.yml and clean plan.json"
-  activeForm: "Configuring Maximus settings"
-```
+**Create a task for this phase.** Call the TaskCreate tool:
+- subject: `Configure Maximus settings`
+- description: `Generate tailored config.yml and clean plan.json`
+- activeForm: `Configuring Maximus settings`
+
+Then set it to in_progress with TaskUpdate.
 
 ### Step 1: Create or fix .maximus/
 
@@ -152,9 +151,26 @@ Do NOT run `maximus init` (it refuses to re-initialize). Apply targeted fixes to
 
 Apply only the requested changes.
 
+<DO-NOT-INVENT>
+**STOP — Read this before writing config.yml.** Agents frequently hallucinate these fields. NONE of them exist:
+
+| You might write... | Correct field |
+|---|---|
+| `agent.model` | `agent.default_model` |
+| `loop.iterations` | `loop.max_iterations` |
+| `git.prefix` | `git.commit_prefix` |
+| `git.push` | `git.auto_push` |
+| `project:` (nested object with name/root/description) | Flat `project_name` string only |
+| `stack:`, `verify:`, `guardrails:`, `conventions:` | DO NOT EXIST — delete them |
+| `description:`, `language:`, `framework:`, `test_command:` | DO NOT EXIST — delete them |
+| `engine:` (top-level) | DO NOT EXIST — settings are under `loop:` and `agent:` |
+
+If your output has ANY field not in the template below, you have a bug. Delete it.
+</DO-NOT-INVENT>
+
 ### Step 2: Write config.yml
 
-Write `.maximus/config.yml` using EXACTLY this template. Replace only `[bracketed]` values with real values from Phase 2. Do NOT add extra comments, do NOT add descriptive comments about the project, do NOT modify the template structure.
+**Copy this template CHARACTER-FOR-CHARACTER.** Replace ONLY `[bracketed]` values with real values from Phase 2. Do NOT add extra comments, do NOT add descriptive comments about the project, do NOT add extra sections. Your output MUST have exactly 9 top-level keys/sections (including commented `review`). If you have more, you invented something — delete it.
 
 ```yaml
 # Maximus Loop Configuration — [project-name]
@@ -221,6 +237,7 @@ Do NOT invent fields. Do NOT add custom comments beyond what the template shows.
 
 ```json
 {
+  "version": "1.0.0",
   "tasks": []
 }
 ```
@@ -235,19 +252,18 @@ Present the key config values, then use the `AskUserQuestion` tool:
 
 If the user wants changes, apply them and re-confirm. Do NOT proceed to Phase 4 until the user approves.
 
-**Mark task as completed after user confirms.**
+**Mark the Phase 3 task as completed** using TaskUpdate (status: "completed") after user confirms.
 
 ---
 
 ## Phase 4: Validate & Handoff
 
-**Create Task:**
-```
-TaskCreate:
-  subject: "Validate & handoff"
-  description: "Run final validation and present next steps"
-  activeForm: "Validating final configuration"
-```
+**Create a task for this phase.** Call the TaskCreate tool:
+- subject: `Validate & handoff`
+- description: `Run final validation and present next steps`
+- activeForm: `Validating final configuration`
+
+Then set it to in_progress with TaskUpdate.
 
 Run `maximus validate --json` as a final safety net.
 
@@ -275,7 +291,7 @@ Show failures from the JSON output. Attempt to fix (max 2 attempts). Re-validate
 
 If still invalid after 2 attempts, report the remaining failures and ask the user for help.
 
-**Mark task as completed.**
+**Mark the Phase 4 task as completed** using TaskUpdate (status: "completed").
 
 ---
 
@@ -293,3 +309,5 @@ If you catch yourself doing any of these, STOP immediately:
 - Skipping the final `maximus validate --json` check in Phase 4
 - Proceeding past Phase 3 without user approval
 - Modifying progress.md contents (the init command generates it correctly)
+- Skipping TaskCreate/TaskUpdate calls — every phase MUST have both
+- Running `maximus --version` or other commands not specified in the phases

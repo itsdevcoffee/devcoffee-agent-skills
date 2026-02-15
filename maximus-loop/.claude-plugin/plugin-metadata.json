@@ -1,0 +1,31 @@
+{
+  "name": "maximus-loop",
+  "version": "0.3.6",
+  "description": "Maximus Loop plugin providing interactive task planning, project initialization, configuration validation, and run analysis for autonomous coding agents",
+  "author": {
+    "name": "Dev Coffee",
+    "url": "https://github.com/itsdevcoffee"
+  },
+  "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
+  "keywords": ["planning", "automation", "task-generation", "autonomous-coding", "init", "review", "validate", "status", "analysis"],
+  "license": "MIT",
+  "category": "Automation",
+  "components": {
+    "agents": ["maximus-init", "maximus-plan", "maximus-review", "maximus-validate"],
+    "commands": ["maximus-init", "maximus-plan", "maximus-review", "maximus-validate"],
+    "skills": ["maximus-init", "maximus-plan", "maximus-review", "maximus-validate"],
+    "hooks": []
+  },
+  "dependencies": {
+    "plugins": [],
+    "external": ["maximus"]
+  },
+  "installation": {
+    "marketplace": "devcoffee-marketplace",
+    "setup": ["Install maximus CLI: npm install -g maximus-loop"]
+  },
+  "usage": {
+    "when": "Setting up autonomous task-driven development workflows",
+    "examples": ["/maximus-loop:maximus-init", "/maximus-loop:maximus-plan", "/maximus-loop:maximus-review", "/maximus-loop:maximus-validate"]
+  }
+}

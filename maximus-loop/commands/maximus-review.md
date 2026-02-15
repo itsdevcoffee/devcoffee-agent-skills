@@ -1,8 +1,6 @@
 ---
-name: maximus-review
 description: Review progress and status of an active Maximus Loop execution
 argument-hint: "[--quick]"
-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion, TaskCreate, TaskUpdate, TaskList
 ---
 
 <CRITICAL>
