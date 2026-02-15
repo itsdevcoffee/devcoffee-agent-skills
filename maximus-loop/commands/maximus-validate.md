@@ -9,6 +9,6 @@ After loading the skill, follow its instructions exactly — start with `maximus
 Do NOT read files, search patterns, explore the codebase, or ask questions before running that command.
 </CRITICAL>
 
-Invoke the maximus-loop:maximus-validate skill and follow it exactly as presented to you.
+Invoke the maximus-loop:maximus-validate skill ONCE. After it loads, begin executing its instructions immediately — do NOT invoke it again.
 
 **Arguments received:** $ARGUMENTS

@@ -8,6 +8,6 @@ After loading the skill below, EXECUTE ITS INSTRUCTIONS DIRECTLY in this convers
 DO NOT use the Task tool to delegate or spawn subagents.
 </CRITICAL>
 
-Invoke the maximus-loop:maximus-plan skill and follow it exactly as presented to you.
+Invoke the maximus-loop:maximus-plan skill ONCE. After it loads, begin executing its instructions immediately — do NOT invoke it again.
 
 **Arguments received:** $ARGUMENTS

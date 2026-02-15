@@ -9,6 +9,6 @@ After loading the skill, follow its phases exactly — starting with TaskCreate 
 Do NOT read files, search patterns, explore the codebase, or ask questions before starting Phase 1.
 </CRITICAL>
 
-Invoke the maximus-loop:maximus-init skill and follow it exactly as presented to you.
+Invoke the maximus-loop:maximus-init skill ONCE. After it loads, begin executing its instructions immediately — do NOT invoke it again.
 
 **Arguments received:** $ARGUMENTS
