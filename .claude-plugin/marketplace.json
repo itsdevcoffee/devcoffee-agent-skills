@@ -162,6 +162,26 @@
       "license": "MIT"
     },
     {
+      "name": "jot",
+      "source": "./jot",
+      "description": "General-purpose note capture and review system - fire-and-forget notes with project tagging and guided triage",
+      "version": "0.1.0",
+      "author": {
+        "name": "Dev Coffee",
+        "url": "https://github.com/itsdevcoffee"
+      },
+      "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
+      "keywords": [
+        "notes",
+        "capture",
+        "review",
+        "triage",
+        "productivity"
+      ],
+      "category": "Standalone Tools",
+      "license": "MIT"
+    },
+    {
       "name": "test-plugin-green",
       "source": "./test-plugin-green",
       "description": "Generate unit tests for code",

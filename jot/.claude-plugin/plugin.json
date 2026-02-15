@@ -1,0 +1,12 @@
+{
+  "name": "jot",
+  "version": "0.1.0",
+  "description": "General-purpose note capture and review system. Fire-and-forget notes with project tagging and guided triage.",
+  "author": {
+    "name": "Dev Coffee",
+    "url": "https://github.com/itsdevcoffee"
+  },
+  "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
+  "license": "MIT",
+  "keywords": ["notes", "capture", "review", "triage", "productivity"]
+}

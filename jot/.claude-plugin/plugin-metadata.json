@@ -1,0 +1,32 @@
+{
+  "name": "jot",
+  "version": "0.1.0",
+  "description": "General-purpose note capture and review system. Fire-and-forget notes with project tagging and guided triage.",
+  "author": {
+    "name": "Dev Coffee",
+    "url": "https://github.com/itsdevcoffee"
+  },
+  "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
+  "keywords": ["notes", "capture", "review", "triage", "productivity"],
+  "license": "MIT",
+  "tagline": "Fire-and-forget notes with project tagging",
+  "category": "standalone",
+  "components": {
+    "commands": ["note", "review"],
+    "skills": ["note", "review"],
+    "agents": [],
+    "hooks": []
+  },
+  "dependencies": {
+    "plugins": [],
+    "external": []
+  },
+  "installation": {
+    "marketplace": "devcoffee-marketplace",
+    "setup": []
+  },
+  "usage": {
+    "when": "Mid-task to capture ideas, bugs, reminders for any project",
+    "examples": ["/jot:note aqimo update CLAUDE.md for soft paywall", "/jot:review"]
+  }
+}
