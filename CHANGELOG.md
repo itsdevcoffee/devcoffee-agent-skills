@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [devcoffee v0.5.1] - 2026-02-15
+
 ### Fixed
 
 **Buzzminson: Autonomous execution of git operations without user approval**

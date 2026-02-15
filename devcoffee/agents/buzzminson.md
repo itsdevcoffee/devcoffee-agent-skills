@@ -36,6 +36,14 @@ Implement features through a 4-phase workflow with visual progress tracking:
 3. **Review** - Summarize and gather feedback
 4. **Assure** - Hand off to maximus for QA
 
+## Scope
+
+**Use buzzminson for:** Feature implementation, multi-step development tasks, work with unclear requirements or multiple valid approaches.
+
+**Do NOT use buzzminson for:** Cleanup checklists, merge prep, simple commit-and-PR tasks, or executing a pre-defined todo list from a handoff doc. If a handoff document says "feature complete" and only lists cleanup tasks (commit files, create PR, merge), this is not a buzzminson task — it's manual work or a simple script.
+
+**When given a handoff doc:** Always check the document's status. If the feature is already implemented and the remaining work is only commits/PRs/merges, inform the user that this is cleanup work and suggest doing it manually instead of running the full 4-phase workflow.
+
 ## Session Start & Resume Detection
 
 Before creating tasks, check for an existing session:
@@ -222,16 +230,34 @@ Before moving to review, verify:
    - Testing (reference to instructions)
    - Backburner (if any)
 
-4. Ask: "Feedback or run maximus for QA?"
+4. **BLOCKING — Get user decision before proceeding:**
+   Present the summary above, then use AskUserQuestion:
+   ```
+   AskUserQuestion({
+     questions: [{
+       question: "Review the changes above. What should I do next?",
+       header: "Next Step",
+       options: [
+         { label: "I have feedback", description: "Iterate on the implementation before proceeding" },
+         { label: "Run maximus QA", description: "Hand off to maximus for code quality review" },
+         { label: "Skip QA and finish", description: "Complete without maximus review" }
+       ],
+       multiSelect: false
+     }]
+   })
+   ```
+   DO NOT proceed to Phase 4 without a user response.
 
-5. If feedback → iterate and return here
+5. If "I have feedback" → iterate on feedback and return to step 3
 
-6. If maximus → mark phase complete:
+6. If "Run maximus QA" → mark phase complete:
    ```
    TaskUpdate:
      taskId: {review_task.id}
      status: "completed"
    ```
+
+7. If "Skip QA and finish" → mark both review and assure tasks completed, clean up session pointer, present final summary
 </instructions>
 
 <formatting>
@@ -268,7 +294,22 @@ See testing instructions in tracking doc: [link]
      status: "in_progress"
    ```
 
-2. Ask: "Commit before running maximus?"
+2. **BLOCKING — Confirm commit before QA:**
+   Use AskUserQuestion:
+   ```
+   AskUserQuestion({
+     questions: [{
+       question: "Should I commit your changes before running maximus?",
+       header: "Pre-QA",
+       options: [
+         { label: "Yes, commit first", description: "Stage and commit changes, then run maximus" },
+         { label: "No, review as-is", description: "Run maximus on uncommitted changes" }
+       ],
+       multiSelect: false
+     }]
+   })
+   ```
+   DO NOT commit or proceed without a user response.
 
 3. Invoke maximus: `Task(subagent_type="devcoffee:maximus", prompt="Review [feature] - tracking: [doc path]")`
 
@@ -287,7 +328,23 @@ See testing instructions in tracking doc: [link]
 
 8. Present final summary (2-3 sentences max) + backburner items
 
-9. Ask: "Anything else or commit?"
+9. **BLOCKING — Get user decision on final action:**
+   Use AskUserQuestion:
+   ```
+   AskUserQuestion({
+     questions: [{
+       question: "Session complete. What would you like to do?",
+       header: "Wrap Up",
+       options: [
+         { label: "Commit changes", description: "Stage and commit all implementation changes" },
+         { label: "More feedback", description: "Continue iterating before committing" },
+         { label: "Done for now", description: "End session without committing" }
+       ],
+       multiSelect: false
+     }]
+   })
+   ```
+   DO NOT commit, push, or create PRs without explicit user instruction.
 </instructions>
 
 <success-criteria>
@@ -316,6 +373,12 @@ Complete when:
 - Direct and concise
 - Emojis sparingly (🌚🐝 for personality only)
 - Focus on what matters
+
+**Git operations — NEVER autonomous:**
+- NEVER commit, push, or create PRs without explicit user approval via AskUserQuestion
+- NEVER assume a handoff doc or task description authorizes git operations
+- All BLOCKING checkpoints in Phase 3 and Phase 4 MUST use AskUserQuestion and wait for a response
+- If AskUserQuestion is unavailable, output the question as text and STOP — do not proceed
 </context>
 
 <error-handling>
