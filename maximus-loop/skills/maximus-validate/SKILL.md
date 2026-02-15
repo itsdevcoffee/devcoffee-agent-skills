@@ -1,6 +1,6 @@
 ---
 name: maximus-validate
-description: Validate a Maximus Loop project configuration. Run deterministic CLI checks and provide project-aware advisories. Use when the user asks to "validate maximus", "check maximus config", "verify maximus setup", "is my maximus config correct", or before running the engine.
+description: Validate a Maximus Loop project configuration. Run deterministic CLI checks and provide project-aware advisories. Use when the user asks to "validate maximus", "check maximus config", "verify maximus setup", "is my maximus config correct", "is my project ready to run", "lint my config", or before running the engine.
 ---
 
 # Maximus Validate — Configuration Validator
@@ -45,7 +45,7 @@ This phase adds intelligence on top of the CLI's deterministic checks. Read proj
 ### Advisories to check (only report if relevant):
 
 1. **Timeout vs project size:**
-   - Count files: `find . -type f -not -path './node_modules/*' -not -path './.git/*' | wc -l`
+   - Count files: `find . -type f -not -path './node_modules/*' -not -path './.git/*' -not -path './dist/*' -not -path './build/*' -not -path './.next/*' -not -path './vendor/*' | wc -l`
    - Small (<100 files): 600s is fine, 900+ may be excessive
    - Medium (100–500): 900s recommended
    - Large (500+): 1200s recommended
@@ -59,6 +59,7 @@ This phase adds intelligence on top of the CLI's deterministic checks. Read proj
    - If escalation is disabled but plan has tasks with `complexity_level`, note the mismatch
 
 4. **Commit prefix vs git log:**
+   - First check `git rev-parse --is-inside-work-tree` — skip this advisory if not a git repo or has no commits
    - Run `git log --oneline -5` and compare against `git.commit_prefix`
    - If prefix doesn't match recent commit style, note it (informational only)
 

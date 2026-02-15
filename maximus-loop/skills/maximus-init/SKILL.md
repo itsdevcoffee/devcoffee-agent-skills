@@ -82,8 +82,10 @@ Valid Maximus setup found:
   Auto-push:    [yes/no]
 ```
 
-**Use AskUserQuestion:** "Would you like to change anything?"
+**BLOCKING — Use AskUserQuestion:** "Would you like to change anything?"
 - Options: "No, this is good" / "Yes, I want to change settings"
+
+Wait for the user's response before proceeding.
 
 - If no changes → Skip to Phase 4 handoff (skip Phases 2 and 3)
 - If changes → Note what to change, proceed to Phase 2
@@ -106,7 +108,7 @@ Read these specific files to determine 3 values. Do NOT launch Explore agents or
 
 1. **Project name:** Read `package.json` (or `Cargo.toml`, `go.mod`, `pyproject.toml`) — extract the `name` field
 2. **Commit prefix:** Run `git log --oneline -10` — look for consistent prefixes (e.g., "feat:", "fix:", "maximus:")
-3. **Timeout:** Run `find . -type f -not -path './node_modules/*' -not -path './.git/*' | wc -l` — small (<100) = 600, medium (100–500) = 900, large (500+) = 1200
+3. **Timeout:** Run `find . -type f -not -path './node_modules/*' -not -path './.git/*' -not -path './dist/*' -not -path './build/*' -not -path './.next/*' -not -path './vendor/*' | wc -l` — small (<100) = 600, medium (100–500) = 900, large (500+) = 1200
 
 Present summary:
 
@@ -158,6 +160,7 @@ Write `.maximus/config.yml` using EXACTLY this template. Replace only `[brackete
 # Maximus Loop Configuration — [project-name]
 
 project_name: "[actual-project-name]"
+maximus_version: "1.0.0"
 
 loop:
   max_iterations: -1
@@ -202,13 +205,14 @@ git:
 <SCHEMA-ENFORCEMENT>
 The config above is the COMPLETE and EXACT schema. Top-level keys:
 - `project_name` (string)
+- `maximus_version` (string, default "1.0.0")
 - `loop` (max_iterations, mode, auto_commit, continue_on_error)
 - `agent` (default_model, timeout, max_retries, escalation?)
 - `tasks` (source, auto_mark_done)
-- `context` (files?)
+- `context?` (files?) — optional section
 - `progress` (file, format)
 - `git` (enabled, commit_prefix, auto_push)
-- `review` (enabled, min_severity, max_phases) — optional
+- `review?` (enabled, min_severity, max_phases) — optional section
 
 Do NOT invent fields. Do NOT add custom comments beyond what the template shows. See `${CLAUDE_PLUGIN_ROOT}/skills/maximus-validate/references/config-schema.md` for the full reference.
 </SCHEMA-ENFORCEMENT>
@@ -281,8 +285,11 @@ If you catch yourself doing any of these, STOP immediately:
 - Launching an Explore agent or doing broad codebase exploration
 - Running any command before `maximus validate --json` in Phase 1
 - Creating a directory named anything other than `.maximus/`
+- Using `mkdir` to create `.maximus/` instead of `maximus init`
+- Re-running `maximus init` when `.maximus/` already exists (it will refuse)
 - Adding fields or comments to config.yml that aren't in the template
 - Running `maximus init --help` (there is no --help flag — this will execute init)
 - Writing config without using AskUserQuestion for confirmation
 - Skipping the final `maximus validate --json` check in Phase 4
 - Proceeding past Phase 3 without user approval
+- Modifying progress.md contents (the init command generates it correctly)

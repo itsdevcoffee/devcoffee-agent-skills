@@ -1,6 +1,6 @@
 ---
 name: maximus-validate
-description: Validate a Maximus Loop project configuration. Triggers on "validate maximus config", "check my maximus setup", "verify config before running", "is my maximus config correct", "maximus validate", or when debugging a broken config.
+description: Validate a Maximus Loop project configuration. Triggers on "validate maximus config", "check my maximus setup", "verify config before running", "is my maximus config correct", "is my project ready to run", "lint my config", "maximus validate", or when debugging a broken config.
 model: sonnet
 color: yellow
 tools: Read, Bash, Glob, Grep, AskUserQuestion, TaskCreate, TaskUpdate, TaskList
