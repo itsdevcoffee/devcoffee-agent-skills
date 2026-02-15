@@ -5,52 +5,48 @@ description: This skill should be used when the user asks to "set up maximus", "
 
 # Maximus Init — Project-Aware Setup
 
-Set up the Maximus Loop autonomous engine for a specific project. Analyze the codebase to generate a tailored config.yml instead of generic defaults.
+Run `maximus init` to generate default config files, then tailor exactly 3 values based on project analysis. The agent does NOT write config from scratch — `maximus init` generates the correct template and the agent only tweaks 3 values.
 
 **Announce:** "I'll set up Maximus Loop for your project by analyzing the codebase and generating a tailored configuration."
 
 <CRITICAL-CONSTRAINTS>
 ## Non-Negotiable Rules
 
-1. **Directory MUST be `.maximus/`** — NOT `maximus-loop/`, NOT `maximus/`, NOT any other name.
+1. **Never `mkdir`** — Always use `maximus init` to create `.maximus/`. Never create the directory manually. Note: `maximus init` has NO `--help` flag — running `maximus init --help` will execute init. Just run `maximus init` directly.
 
-2. **Config schema is FIXED** — Use EXACT field names from the template below. Do NOT invent fields, do NOT add custom comments beyond the template's comments. Reference: `${CLAUDE_PLUGIN_ROOT}/skills/maximus-validate/references/config-schema.md`
+2. **Only modify 3 config values** — After `maximus init` generates the default config, change ONLY: `project_name`, `agent.timeout`, `git.commit_prefix`. Do NOT add fields, remove fields, rewrite the file, or restructure the config. The defaults are correct for everything else.
 
-3. **Plan schema is FIXED** — plan.json MUST contain `{"version": "1.0.0", "tasks": []}` at minimum.
+3. **Phase 2 reads exactly 3 things** — package.json (project name), git log (commit prefix), file count (timeout). No framework detection, no dependency analysis, no broad exploration, no reading source files.
 
-4. **Run `maximus init` first** — When `.maximus/` does not exist, run the CLI command. Do NOT manually `mkdir`. Note: `maximus init` has NO `--help` flag — running `maximus init --help` will execute init. Just run `maximus init` directly.
+4. **User confirmation is MANDATORY** — Use `AskUserQuestion` to confirm the config BEFORE proceeding to Phase 4.
 
-5. **User confirmation is MANDATORY** — Use `AskUserQuestion` tool to confirm the config BEFORE writing it. Do NOT skip this.
+5. **Task API is MANDATORY** — Call TaskCreate at the START of each phase and TaskUpdate (status: "completed") at the END. This gives the user real-time progress visibility.
 
-6. **Follow the 4 phases in order** — Do NOT launch Explore agents, do NOT do broad codebase exploration. Each phase specifies exactly what to read and run.
-
-7. **Phase 1 is ALWAYS `maximus validate --json`** — This is your FIRST action. Do not read files, explore, or check anything else before running this command.
-
-8. **Task API is MANDATORY** — You MUST use TaskCreate at the START of each phase and TaskUpdate (status: "completed") at the END. This gives the user real-time progress visibility. Never skip this.
+6. **Phase 1 is ALWAYS `maximus validate --json`** — This is the first action after creating the Phase 1 task. Do not read files, explore, or check anything else before running this command.
 </CRITICAL-CONSTRAINTS>
 
 ---
 
 ## Phase 1: Detect & Validate
 
-**FIRST — Create a task to track this phase.** Call the TaskCreate tool:
+**Create a task for this phase.** Call the TaskCreate tool:
 - subject: `Detect & validate existing setup`
 - description: `Run maximus validate --json and determine current state`
 - activeForm: `Detecting existing setup`
 
 Then set it to in_progress with TaskUpdate.
 
-**Your FIRST action after creating the task must be running this command:**
+**First action — run this command:**
 
 ```bash
 maximus validate --json
 ```
 
-Parse the JSON output. The `valid` field and `checks` array tell you the state:
+Parse the JSON output. The `valid` field and `checks` array determine the state:
 
 ### State A — `.maximus/` missing
 
-The `directory` check has `status: "fail"`. Report to the user:
+The `directory` check has `status: "fail"`. Report:
 
 ```
 No Maximus setup found. I'll analyze the project and create a tailored configuration.
@@ -60,7 +56,7 @@ Proceed to Phase 2.
 
 ### State B — Invalid configuration
 
-Directory exists but other checks failed. Show the failures from the JSON:
+Directory exists but other checks failed. Show the failures:
 
 ```
 Existing Maximus setup found with errors:
@@ -88,7 +84,7 @@ Valid Maximus setup found:
 
 Wait for the user's response before proceeding.
 
-- If no changes → Skip to Phase 4 handoff (skip Phases 2 and 3)
+- If no changes → Skip to Phase 4 (skip Phases 2 and 3)
 - If changes → Note what to change, proceed to Phase 2
 
 **Mark the Phase 1 task as completed** using TaskUpdate (status: "completed").
@@ -99,12 +95,12 @@ Wait for the user's response before proceeding.
 
 **Create a task for this phase.** Call the TaskCreate tool:
 - subject: `Analyze project structure`
-- description: `Read package files, git log, and count files to determine config values`
+- description: `Read package.json, git log, and count files to determine 3 config values`
 - activeForm: `Analyzing project structure`
 
 Then set it to in_progress with TaskUpdate.
 
-Read these specific files to determine 3 values. Do NOT launch Explore agents or do broad exploration.
+Read exactly 3 things to derive 3 config values. Nothing else.
 
 1. **Project name:** Read `package.json` (or `Cargo.toml`, `go.mod`, `pyproject.toml`) — extract the `name` field
 2. **Commit prefix:** Run `git log --oneline -10` — look for consistent prefixes (e.g., "feat:", "fix:", "maximus:")
@@ -119,6 +115,8 @@ Project Analysis:
   Commit prefix:  "[detected-prefix]"
 ```
 
+That's it. Do NOT explore frameworks, dependencies, integrations, architecture, or anything else.
+
 **Mark the Phase 2 task as completed** using TaskUpdate (status: "completed").
 
 ---
@@ -127,12 +125,12 @@ Project Analysis:
 
 **Create a task for this phase.** Call the TaskCreate tool:
 - subject: `Configure Maximus settings`
-- description: `Generate tailored config.yml and clean plan.json`
+- description: `Run maximus init, then modify 3 config values from Phase 2 analysis`
 - activeForm: `Configuring Maximus settings`
 
 Then set it to in_progress with TaskUpdate.
 
-### Step 1: Create or fix .maximus/
+### Step 1: Create .maximus/
 
 **If `.maximus/` does NOT exist (State A):**
 
@@ -141,99 +139,29 @@ Run this command directly (no flags):
 maximus init
 ```
 
-This creates `.maximus/` with config.yml, plan.json, progress.md, and updates .gitignore.
+This generates correct default files: config.yml, plan.json, progress.md, and updates .gitignore. Do NOT manually create any of these files.
 
-**If `.maximus/` exists but invalid (State B):**
+**If `.maximus/` exists but is invalid (State B):**
 
-Do NOT run `maximus init` (it refuses to re-initialize). Apply targeted fixes to the specific failed fields.
+Do NOT run `maximus init` (it refuses to re-initialize). Apply targeted fixes to the specific failed checks only.
 
 **If valid with user-requested changes (State C):**
 
-Apply only the requested changes.
+Apply only the requested changes to the existing config.
 
-<DO-NOT-INVENT>
-**STOP — Read this before writing config.yml.** Agents frequently hallucinate these fields. NONE of them exist:
+### Step 2: Modify ONLY 3 values in config.yml
 
-| You might write... | Correct field |
-|---|---|
-| `agent.model` | `agent.default_model` |
-| `loop.iterations` | `loop.max_iterations` |
-| `git.prefix` | `git.commit_prefix` |
-| `git.push` | `git.auto_push` |
-| `project:` (nested object with name/root/description) | Flat `project_name` string only |
-| `stack:`, `verify:`, `guardrails:`, `conventions:` | DO NOT EXIST — delete them |
-| `description:`, `language:`, `framework:`, `test_command:` | DO NOT EXIST — delete them |
-| `engine:` (top-level) | DO NOT EXIST — settings are under `loop:` and `agent:` |
+Read the generated `.maximus/config.yml` first to see the defaults. Then use the Edit tool to change exactly these 3 values:
 
-If your output has ANY field not in the template below, you have a bug. Delete it.
-</DO-NOT-INVENT>
+1. **`project_name`** → value from Phase 2 analysis
+2. **`agent.timeout`** → calculated timeout from Phase 2 (600, 900, or 1200)
+3. **`git.commit_prefix`** → detected prefix from Phase 2
 
-### Step 2: Write config.yml
-
-**Copy this template CHARACTER-FOR-CHARACTER.** Replace ONLY `[bracketed]` values with real values from Phase 2. Do NOT add extra comments, do NOT add descriptive comments about the project, do NOT add extra sections. Your output MUST have exactly 9 top-level keys/sections (including commented `review`). If you have more, you invented something — delete it.
-
-```yaml
-# Maximus Loop Configuration — [project-name]
-
-project_name: "[actual-project-name]"
-maximus_version: "1.0.0"
-
-loop:
-  max_iterations: -1
-  mode: sequential
-  auto_commit: true
-  continue_on_error: false
-
-agent:
-  default_model: sonnet
-  timeout: [calculated-timeout-integer]
-  max_retries: 2
-  escalation:
-    enabled: true
-    simple: haiku
-    medium: sonnet
-    complex: opus
-
-tasks:
-  source: .maximus/plan.json
-  auto_mark_done: true
-
-context:
-  files:
-    - CLAUDE.md
-
-progress:
-  file: .maximus/progress.md
-  format: markdown
-
-git:
-  enabled: true
-  commit_prefix: "[detected-prefix]"
-  auto_push: false
-
-# Code review (future feature)
-# review:
-#   enabled: false
-#   min_severity: "medium"
-#   max_phases: 3
-```
-
-<SCHEMA-ENFORCEMENT>
-The config above is the COMPLETE and EXACT schema. Top-level keys:
-- `project_name` (string)
-- `maximus_version` (string, default "1.0.0")
-- `loop` (max_iterations, mode, auto_commit, continue_on_error)
-- `agent` (default_model, timeout, max_retries, escalation?)
-- `tasks` (source, auto_mark_done)
-- `context?` (files?) — optional section
-- `progress` (file, format)
-- `git` (enabled, commit_prefix, auto_push)
-- `review?` (enabled, min_severity, max_phases) — optional section
-
-Do NOT invent fields. Do NOT add custom comments beyond what the template shows. See `${CLAUDE_PLUGIN_ROOT}/skills/maximus-validate/references/config-schema.md` for the full reference.
-</SCHEMA-ENFORCEMENT>
+Do NOT modify any other fields. Do NOT add fields. Do NOT rewrite the file. Do NOT restructure the config. The defaults generated by `maximus init` are correct for everything else.
 
 ### Step 3: Write clean plan.json
+
+Overwrite `.maximus/plan.json` with:
 
 ```json
 {
@@ -244,13 +172,13 @@ Do NOT invent fields. Do NOT add custom comments beyond what the template shows.
 
 ### Step 4: Confirm with user
 
-**BLOCKING — You MUST use AskUserQuestion before proceeding.**
+**BLOCKING — Use AskUserQuestion before proceeding.**
 
-Present the key config values, then use the `AskUserQuestion` tool:
+Present the 3 modified values and ask:
 - Question: "Does this configuration look correct?"
 - Options: "Yes, looks good" / "No, I want to change something"
 
-If the user wants changes, apply them and re-confirm. Do NOT proceed to Phase 4 until the user approves.
+If changes requested, apply them and re-confirm. Do NOT proceed to Phase 4 until approved.
 
 **Mark the Phase 3 task as completed** using TaskUpdate (status: "completed") after user confirms.
 
@@ -298,16 +226,19 @@ If still invalid after 2 attempts, report the remaining failures and ask the use
 ## Red Flags
 
 If you catch yourself doing any of these, STOP immediately:
-- Launching an Explore agent or doing broad codebase exploration
 - Running any command before `maximus validate --json` in Phase 1
-- Creating a directory named anything other than `.maximus/`
+- Reading anything beyond package.json, git log, and file count in Phase 2
+- Exploring frameworks, dependencies, integrations, or architecture
+- Reading source files, tsconfig, app configs, or any project files beyond the 3 specified
 - Using `mkdir` to create `.maximus/` instead of `maximus init`
-- Re-running `maximus init` when `.maximus/` already exists (it will refuse)
-- Adding fields or comments to config.yml that aren't in the template
-- Running `maximus init --help` (there is no --help flag — this will execute init)
-- Writing config without using AskUserQuestion for confirmation
-- Skipping the final `maximus validate --json` check in Phase 4
+- Writing config.yml from scratch instead of editing the generated file
+- Modifying more than 3 values (project_name, agent.timeout, git.commit_prefix) in config.yml
+- Adding, removing, or renaming any fields in config.yml
+- Rewriting the entire config.yml file
+- Re-running `maximus init` when `.maximus/` already exists
+- Running `maximus init --help` (no --help flag — this will execute init)
+- Skipping AskUserQuestion for user confirmation
 - Proceeding past Phase 3 without user approval
-- Modifying progress.md contents (the init command generates it correctly)
+- Modifying progress.md contents (maximus init generates it correctly)
 - Skipping TaskCreate/TaskUpdate calls — every phase MUST have both
-- Running `maximus --version` or other commands not specified in the phases
+- Running commands not specified in the phases (e.g., `maximus --version`)
