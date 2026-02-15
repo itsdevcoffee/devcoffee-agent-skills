@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [maximus-loop v0.3.2] - 2026-02-15
+
+### Fixed
+
+- Fixed task state synchronization bug in maximus-loop engine where completed tasks were incorrectly marked as in-progress after process restart, causing agents to re-execute already-finished work and create duplicate commits
+
 ## [maximus-loop v0.3.1] - 2026-02-15
 
 ### Fixed
