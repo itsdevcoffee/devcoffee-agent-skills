@@ -7,7 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added - TLDR Plugin (v1.1.0)
+### Fixed
+
+**Buzzminson: Autonomous execution of git operations without user approval**
+- Replace weak "Ask:" directives in Phase 3 (Review) and Phase 4 (Assure) with **BLOCKING** checkpoints using explicit `AskUserQuestion` tool calls
+- Phase 3 now requires user to select "I have feedback", "Run maximus QA", or "Skip QA and finish" before proceeding
+- Phase 4 now requires user confirmation before committing and before final wrap-up
+- Add "Git operations — NEVER autonomous" guideline preventing commits, pushes, and PRs without explicit user approval
+- Root cause: Handoff doc with "feature complete" status caused buzzminson to skip interactive phases and execute cleanup tasks autonomously
+
+### Added
+
+**Buzzminson: Scope section for task type guidance**
+- Add Scope section after Mission explaining what buzzminson is and isn't for
+- Explicitly states cleanup checklists, merge prep, and commit-and-PR tasks are out of scope
+- When given a handoff doc marked "feature complete", buzzminson should inform the user and suggest manual execution instead of running the full 4-phase workflow
+
+## [TLDR v1.1.0] - 2026-02-15
+
+### Added
 
 **Three new development skills for continuous TLDR improvement:**
 - **`/tldr:feedback`** — Codified evaluation workflow for scoring TLDR samples against 4 quality criteria (Completeness, Conciseness, Actionability, Accuracy). Supports `--no-user-score` flag for agent-only evaluation. Scoring rubrics bundled as `references/EVALUATION.md` using progressive disclosure.
@@ -18,11 +36,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Consolidated evaluation data into `tldr/docs/evaluation/` (single canonical location inside plugin directory)
 - Removed duplicate `docs/tldr-evaluation/` from repo root
 - All skills use plugin-root-relative path resolution — works regardless of user's working directory
-- Added `name: TLDR` to main skill frontmatter for consistency across all four skills
 
-## [0.2.1] - 2026-02-15 (maximus-loop)
+### Fixed
 
-### Fixed - maximus-init Skill
+**Skill slash command naming**
+- Removed `name` fields from all skill frontmatter — `name` was overriding auto-discovery, producing `/TLDR`, `/TLDR Feedback` etc. instead of correct `/tldr:feedback`, `/tldr:note`, `/tldr:review`
+
+## [maximus-loop v0.2.1] - 2026-02-15
+
+### Fixed
 
 **Critical: Config Template Alignment**
 - Fixed `max_iterations: 20` to match CLI template default of `-1` (unlimited). Previous value caused unexpected early engine stops for users expecting unlimited iteration.
@@ -40,22 +62,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added "scaffold maximus" and "bootstrap maximus" trigger phrases to skill description.
 - Replaced hardcoded skill name examples in Phase 5 with dynamic discovery from `~/.claude/plugins/` and `~/.claude/skills/`.
 
-### Fixed - maximus-init Command
-
+**maximus-init Command:**
 - Removed misleading `argument-hint: "[project path] [optional-config]"` — skill does not accept or process arguments.
 - Updated description to accurately reflect project-aware analysis behavior.
 
-### Fixed - maximus-init Agent
-
+**maximus-init Agent:**
 - Removed example with non-existent `--enable-auto-commit` flag.
 - Replaced with realistic "Initialize maximus for this project" example.
 - Added "scaffold maximus" trigger phrase, removed "create task plan" (that's `/maximus-plan`).
 
-### Changed - Version Sync
+### Changed
 
 - Synced marketplace.json version from `0.1.0` to `0.2.1` (was out of date since initial plugin creation).
 
-## [0.5.0] - 2026-02-15
+## [devcoffee v0.5.0] - 2026-02-15
 
 ### Added - Compaction Resilience
 
@@ -78,9 +98,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `.maximus-review-state.json` schema and recovery protocol documentation
 - Add state file cleanup instruction after successful Phase 4 completion
 
-### Changed - Task API in Buzzminson
+### Fixed - Task API in Buzzminson
 
-**Fix Critical Task ID Bug**
+**Critical Task ID Bug**
 - Replace hardcoded task IDs (`"task-1"` through `"task-4"`) with dynamic ID references throughout buzzminson agent
 - TaskCreate returns dynamically generated IDs — hardcoded references could target wrong tasks or fail silently
 - All TaskUpdate calls now reference the returned IDs from TaskCreate (`{clarify_task.id}`, `{implement_task.id}`, etc.)
@@ -93,9 +113,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add YAML frontmatter block to buzzminson tracking template (`current_phase`, `status`, `feature`, `started`, `agent`)
 - Update status transitions documentation with frontmatter field values for each phase
 
-### Added - OpenTUI Dev Plugin
+## [opentui-dev v0.1.1] - 2026-02-15
 
-**New Plugin for Terminal UI Development**
+### Added
+
+**Terminal UI Development Plugin**
 - Added `opentui-dev` plugin to marketplace with comprehensive OpenTUI patterns
 - Production-tested patterns extracted from Maximus Loop TUI POC (4,100+ LOC)
 - Comprehensive skill documentation (700+ lines) covering:
@@ -141,6 +163,8 @@ claude plugin install opentui-dev@devcoffee-marketplace
 bun add @opentui/core
 ```
 
+## [devcoffee v0.4.1] - 2026-02-13
+
 ### Added - Task API Integration
 
 **Visual Progress Tracking for Buzzminson**
@@ -164,7 +188,9 @@ bun add @opentui/core
 - `devcoffee/agents/buzzminson.md` - Added Task API integration throughout all 4 phases
 - `docs/context/2026-02-13-task-api-visual-progress-tracking.md` - New comprehensive reference
 
-### Fixed - TLDR Skill
+## [TLDR v1.0.1] - 2026-02-06
+
+### Fixed
 
 **Critical Bug Fix: File-Reading Approach**
 - **Issue:** Skill instructed Claude to read `~/.claude/history.jsonl` which doesn't exist, causing wild goose chase through various `.jsonl` files until giving up
@@ -183,6 +209,8 @@ bun add @opentui/core
 **File Changes:**
 - `tldr/skills/tldr/SKILL.md` - Complete rewrite from file-based to context-based approach
 - Removed `allowed-tools: [Read]` from frontmatter (no longer needed)
+
+## [devcoffee v0.4.0] - 2026-02-07 (Marketplace Scripts)
 
 ### Added - Automation Scripts
 
@@ -266,7 +294,7 @@ bun add @opentui/core
 **Cleanup**
 - Removed `devcoffee/agents/buzzminson.md.backup` backup file from agents directory
 
-## [0.4.0] - 2026-02-07
+## [devcoffee v0.4.0] - 2026-02-07 (README Automation)
 
 ### Added - CLAUDE.md Improvements
 
@@ -362,7 +390,9 @@ bun add @opentui/core
 - **User visibility:** Failed plugins clearly marked in generated content instead of silent skipping
 - **Type validation:** Added `typeof` check for components object to prevent runtime errors
 
-### Fixed - TLDR Skill
+## [TLDR v1.0.0] - 2026-02-07
+
+### Fixed
 
 **Standalone Skill Structure**
 - **Fixed namespace issue:** Converted tldr from plugin command to standalone skill
@@ -378,9 +408,9 @@ bun add @opentui/core
 - Created comprehensive EVALUATION.md with scoring criteria (Completeness, Conciseness, Actionability, Accuracy)
 - Sample collection workflow for data-driven v1.1 improvements
 
-## [0.3.0] - 2026-02-06
+## [devcoffee v0.3.0] - 2026-02-06
 
-### Major Changes - Buzzminson Agent
+### Changed - Buzzminson Agent
 
 **Research-Backed Simplification**
 - **Simplified agent definition from 453 to 172 lines (62% reduction)** based on research showing agents perform better with concise prompts (<150 lines recommended)
@@ -411,7 +441,7 @@ bun add @opentui/core
 - Streamlined workflow descriptions focusing on actionable steps
 - Updated references to point to detailed documentation files
 
-### Major Changes - Maximus Agent
+### Changed - Maximus Agent (Breaking)
 
 **Review-Only Default Mode**
 - **Switched to review-only mode by default** - analyzes code quality and identifies issues without making changes
@@ -518,9 +548,9 @@ bun add @opentui/core
 - New reference files provide better guidance for question formatting
 - Tracking documents now have comprehensive template with examples
 
-## [0.2.1] - 2026-02-04
+## [devcoffee v0.2.1] - 2026-02-04
 
-### Improved - Maximus Agent
+### Changed - Maximus Agent
 - **Enhanced code-simplifier output** with detailed metrics and categorization
 - Simplifier now provides structured output matching review phase detail level
 - Added 8 improvement categories: Extract Function, Rename Variable, Reduce Nesting, Consolidate Code, Remove Duplication, Improve Types, Add Constants, Simplify Logic
