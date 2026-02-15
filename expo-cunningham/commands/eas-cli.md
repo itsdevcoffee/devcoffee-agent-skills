@@ -5,6 +5,6 @@ tools: Bash, Read, Grep, Glob
 disable-model-invocation: true
 ---
 
-Invoke the expo-cunningham:eas-cli skill and follow it exactly as presented to you.
+Invoke the eas-cli skill and follow it exactly as presented to you
 
 **Arguments received:** $ARGUMENTS
