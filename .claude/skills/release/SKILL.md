@@ -121,7 +121,12 @@ git diff --staged
 
 ### Step 6: Create Commit
 
-**Format:** `chore(<plugin>): release vX.Y.Z`
+**Format (non-negotiable):** `chore(<plugin>): release vX.Y.Z`
+
+**Why this exact format?**
+- `chore` type = non-functional change (standard for releases)
+- `(<plugin>)` scope = clear ownership in monorepo
+- CHANGELOG automation tools expect this pattern
 
 **Body:** Brief summary of changes from CHANGELOG.
 
@@ -160,22 +165,36 @@ git tag -l "*<plugin>*" | tail -5
 
 ### Step 8: Final Verification
 
-**Before pushing, verify:**
-- [ ] CHANGELOG has detailed entry under `[<plugin> vX.Y.Z]`
-- [ ] All version files updated and match
-- [ ] Validation passed (`npm run readme:validate`)
-- [ ] Only version/CHANGELOG files staged (no dirty commits)
-- [ ] Commit message follows format
-- [ ] Git tag created with plugin prefix
-- [ ] Tag verified in `git tag -l` output
+**REQUIRED:** Copy this checklist and mark each item with ✓:
 
-**If ANY checkbox is unchecked, STOP and fix it.**
+```
+- [ ] CHANGELOG has detailed entry under [<plugin> vX.Y.Z]
+- [ ] All version files updated and match
+- [ ] Validation passed (npm run readme:validate)
+- [ ] Only version/CHANGELOG files staged (no dirty commits)
+- [ ] Commit message follows format: chore(<plugin>): release vX.Y.Z
+- [ ] Git tag created with plugin prefix (<plugin>-vX.Y.Z)
+- [ ] Tag verified in git tag -l output
+```
+
+**If you cannot mark ALL items with ✓, STOP and fix it.** No exceptions.
 
 ### Step 9: Push Release
 
+**Command (atomic push):**
 ```bash
 git push origin main --tags
 ```
+
+**Why push commit and tags together?**
+- Tag without pushed commit = local-only, invisible to others
+- Commit without pushed tag = unversioned code in production
+- Both together = atomic release, visible version, rollback-safe
+
+**❌ FORBIDDEN partial pushes:**
+- `git push` (without --tags)
+- `git push --tags` (without commit)
+- Pushing commit and tags in separate operations
 
 **Verify push succeeded:**
 ```bash
@@ -214,6 +233,8 @@ These thoughts mean you're rationalizing shortcuts:
 | "The commit looks clean" | Verify what's staged. Don't assume. |
 | "CHANGELOG is fine" | Read it. Is it detailed enough? |
 | "git add -A is faster" | Fast = dirty commits with unrelated files. |
+| "I'll add details to the CHANGELOG later" | CHANGELOG is part of the release. Write it now or don't release. |
+| "I did all the steps, skip the checklist" | Verification prevents mistakes. Check ALL items. |
 
 **If you catch yourself rationalizing, STOP. Follow the checklist.**
 

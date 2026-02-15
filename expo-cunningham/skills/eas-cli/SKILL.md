@@ -9,7 +9,6 @@ description: >
   "roll back to embedded", "manage credentials", "set environment variables",
   "create webhook", "compare fingerprints", "run workflow", "deploy web app",
   "eas deploy", or any task involving Expo Application Services CLI operations.
-version: 0.1.0
 ---
 
 # EAS CLI Skill

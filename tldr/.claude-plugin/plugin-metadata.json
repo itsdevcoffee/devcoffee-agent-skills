@@ -12,7 +12,7 @@
   "tagline": "Hyper-condensed conversation summaries",
   "category": "standalone",
   "components": {
-    "commands": ["tldr", "tldr-feedback", "tldr-note", "tldr-review"],
+    "commands": ["tldr", "feedback", "note", "review"],
     "skills": ["tldr", "feedback", "note", "review"],
     "agents": [],
     "hooks": []

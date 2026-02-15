@@ -142,7 +142,7 @@
       "name": "expo-cunningham",
       "source": "./expo-cunningham",
       "description": "Fine-tuned EAS CLI skill and autonomous agent for managing Expo Application Services - OTA updates, builds, submissions, channels, branches, and more via npx eas",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "author": {
         "name": "Dev Coffee",
         "url": "https://github.com/itsdevcoffee"

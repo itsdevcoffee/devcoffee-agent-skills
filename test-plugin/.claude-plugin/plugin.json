@@ -1,0 +1,12 @@
+{
+  "name": "test-plugin",
+  "version": "0.1.0",
+  "description": "Generate comprehensive unit tests for your code using AI-powered analysis",
+  "author": {
+    "name": "Dev Coffee",
+    "url": "https://github.com/itsdevcoffee"
+  },
+  "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
+  "keywords": ["testing", "unit-tests", "tdd", "test-generation", "quality"],
+  "license": "MIT"
+}
