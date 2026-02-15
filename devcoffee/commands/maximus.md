@@ -119,9 +119,32 @@ else if "--yolo" in $ARGUMENTS:
     → Proceed immediately with fixes (no asking)
 ```
 
+## Session Start & Resume Detection
+
+Before creating tasks, check TaskList for existing maximus tasks. If found, this is a resumed session — use existing task IDs and check `.maximus-review-state.json` for persisted state. If no matching tasks, create new ones:
+
+### Review-Only Mode Tasks:
+```
+detect_task = TaskCreate: subject: "Detect changes", activeForm: "Detecting changed files"
+analyze_task = TaskCreate: subject: "Run parallel analysis", activeForm: "Analyzing code quality"
+synthesize_task = TaskCreate: subject: "Synthesize and present results", activeForm: "Synthesizing review results"
+```
+
+### YOLO Mode Tasks:
+```
+detect_task = TaskCreate: subject: "Detect changes", activeForm: "Detecting changed files"
+reviewfix_task = TaskCreate: subject: "Review-fix loop", activeForm: "Running review-fix round"
+simplify_task = TaskCreate: subject: "Run code-simplifier", activeForm: "Simplifying code"
+summary_task = TaskCreate: subject: "Output summary report", activeForm: "Generating summary report"
+```
+
+Use the **returned task IDs** for all subsequent TaskUpdate calls.
+
 ## Workflow
 
 ### Phase 1: Detect Changes
+
+**Update task:** `TaskUpdate: taskId: {detect_task.id}, status: "in_progress"`
 
 ```bash
 # 1. Check uncommitted changes
@@ -144,11 +167,15 @@ Detected {N} files from {uncommitted changes | N unpushed commits}:
 
 If no changes: Report and exit.
 
+**Mark complete:** `TaskUpdate: taskId: {detect_task.id}, status: "completed"`
+
 ### REVIEW-ONLY WORKFLOW (Default - No --yolo flag)
 
 **If --yolo flag NOT detected, execute this workflow:**
 
 #### Step 1: Spawn Agents in Parallel
+
+**Update task:** `TaskUpdate: taskId: {analyze_task.id}, status: "in_progress"`
 
 Use a **single message with TWO Task tool calls**:
 
@@ -166,7 +193,11 @@ Use a **single message with TWO Task tool calls**:
    Files: {detected_files}
    ```
 
+**Mark complete:** `TaskUpdate: taskId: {analyze_task.id}, status: "completed"`
+
 #### Step 2: Synthesize Results
+
+**Update task:** `TaskUpdate: taskId: {synthesize_task.id}, status: "in_progress"`
 
 After both agents complete:
 1. Collect all findings from both agents
@@ -205,6 +236,8 @@ After both agents complete:
 To apply fixes automatically: `/maximus --yolo`
 ```
 
+**Mark complete:** `TaskUpdate: taskId: {synthesize_task.id}, status: "completed"`
+
 **Then EXIT. Do not proceed to Phase 2.**
 
 ### YOLO MODE WORKFLOW (--yolo flag present)
@@ -212,6 +245,8 @@ To apply fixes automatically: `/maximus --yolo`
 **Only execute Phases 2-4 if --yolo flag IS detected.**
 
 ### Phase 2: Review-Fix Loop (AUTONOMOUS)
+
+**Update task:** `TaskUpdate: taskId: {reviewfix_task.id}, status: "in_progress"`
 
 Initialize tracking:
 ```
@@ -253,9 +288,14 @@ history = []
 
 7. **Continue to next round**
 
+**Mark complete:** `TaskUpdate: taskId: {reviewfix_task.id}, status: "completed"`
+**Persist state:** Write `state` to `.maximus-review-state.json` with `current_phase: 2`.
+
 ### Phase 3: Simplification (MANDATORY - DO NOT SKIP)
 
 **THIS PHASE IS REQUIRED. Stopping after Phase 2 is considered FAILURE.**
+
+**Update task:** `TaskUpdate: taskId: {simplify_task.id}, status: "in_progress"`
 
 1. Check if `--pause-simplifier` or `--interactive` flag → Ask user permission
 2. **Otherwise proceed immediately (NO ASKING)**
@@ -313,7 +353,12 @@ history = []
 
 **After Phase 3, you MUST proceed to Phase 4. You are not done yet.**
 
+**Mark complete:** `TaskUpdate: taskId: {simplify_task.id}, status: "completed"`
+**Persist state:** Write `state` to `.maximus-review-state.json` with `current_phase: 3`.
+
 ### Phase 4: Summary Report (ABSOLUTELY MANDATORY)
+
+**Update task:** `TaskUpdate: taskId: {summary_task.id}, status: "in_progress"`
 
 **⚠️ PRE-FLIGHT CHECKLIST - Verify before outputting:**
 
@@ -447,6 +492,18 @@ If errors occur during execution, follow these recovery procedures:
 - **Always complete Phase 4 summary** (even with errors noted)
 - **Mark result as "NEEDS ATTENTION"** when errors occur
 - **Include error details in Timeline section**
+
+## Session Recovery (After Context Compaction)
+
+If resuming after context loss:
+1. Read `.maximus-review-state.json` for persisted state
+2. Check TaskList for existing tasks and their statuses
+3. Resume from the next incomplete phase using persisted data
+4. Mark result as "NEEDS ATTENTION" if recovery was needed
+5. Delete `.maximus-review-state.json` after successful Phase 4
+
+**Mark summary complete:** `TaskUpdate: taskId: {summary_task.id}, status: "completed"`
+**Cleanup:** Delete `.maximus-review-state.json` after successful completion.
 
 ## Completion Verification
 

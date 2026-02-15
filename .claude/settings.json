@@ -2,5 +2,31 @@
   "enabledPlugins": {
     "plugin-dev@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true
+  },
+  "hooks": {
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '## Devcoffee Recovery Context\n\nContext compaction occurred. Recovery steps:\n\n**Buzzminson:** Read `docs/buzzminson/.active-session` for tracking doc path, then read that file. Run TaskList to find task IDs.\n\n**Maximus:** Read `.maximus-review-state.json` for persisted state. Run TaskList to find task IDs and phase progress.\n\nResume from the last incomplete phase. Do NOT restart completed work.'",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "scripts/hooks/check-version.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
   }
 }

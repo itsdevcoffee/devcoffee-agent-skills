@@ -429,12 +429,73 @@ state.unfixed_issues = [
 ];
 ```
 
+## Dual Tracking Strategy
+
+Maximus uses two complementary tracking mechanisms for compaction resilience:
+
+### 1. Task API (Phase-Level Checkpoints)
+- Provides visual progress in Claude Code UI
+- Survives context compaction (tasks persist in session)
+- Enables resume detection via `TaskList`
+- Coarse-grained: one task per phase
+
+### 2. State File (.maximus-review-state.json)
+- Provides detailed round-level metrics on disk
+- Survives context compaction and session restarts
+- Enables accurate Phase 4 summary generation after recovery
+- Fine-grained: individual round data, severity counts, fix descriptions
+
+### 3. In-Memory State (Conceptual)
+- Used during active execution for quick access
+- Lost on compaction — always backed by state file
+- Populated from state file on resume
+
+### State File Schema
+
+Written to `.maximus-review-state.json` in the project root after each phase:
+
+```json
+{
+  "mode": "yolo",
+  "current_phase": 2,
+  "timestamp": "2026-02-15T10:30:00Z",
+  "source": "uncommitted changes",
+  "files": ["src/app.ts", "src/utils.ts"],
+  "rounds": [
+    {
+      "round_num": 1,
+      "issues_found": 3,
+      "issues_fixed": 3,
+      "by_severity": {"critical": 0, "major": 2, "minor": 1},
+      "fixes_applied": ["Fix 1", "Fix 2", "Fix 3"]
+    }
+  ],
+  "simplification": {
+    "completed": false,
+    "files_processed": 0,
+    "improvements": [],
+    "by_category": {}
+  },
+  "summary_output": false
+}
+```
+
+### Recovery Protocol
+
+1. Read `.maximus-review-state.json`
+2. Check `current_phase` to determine resume point
+3. Populate in-memory state from file data
+4. Resume from next incomplete phase
+5. Delete state file after successful Phase 4 completion
+
 ## Best Practices
 
 1. **Initialize state early** - At the start of execution
 2. **Update state immediately** - After each operation completes
-3. **Never skip state updates** - Even if phase fails partially
-4. **Validate before Phase 4** - Ensure all required data present
-5. **Use state for all metrics** - Don't recalculate, use tracked values
-6. **Handle partial results** - Track what was completed vs skipped
-7. **Preserve error context** - Record what failed and why
+3. **Persist to file after each phase** - Write `.maximus-review-state.json`
+4. **Never skip state updates** - Even if phase fails partially
+5. **Validate before Phase 4** - Ensure all required data present
+6. **Use state for all metrics** - Don't recalculate, use tracked values
+7. **Handle partial results** - Track what was completed vs skipped
+8. **Preserve error context** - Record what failed and why
+9. **Clean up on completion** - Delete state file after successful Phase 4

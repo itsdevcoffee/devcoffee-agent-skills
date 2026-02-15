@@ -36,33 +36,79 @@ Implement features through a 4-phase workflow with visual progress tracking:
 3. **Review** - Summarize and gather feedback
 4. **Assure** - Hand off to maximus for QA
 
+## Session Start & Resume Detection
+
+Before creating tasks, check for an existing session:
+
+1. **Check TaskList for existing buzzminson tasks:**
+   ```
+   TaskList
+   ```
+   If tasks with subjects containing "Clarify", "Implement", "Review", or "quality assurance" already exist:
+   - This is a **resumed session** (likely after context compaction)
+   - Do NOT create new tasks — use the existing task IDs
+   - Follow the **Session Recovery** protocol below
+
+2. **If no matching tasks exist**, this is a new session — proceed with Task Tracking Setup.
+
 ## Task Tracking Setup
 
-At the start of every session, create task list to show progress:
+Create task list to show progress. **Store the returned task IDs — they are dynamically generated.**
 
 ```
-TaskCreate:
+clarify_task = TaskCreate:
   subject: "Clarify requirements and approach"
-  description: "Ask clarifying questions and document feature specification"
+  description: "Ask clarifying questions, document feature spec"
   activeForm: "Clarifying requirements and approach"
 
-TaskCreate:
+implement_task = TaskCreate:
   subject: "Implement feature"
   description: "Build feature following existing patterns and document changes"
   activeForm: "Implementing feature"
 
-TaskCreate:
+review_task = TaskCreate:
   subject: "Review implementation"
-  description: "Present summary, gather feedback, and iterate if needed"
+  description: "Present summary, gather feedback, iterate if needed"
   activeForm: "Reviewing implementation"
 
-TaskCreate:
+assure_task = TaskCreate:
   subject: "Run quality assurance"
   description: "Invoke maximus for code review and address findings"
   activeForm: "Running quality assurance"
 ```
 
-Then update task status as you progress through phases.
+Use the **returned task IDs** for all subsequent TaskUpdate calls. Do NOT hardcode task IDs.
+
+## Session Recovery (After Context Compaction)
+
+<instructions>
+If resuming after context loss (compaction or session restart):
+
+1. **Find active tracking document:**
+   - Check `docs/buzzminson/.active-session` for the current session path
+   - If not found, read the most recent file in `docs/buzzminson/`
+
+2. **Read tracking document** to recover:
+   - Current phase (from `current_phase` in YAML frontmatter)
+   - Completed tasks, remaining tasks, key decisions
+
+3. **Recover task state:**
+   ```
+   TaskList
+   ```
+   - "completed" tasks → finished phases
+   - "in_progress" tasks → current phase (resume here)
+   - "pending" tasks → remaining phases
+   - Use these task IDs for all subsequent updates
+
+4. **Resume from correct phase:**
+   - Phase 1 → Check if requirements are documented
+   - Phase 2 → Check what's built, continue from last incomplete task
+   - Phase 3 → Present summary of completed work
+   - Phase 4 → Run or resume maximus QA
+
+5. **Announce recovery:** "Resuming buzzminson from [doc path]. Phase: [N]. Picking up from [last item]."
+</instructions>
 
 ## Phase 1: Clarify
 
@@ -70,11 +116,13 @@ Then update task status as you progress through phases.
 1. **Update task status:**
    ```
    TaskUpdate:
-     taskId: "task-1"
+     taskId: {clarify_task.id}
      status: "in_progress"
    ```
 
 2. Create tracking doc: `docs/buzzminson/YYYY-MM-DD-feature-name.md`
+   - Use YAML frontmatter (see tracking template reference)
+   - Write session pointer: `docs/buzzminson/.active-session` with the tracking doc path
 
 3. Analyze: Are there ambiguities? Multiple valid approaches? Missing details?
 
@@ -82,21 +130,24 @@ Then update task status as you progress through phases.
 
 5. If clear → Document assumptions and proceed
 
-6. **Mark phase complete:**
+6. **Update tracking doc frontmatter:** `current_phase: 1`, `status: Planning`
+
+7. **Mark phase complete:**
    ```
    TaskUpdate:
-     taskId: "task-1"
+     taskId: {clarify_task.id}
      status: "completed"
    ```
 </instructions>
 
 <success-criteria>
 Before proceeding to implementation, verify:
-- [ ] Tracking document created with proper structure
+- [ ] Tracking document created with YAML frontmatter
+- [ ] Session pointer written to `docs/buzzminson/.active-session`
 - [ ] Requirements are clear (answered or documented assumptions)
 - [ ] Approach is decided (or default chosen)
-- [ ] Status updated to "Implementation"
-- [ ] Task 1 marked completed
+- [ ] Tracking doc frontmatter updated: `current_phase: 2`, `status: Implementation`
+- [ ] Clarify task marked completed
 </success-criteria>
 
 <reference>
@@ -110,24 +161,34 @@ Before proceeding to implementation, verify:
 1. **Update task status:**
    ```
    TaskUpdate:
-     taskId: "task-2"
+     taskId: {implement_task.id}
      status: "in_progress"
    ```
 
-2. Build feature completely following existing patterns
+2. **Create sub-tasks for major implementation items** (provides granular checkpoints):
+   ```
+   sub_task = TaskCreate:
+     subject: "[specific implementation item]"
+     description: "Part of feature implementation"
+     activeForm: "Building [specific component]"
+   ```
+   Mark each sub-task completed as you finish it. Update `activeForm` on the parent implement task to reflect current work.
 
-3. Update tracking doc continuously:
+3. Build feature completely following existing patterns
+
+4. Update tracking doc continuously:
    - Move tasks: Planned → Completed
    - Document: Changes Made, Problems & Roadblocks, Key Decisions
+   - Update frontmatter: `current_phase: 2`, `status: Implementation`
 
-4. Write testing instructions (simple, step-by-step)
+5. Write testing instructions (simple, step-by-step)
 
-5. Keep session log updated with timestamps
+6. Keep session log updated with timestamps
 
-6. **Mark phase complete:**
+7. **Mark phase complete:**
    ```
    TaskUpdate:
-     taskId: "task-2"
+     taskId: {implement_task.id}
      status: "completed"
    ```
 </instructions>
@@ -139,7 +200,8 @@ Before moving to review, verify:
 - [ ] Changes documented with file paths
 - [ ] Testing instructions written
 - [ ] Code follows existing patterns
-- [ ] Task 2 marked completed
+- [ ] Tracking doc frontmatter updated: `current_phase: 3`, `status: Review`
+- [ ] Implement task marked completed
 </success-criteria>
 
 ## Phase 3: Review
@@ -148,11 +210,11 @@ Before moving to review, verify:
 1. **Update task status:**
    ```
    TaskUpdate:
-     taskId: "task-3"
+     taskId: {review_task.id}
      status: "in_progress"
    ```
 
-2. Update tracking doc: Status → "Review", fill Summary
+2. Update tracking doc: frontmatter `current_phase: 3`, `status: Review`, fill Summary
 
 3. Present to user:
    - Summary (2-3 sentences)
@@ -167,7 +229,7 @@ Before moving to review, verify:
 6. If maximus → mark phase complete:
    ```
    TaskUpdate:
-     taskId: "task-3"
+     taskId: {review_task.id}
      status: "completed"
    ```
 </instructions>
@@ -202,7 +264,7 @@ See testing instructions in tracking doc: [link]
 1. **Update task status:**
    ```
    TaskUpdate:
-     taskId: "task-4"
+     taskId: {assure_task.id}
      status: "in_progress"
    ```
 
@@ -212,26 +274,29 @@ See testing instructions in tracking doc: [link]
 
 4. Let maximus complete fully
 
-5. Update tracking doc: Add maximus results, Status → "Complete"
+5. Update tracking doc: Add maximus results, frontmatter `current_phase: 5`, `status: Complete`
 
-6. **Mark phase complete:**
+6. **Clean up session pointer:** Delete `docs/buzzminson/.active-session`
+
+7. **Mark phase complete:**
    ```
    TaskUpdate:
-     taskId: "task-4"
+     taskId: {assure_task.id}
      status: "completed"
    ```
 
-7. Present final summary (2-3 sentences max) + backburner items
+8. Present final summary (2-3 sentences max) + backburner items
 
-8. Ask: "Anything else or commit?"
+9. Ask: "Anything else or commit?"
 </instructions>
 
 <success-criteria>
 Complete when:
 - [ ] Maximus review cycle finished
 - [ ] All issues addressed or documented in backburner
-- [ ] Tracking doc updated with final status
-- [ ] Task 4 marked completed
+- [ ] Tracking doc updated with final status and `current_phase: 5`
+- [ ] Session pointer cleaned up
+- [ ] Assure task marked completed
 - [ ] User satisfied with result
 </success-criteria>
 

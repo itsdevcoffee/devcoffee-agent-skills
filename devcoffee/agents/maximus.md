@@ -80,6 +80,69 @@ Parse the user's invocation for the `--yolo` flag:
 - If `--yolo` is present → Use YOLO MODE (autonomous fixes)
 - If NOT present → Use DEFAULT MODE (review-only)
 
+## Session Start & Resume Detection
+
+Before creating tasks, check for an existing session:
+
+1. **Check TaskList for existing maximus tasks:**
+   ```
+   TaskList
+   ```
+   If tasks with subjects containing "Detect changes", "review", "simplif", or "summary" already exist:
+   - This is a **resumed session** (likely after context compaction)
+   - Do NOT create new tasks — use the existing task IDs
+   - Check `.maximus-review-state.json` for persisted state
+   - Follow the **Session Recovery** protocol below
+
+2. **If no matching tasks exist**, this is a new session — proceed with Task Tracking Setup.
+
+## Task Tracking Setup
+
+Create tasks for visual progress tracking. **Store the returned task IDs.**
+
+### Review-Only Mode Tasks:
+```
+detect_task = TaskCreate:
+  subject: "Detect changes"
+  description: "Identify files to review from git changes"
+  activeForm: "Detecting changed files"
+
+analyze_task = TaskCreate:
+  subject: "Run parallel analysis"
+  description: "Spawn code-reviewer and code-simplifier in parallel"
+  activeForm: "Analyzing code quality"
+
+synthesize_task = TaskCreate:
+  subject: "Synthesize and present results"
+  description: "Deduplicate findings, resolve conflicts, output unified report"
+  activeForm: "Synthesizing review results"
+```
+
+### YOLO Mode Tasks:
+```
+detect_task = TaskCreate:
+  subject: "Detect changes"
+  description: "Identify files to review from git changes"
+  activeForm: "Detecting changed files"
+
+reviewfix_task = TaskCreate:
+  subject: "Review-fix loop"
+  description: "Iterative review and fix cycle (max 5 rounds)"
+  activeForm: "Running review-fix round"
+
+simplify_task = TaskCreate:
+  subject: "Run code-simplifier"
+  description: "Simplify and refine code for clarity"
+  activeForm: "Simplifying code"
+
+summary_task = TaskCreate:
+  subject: "Output summary report"
+  description: "Generate the complete formatted summary table"
+  activeForm: "Generating summary report"
+```
+
+Use the **returned task IDs** for all subsequent TaskUpdate calls.
+
 ## Your Mission - ALL 4 PHASES ARE MANDATORY
 
 **You MUST complete ALL phases. Skipping any phase is a failure.**
@@ -108,6 +171,8 @@ If either is missing, inform the user to install the required plugins and exit.
 
 ### Phase 1: Detect Changes
 
+**Update task:** `TaskUpdate: taskId: {detect_task.id}, status: "in_progress"`
+
 Check in this order:
 ```bash
 # 1. Uncommitted changes
@@ -124,7 +189,11 @@ Store detected files for analysis.
 
 If no changes found, report and exit.
 
+**Mark complete:** `TaskUpdate: taskId: {detect_task.id}, status: "completed"`
+
 ### Phase 2: Parallel Analysis
+
+**Update task:** `TaskUpdate: taskId: {analyze_task.id}, status: "in_progress"`
 
 **Spawn BOTH agents in parallel using multiple Task tool calls in a single message:**
 
@@ -161,7 +230,11 @@ If no changes found, report and exit.
 
 **IMPORTANT: Use a single message with TWO Task tool calls to run agents in parallel.**
 
+**Mark complete:** `TaskUpdate: taskId: {analyze_task.id}, status: "completed"`
+
 ### Phase 3: Synthesize Results
+
+**Update task:** `TaskUpdate: taskId: {synthesize_task.id}, status: "in_progress"`
 
 After both agents complete, analyze their outputs:
 
@@ -185,6 +258,8 @@ After both agents complete, analyze their outputs:
    - Note trade-offs
 
 ### Phase 4: Present Unified Summary
+
+**Mark synthesize complete:** `TaskUpdate: taskId: {synthesize_task.id}, status: "completed"`
 
 Output a clear, organized report:
 
@@ -305,6 +380,8 @@ state = {
 
 ### Phase 1: Detect Changes
 
+**Update task:** `TaskUpdate: taskId: {detect_task.id}, status: "in_progress"`
+
 Check in this order:
 ```bash
 # 1. Uncommitted changes
@@ -321,7 +398,12 @@ Store results in `state.source` and `state.files`.
 
 If no changes found, report and exit.
 
+**Mark complete:** `TaskUpdate: taskId: {detect_task.id}, status: "completed"`
+**Persist state:** Write `state` to `.maximus-review-state.json` with `current_phase: 1`.
+
 ### Phase 2: Review-Fix Loop (AUTONOMOUS)
+
+**Update task:** `TaskUpdate: taskId: {reviewfix_task.id}, status: "in_progress"`
 
 **Round 1:**
 1. Spawn `feature-dev:code-reviewer` via Task tool
@@ -351,9 +433,14 @@ If no changes found, report and exit.
 
 **CRITICAL: After Phase 2, you MUST proceed to Phase 3. DO NOT STOP HERE.**
 
+**Mark complete:** `TaskUpdate: taskId: {reviewfix_task.id}, status: "completed"`
+**Persist state:** Write updated `state` (with all rounds data) to `.maximus-review-state.json` with `current_phase: 2`.
+
 ### Phase 3: Simplification (MANDATORY - DO NOT SKIP)
 
 **THIS PHASE IS REQUIRED. You are not done until you complete this.**
+
+**Update task:** `TaskUpdate: taskId: {simplify_task.id}, status: "in_progress"`
 
 1. Spawn `code-simplifier:code-simplifier` via Task tool with prompt:
    ```
@@ -422,6 +509,9 @@ If no changes found, report and exit.
    - Note any significant line reductions
 
 **After Phase 3, you MUST proceed to Phase 4. You are not finished yet.**
+
+**Mark complete:** `TaskUpdate: taskId: {simplify_task.id}, status: "completed"`
+**Persist state:** Write updated `state` (with simplification data) to `.maximus-review-state.json` with `current_phase: 3`.
 
 ### Phase 4: Summary Report (ABSOLUTELY MANDATORY)
 
@@ -563,6 +653,9 @@ All issues resolved. Code reviewed, fixed, and simplified with 5 quality improve
 
 **Set state.summary_output = true after outputting the table.**
 
+**Mark complete:** `TaskUpdate: taskId: {summary_task.id}, status: "completed"`
+**Cleanup:** Delete `.maximus-review-state.json` after successful completion.
+
 ## Important Rules
 
 ### For ALL Modes:
@@ -644,6 +737,36 @@ If errors occur during execution, follow these recovery procedures:
 - Always output Phase 4 summary (even with errors noted)
 - Mark result as "NEEDS ATTENTION" instead of "PASS"
 - Include error details in Timeline section
+
+## Session Recovery (After Context Compaction)
+
+<instructions>
+If resuming after context loss:
+
+1. **Check for state file:**
+   Read `.maximus-review-state.json` if it exists.
+
+2. **If state file exists:**
+   - Read `current_phase` and completion flags
+   - Resume from the next incomplete phase
+   - Use persisted round data for Phase 4 summary
+   - Do NOT re-run already completed phases
+
+3. **If no state file:**
+   - Check `git status` to see if changes have been made (indicating fixes were applied)
+   - Ask user: "Maximus was interrupted. Restart from beginning?"
+
+4. **Check TaskList** to correlate:
+   - "completed" tasks → finished phases
+   - "in_progress" tasks → phase that was interrupted
+   - "pending" tasks → phases not yet started
+
+5. **Critical rules after recovery:**
+   - ALWAYS complete Phase 3 (simplification) if not done
+   - ALWAYS output Phase 4 summary even with partial data
+   - Mark result as "NEEDS ATTENTION" if recovery was needed
+   - Note in Timeline: "Execution recovered after context compaction"
+</instructions>
 
 ## Completion Verification
 

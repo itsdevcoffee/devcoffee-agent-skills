@@ -1,5 +1,17 @@
 # Dev Coffee Agent Skills
 
+## Pre-Commit Checklist (MANDATORY)
+
+**Before committing ANY changes to plugin source files, verify:**
+
+- [ ] **CHANGELOG.md** — Add entries under `[Unreleased]` for user-facing changes
+- [ ] **Version bump** — If releasing: update version in `<plugin>/.claude-plugin/plugin.json`, `<plugin>/.claude-plugin/plugin-metadata.json`, and `.claude-plugin/marketplace.json`
+- [ ] **Semantic version** — MAJOR (breaking), MINOR (new features), PATCH (bug fixes)
+
+**This applies to changes in:** `devcoffee/`, `video-analysis/`, `remotion-max/`, `maximus-loop/`, `tldr/`, `opentui-dev/`
+
+**Skip only for:** docs-only changes, test updates, CI/build config, internal refactoring with zero user impact.
+
 ## Project Overview
 
 **Dev Coffee Agent Skills** is a Claude Code plugin marketplace providing production-ready tools for automated feature development and code quality workflows.
@@ -105,16 +117,13 @@ Files go in `docs/` except for obvious exceptions: README.md, CLAUDE.md, LICENSE
 - **Constraint:** Do NOT use this tool for general logic questions, standard language syntax (e.g. vanilla JS/TS), or when I explicitly provide the code context.
 - **Action:** When the trigger is met, automatically resolve the library ID and fetch docs without asking for permission first.
 
-## TLDR Command Evaluation
+## TLDR Plugin Development
 
-When evaluating TLDR command outputs (user says "rate this tldr" or shares samples), read `docs/tldr-evaluation/EVALUATION.md` first for the complete evaluation system, scoring criteria, and workflow instructions.
+TLDR evaluation and improvement workflows are handled by dedicated skills within the `tldr/` plugin:
 
-**Quick reference:**
-- Evaluation system: `docs/tldr-evaluation/EVALUATION.md`
-- Summary log: `docs/tldr-evaluation/evaluation-log.md`
-- Individual samples: `docs/tldr-evaluation/samples/`
-
-**Scoring criteria:** Completeness, Conciseness, Actionability, Accuracy (0.0-10.0 scale)
+- `/tldr:feedback` — Score and log TLDR samples (evaluation data at `tldr/docs/evaluation/`)
+- `/tldr:note` — Quick-capture improvement ideas (catalog at `tldr/docs/evaluation/notes.md`)
+- `/tldr:review` — Triage and implement pending notes
 
 ## CHANGELOG Maintenance
 

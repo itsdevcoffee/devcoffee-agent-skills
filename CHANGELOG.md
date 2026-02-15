@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-02-15
+
+### Added - Compaction Resilience
+
+**Session Recovery for Buzzminson and Maximus**
+- Add Session Recovery sections to both buzzminson agent and maximus agent/command with explicit instructions for resuming after context compaction
+- Add resume detection via TaskList at session start — checks for existing tasks before creating new ones to prevent duplicate task creation
+- Add `.active-session` pointer file for buzzminson (`docs/buzzminson/.active-session`) so the agent can find the active tracking document after context loss
+- Add `.maximus-review-state.json` file persistence for maximus — state written to disk after each phase transition for accurate Phase 4 summary generation after recovery
+- Add YAML frontmatter to buzzminson tracking template with `current_phase` and `status` fields for machine-parseable phase detection
+- Add PreCompact hook (project-level `.claude/settings.json`) that injects recovery hints before context compaction occurs
+- Add Stop hook (project-level `.claude/settings.json`) with `scripts/hooks/check-version.sh` that reminds agents to bump versions when plugin source files are modified without a corresponding version update
+
+**Task API Improvements for Maximus**
+- Add TaskCreate/TaskUpdate for all maximus phases (detect, review-fix, simplify, summary) — previously maximus had zero phase-level task tracking
+- Add separate task sets for review-only mode (3 tasks) and YOLO mode (4 tasks)
+- Add TaskUpdate calls at every phase transition in both agent and command files
+
+**State Management Updates**
+- Add Dual Tracking Strategy section to `state-management.md` documenting Task API + state file + in-memory state layers
+- Add `.maximus-review-state.json` schema and recovery protocol documentation
+- Add state file cleanup instruction after successful Phase 4 completion
+
+### Changed - Task API in Buzzminson
+
+**Fix Critical Task ID Bug**
+- Replace hardcoded task IDs (`"task-1"` through `"task-4"`) with dynamic ID references throughout buzzminson agent
+- TaskCreate returns dynamically generated IDs — hardcoded references could target wrong tasks or fail silently
+- All TaskUpdate calls now reference the returned IDs from TaskCreate (`{clarify_task.id}`, `{implement_task.id}`, etc.)
+
+**Enhanced Phase 2 Granularity**
+- Add sub-task creation guidance in Phase 2 (Implement) for granular checkpoint tracking during long implementation phases
+- Add `activeForm` update instructions so the status spinner reflects current sub-task work
+
+**Tracking Template Updates**
+- Add YAML frontmatter block to buzzminson tracking template (`current_phase`, `status`, `feature`, `started`, `agent`)
+- Update status transitions documentation with frontmatter field values for each phase
+
 ### Added - OpenTUI Dev Plugin
 
 **New Plugin for Terminal UI Development**

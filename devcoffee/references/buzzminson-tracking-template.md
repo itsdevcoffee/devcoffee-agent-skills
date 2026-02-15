@@ -9,11 +9,15 @@ This template should be used for every buzzminson implementation session.
 ## Template Structure
 
 ```markdown
-# [Feature Name] - Implementation Log
+---
+feature: [Feature Name]
+started: YYYY-MM-DD HH:MM
+current_phase: 1
+status: Planning
+agent: buzzminson
+---
 
-**Started:** YYYY-MM-DD HH:MM
-**Status:** Planning | Implementation | Review | Quality Assurance | Complete
-**Agent:** @devcoffee:buzzminson
+# [Feature Name] - Implementation Log
 
 ## Summary
 
@@ -195,12 +199,12 @@ Example:
 
 ## Notes
 
-**Status Transitions:**
-1. `Planning` - Creating doc, asking questions
-2. `Implementation` - Building the feature
-3. `Review` - User reviewing and providing feedback
-4. `Quality Assurance` - Maximus reviewing code
-5. `Complete` - All work done
+**Status Transitions (update YAML frontmatter `current_phase` and `status` at each transition):**
+1. `current_phase: 1`, `status: Planning` - Creating doc, asking questions
+2. `current_phase: 2`, `status: Implementation` - Building the feature
+3. `current_phase: 3`, `status: Review` - User reviewing and providing feedback
+4. `current_phase: 4`, `status: Quality Assurance` - Maximus reviewing code
+5. `current_phase: 5`, `status: Complete` - All work done
 
 **Best Practices:**
 - Update this document continuously as you work
