@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [TLDR v1.1.1] - 2026-02-15
+
+### Fixed
+
+- Restore `name` fields in skill frontmatter for correct autocomplete display — skills were showing as `/TLDR`, `/TLDR Feedback`, `/TLDR Note`, `/TLDR Review` instead of colon-format (`/tldr:feedback`, etc.) due to fallback to H1 headings
+- Update H1 headings to lowercase to match directory-based naming convention
+- Remove phantom `"tldr"` from `commands` array in plugin-metadata.json (no commands/ directory exists)
+
 ## [maximus-loop v0.3.0] - 2026-02-15
 
 ### Added

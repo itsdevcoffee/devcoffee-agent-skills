@@ -97,7 +97,7 @@
       "name": "tldr",
       "source": "./tldr",
       "description": "Conversation summarization for Claude Code - creates hyper-condensed bullet-point summaries of Claude's messages",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "author": {
         "name": "Dev Coffee",
         "url": "https://github.com/itsdevcoffee"
