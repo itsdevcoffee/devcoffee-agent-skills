@@ -23,22 +23,17 @@ Set up the Maximus Loop autonomous engine for a specific project. Analyze the co
 5. **Ask for user confirmation** — Present config and ask "Does this look correct?" BEFORE writing it.
 </CRITICAL-CONSTRAINTS>
 
-## Task API Integration
-
-Create 4 phase tasks upfront with TaskCreate, then update status as each phase completes.
-
-```
-TaskCreate: subject="Detect & validate existing setup", activeForm="Detecting existing setup"
-TaskCreate: subject="Analyze project structure", activeForm="Analyzing project structure"
-TaskCreate: subject="Configure Maximus settings", activeForm="Configuring Maximus settings"
-TaskCreate: subject="Validate & handoff", activeForm="Validating final configuration"
-```
-
 ---
 
 ## Phase 1: Detect & Validate
 
-**Mark task as in_progress.**
+**Create Task:**
+```
+TaskCreate:
+  subject: "Detect & validate existing setup"
+  description: "Run maximus validate --json and determine current state"
+  activeForm: "Detecting existing setup"
+```
 
 Run `maximus validate --json` to detect the current state.
 
@@ -82,7 +77,13 @@ Valid Maximus setup found:
 
 ## Phase 2: Analyze
 
-**Mark task as in_progress.**
+**Create Task:**
+```
+TaskCreate:
+  subject: "Analyze project structure"
+  description: "Read package files, git log, and count files to determine config values"
+  activeForm: "Analyzing project structure"
+```
 
 Read project files to determine tailored values:
 
@@ -104,7 +105,13 @@ Project Analysis:
 
 ## Phase 3: Configure
 
-**Mark task as in_progress.**
+**Create Task:**
+```
+TaskCreate:
+  subject: "Configure Maximus settings"
+  description: "Generate tailored config.yml and clean plan.json"
+  activeForm: "Configuring Maximus settings"
+```
 
 ### If `.maximus/` does NOT exist (State A):
 
@@ -214,7 +221,13 @@ Show the key values and **ask:** "Does this configuration look correct?"
 
 ## Phase 4: Validate & Handoff
 
-**Mark task as in_progress.**
+**Create Task:**
+```
+TaskCreate:
+  subject: "Validate & handoff"
+  description: "Run final validation and present next steps"
+  activeForm: "Validating final configuration"
+```
 
 Run `maximus validate --json` as a final safety net.
 
