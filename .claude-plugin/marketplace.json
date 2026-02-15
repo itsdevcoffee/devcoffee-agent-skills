@@ -72,7 +72,7 @@
       "name": "maximus-loop",
       "source": "./maximus-loop",
       "description": "Interactive task plan generation for autonomous coding agents - design, validate, and manage structured task plans for the Maximus Loop engine",
-      "version": "0.2.3",
+      "version": "0.3.0",
       "author": {
         "name": "Dev Coffee",
         "url": "https://github.com/itsdevcoffee"
@@ -83,6 +83,7 @@
         "automation",
         "task-generation",
         "autonomous-coding",
+        "validate",
         "maximus-loop"
       ],
       "category": "Automation",
@@ -129,6 +130,29 @@
         "animations",
         "patterns",
         "development"
+      ],
+      "category": "Development Tools",
+      "license": "MIT"
+    },
+    {
+      "name": "expo-cunningham",
+      "source": "./expo-cunningham",
+      "description": "Fine-tuned EAS CLI skill and autonomous agent for managing Expo Application Services - OTA updates, builds, submissions, channels, branches, and more via npx eas",
+      "version": "0.1.0",
+      "author": {
+        "name": "Dev Coffee",
+        "url": "https://github.com/itsdevcoffee"
+      },
+      "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
+      "keywords": [
+        "expo",
+        "eas",
+        "ota",
+        "react-native",
+        "builds",
+        "submissions",
+        "over-the-air",
+        "mobile"
       ],
       "category": "Development Tools",
       "license": "MIT"
