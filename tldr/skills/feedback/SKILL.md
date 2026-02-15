@@ -1,4 +1,5 @@
 ---
+name: feedback
 description: >-
   This skill should be used when the user asks to "rate this tldr",
   "evaluate this tldr", "score this summary", "grade this tldr",
@@ -9,7 +10,7 @@ description: >-
   programmatically by /tldr:note --ex.
 ---
 
-# TLDR Feedback
+# feedback
 
 Evaluate TLDR command outputs against quality criteria and log results for improvement tracking. This is a development tool for improving the `/tldr` skill itself.
 

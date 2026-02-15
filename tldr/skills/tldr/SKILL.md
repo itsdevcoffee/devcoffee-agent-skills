@@ -1,4 +1,5 @@
 ---
+name: tldr
 description: >-
   This skill should be used when the user asks for a TLDR, summary, recap,
   or condensed version of content. Invoked as "/tldr" with no arguments to
@@ -8,7 +9,7 @@ description: >-
   "shorten your last response", or "tldr of the error analysis".
 ---
 
-# TLDR Command
+# tldr
 
 Create a concise bullet-point summary of content from the current conversation.
 

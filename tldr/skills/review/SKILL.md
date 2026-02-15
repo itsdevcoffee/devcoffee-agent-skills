@@ -1,4 +1,5 @@
 ---
+name: review
 description: >-
   This skill should be used when the user asks to "review tldr notes",
   "triage tldr improvements", "go through tldr backlog", "check my
@@ -8,7 +9,7 @@ description: >-
   discussion and implementation.
 ---
 
-# TLDR Review
+# review
 
 Guided triage session through pending TLDR improvement notes. Discuss, refine, and act on items captured via `/tldr:note`.
 

@@ -1,4 +1,5 @@
 ---
+name: note
 description: >-
   This skill should be used when the user asks to "note a tldr improvement",
   "log a tldr issue", "capture a tldr idea", "jot down a tldr problem",
@@ -8,7 +9,7 @@ description: >-
   issue, which auto-triggers evaluation via /tldr:feedback.
 ---
 
-# TLDR Note
+# note
 
 Quickly capture improvement ideas, bugs, or feature requests for the TLDR plugin without disrupting the current workflow.
 
