@@ -5,6 +5,15 @@ All notable changes to the maximus-loop plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.7] - 2026-02-15
+
+### Changed
+
+- Rewrite init skill: agent no longer writes config from scratch — `maximus init` generates defaults, agent only edits 3 values (`project_name`, `agent.timeout`, `git.commit_prefix`)
+- Removed full config template, `<DO-NOT-INVENT>` block, and `<SCHEMA-ENFORCEMENT>` block (no longer needed)
+- Phase 2 explicitly limited to reading exactly 3 things (package.json, git log, file count)
+- Red flags updated to catch writing-from-scratch and over-exploration
+
 ## [0.3.6] - 2026-02-15
 
 ### Fixed
