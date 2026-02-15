@@ -71,6 +71,45 @@ devcoffee-agent-skills/          # Plugin marketplace monorepo
 
 **Plugin Structure:** Each plugin follows Claude Code conventions with agents/, commands/, skills/, and .claude-plugin/plugin.json
 
+## Claude Plugin Architecture (Critical Rules)
+
+**📖 Full Reference:** `docs/reference/claude-plugin-architecture.md` - Read this before developing/modifying plugins.
+
+**Critical rules agents frequently violate:**
+
+1. **Only `commands/` creates autocomplete entries**
+   - Skills and agents do NOT appear in `/` autocomplete
+   - Missing `commands/` directory = zero autocomplete (this was TLDR's issue)
+
+2. **Commands are thin wrappers** (1 line delegating to skills)
+   ```markdown
+   Invoke the plugin-name:skill-name skill and follow it exactly as presented to you.
+   ```
+   - Do NOT duplicate full logic in command files
+
+3. **Skills use ONLY 2 frontmatter fields:** `name` and `description` (max 1024 chars total)
+   - ❌ Forbidden: `version`, `metadata`, `framework`, `status`, `tools`, `tags`
+
+4. **Commands have NO `name` field** - filename IS the command name
+   - `commands/action.md` → `/plugin:action`
+
+5. **Skill descriptions = triggers ONLY** - NEVER summarize workflow
+   - ✅ Good: `Use when implementing any feature or bugfix, before writing implementation code`
+   - ❌ Bad: `Use when executing plans - dispatches subagent per task with code review between tasks`
+   - Why: Claude shortcuts and doesn't read the full skill when workflow is in description
+
+6. **Use `disable-model-invocation: true`** on all commands to prevent auto-invocation
+
+7. **Not every skill needs a command** - only create commands for user-facing entry points
+   - Example: superpowers has 14 skills, only 3 commands
+
+**Quick check before committing plugin changes:**
+- [ ] Commands are thin wrappers (1-2 lines)
+- [ ] Skills have only `name` + `description` in frontmatter
+- [ ] Command frontmatter has NO `name` field
+- [ ] All commands have `disable-model-invocation: true`
+- [ ] Skill descriptions are "Use when..." (no workflow summary)
+
 ## Development Commands
 
 ```bash
