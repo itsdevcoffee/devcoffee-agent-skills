@@ -3,6 +3,12 @@ description: Capture a note, idea, bug, or reminder for any project
 argument-hint: "[project] [context]"
 ---
 
-Invoke the jot:note skill and follow it exactly as presented to you.
+Immediately invoke the jot:note-writer agent using the Task tool with these parameters:
+- `subagent_type: "jot:note-writer"`
+- `run_in_background: true`
+- `description: "Capture note"`
+- `prompt: "$ARGUMENTS"`
 
-**Arguments received:** $ARGUMENTS
+Then immediately tell the user: "📝 Capturing note in background..."
+
+Do NOT wait for the agent to complete. Return control to the user immediately.

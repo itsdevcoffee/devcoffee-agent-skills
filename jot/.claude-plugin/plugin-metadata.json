@@ -1,6 +1,6 @@
 {
   "name": "jot",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "General-purpose note capture and review system. Fire-and-forget notes with project tagging and guided triage.",
   "author": {
     "name": "Dev Coffee",
@@ -12,9 +12,9 @@
   "tagline": "Fire-and-forget notes with project tagging",
   "category": "standalone",
   "components": {
-    "commands": ["note", "review"],
-    "skills": ["note", "review"],
-    "agents": [],
+    "commands": ["note", "review", "list"],
+    "skills": ["note", "review", "list"],
+    "agents": ["note-writer"],
     "hooks": []
   },
   "dependencies": {
@@ -27,6 +27,6 @@
   },
   "usage": {
     "when": "Mid-task to capture ideas, bugs, reminders for any project",
-    "examples": ["/jot:note aqimo update CLAUDE.md for soft paywall", "/jot:review"]
+    "examples": ["/jot:note aqimo update CLAUDE.md for soft paywall", "/jot:list", "/jot:review"]
   }
 }
