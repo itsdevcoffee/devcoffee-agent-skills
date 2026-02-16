@@ -3,5 +3,6 @@
   "version": "0.1.0",
   "displayName": "Arc",
   "description": "Automation companion for the Maximus Loop CLI — project initialization, validation, task planning, and run analysis",
-  "category": "Automation"
+  "tagline": "Init, validate, plan, and review for Maximus Loop",
+  "category": "automation"
 }
