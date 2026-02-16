@@ -175,7 +175,7 @@
       "name": "arc",
       "source": "./arc",
       "description": "Automation companion for the Maximus Loop CLI — project initialization, validation, task planning, and run analysis",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "author": {
         "name": "Dev Coffee",
         "url": "https://github.com/itsdevcoffee"

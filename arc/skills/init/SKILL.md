@@ -7,27 +7,29 @@ description: Use when the user asks to "set up maximus", "configure maximus", "i
 
 **Announce:** "I'll validate your current setup, analyze the project, and configure Maximus Loop."
 
+<CRITICAL>
+## Task API is MANDATORY
+
+You MUST use TaskCreate and TaskUpdate for EVERY phase. This is not optional.
+
+Each phase has a **BEGIN** block (TaskCreate + TaskUpdate in_progress) and an **END** block (TaskUpdate completed). These are your FIRST and LAST actions in each phase. Skipping them breaks the user's progress tracking.
+
+If you skip Task API calls, this skill has FAILED regardless of whether the config was created.
+</CRITICAL>
+
 ---
 
 ## Phase 1: Detect & Validate
 
-Execute the following steps in order. Each step is a single tool call.
+> **BEGIN:** Call TaskCreate with subject `"Detect & validate existing setup"`, description `"Run maximus validate --json and determine current state"`, activeForm `"Detecting existing setup"`. Then call TaskUpdate with status `in_progress` for that task.
 
-### Step 1: Create Task
-Call TaskCreate with:
-- subject: "Detect & validate existing setup"
-- description: "Run maximus validate --json and determine current state"
-- activeForm: "Detecting existing setup"
+### Step 1: Run Validation
 
-### Step 2: Update Task Status
-Call TaskUpdate with status `in_progress` for the task from Step 1.
-
-### Step 3: Run Validation
 Run `maximus validate --json`
 
-This is your FIRST action. Do NOT read files, explore, or run anything else before this.
+This is your FIRST action after creating the task. Do NOT read files, explore, or run anything else before this.
 
-### Step 4: Parse Validation Output
+### Step 2: Parse Validation Output
 
 Parse the JSON output and check the `directory` check status. This determines which state path to follow.
 
@@ -52,7 +54,7 @@ Existing Maximus setup found with errors:
   [list each check where status is "fail" with its message]
 ```
 
-Proceed to Phase 2. **CRITICAL:** Do NOT run `maximus init` in Phase 3 Step 14 — it refuses to re-initialize existing directories. In Phase 3, apply targeted fixes instead.
+Proceed to Phase 2. **CRITICAL:** Do NOT run `maximus init` in Phase 3 — it refuses to re-initialize existing directories. In Phase 3, apply targeted fixes instead.
 
 **State C — Valid Setup (`valid: true`)**
 
@@ -73,50 +75,37 @@ Use AskUserQuestion: "Would you like to change anything?" with options:
 - "Yes, I want to change settings"
 
 If user selects "No, this is good":
-- Complete task with TaskUpdate status `completed`
 - Skip to Phase 4 (skip Phases 2 and 3 entirely)
 
 If user selects "Yes, I want to change settings":
 - Note what settings to change
-- Complete task with TaskUpdate status `completed`
 - Proceed to Phase 2
 
-### Step 5: Complete Detection Task
-Call TaskUpdate with status `completed` for the task from Step 1.
+> **END:** Call TaskUpdate with status `completed` for the Phase 1 task.
 
 ---
 
 ## Phase 2: Analyze
 
-Execute the following steps in order. Each step is a single tool call.
+> **BEGIN:** Call TaskCreate with subject `"Analyze project structure"`, description `"Read package.json, git log, and count files to determine 3 config values"`, activeForm `"Analyzing project structure"`. Then call TaskUpdate with status `in_progress` for that task.
 
-### Step 6: Create Analysis Task
-Call TaskCreate with:
-- subject: "Analyze project structure"
-- description: "Read package.json, git log, and count files to determine 3 config values"
-- activeForm: "Analyzing project structure"
+### Step 1: Extract Project Name
 
-### Step 7: Update Task Status
-Call TaskUpdate with status `in_progress` for the task from Step 6.
-
-### Step 8: Extract Project Name
 Read `package.json` (or `Cargo.toml`, `go.mod`, `pyproject.toml` for other languages).
 
 Extract the `name` field value.
 
-STOP. Move to Step 9.
+### Step 2: Detect Commit Prefix
 
-### Step 9: Detect Commit Prefix
 Run `git log --oneline -10`
 
 Look for consistent prefixes in commit messages (e.g., "feat:", "fix:", "maximus:").
 
 If a prefix pattern is found, use it. If no consistent pattern exists, default to `"maximus:"`.
 
-STOP. Move to Step 10.
+### Step 3: Calculate Timeout
 
-### Step 10: Calculate Timeout
-Run:
+Run this exact command in Bash:
 ```bash
 find . -type f -not -path './node_modules/*' -not -path './.git/*' -not -path './dist/*' -not -path './build/*' -not -path './.next/*' -not -path './vendor/*' | wc -l
 ```
@@ -126,47 +115,34 @@ Calculate timeout based on file count:
 - 100-500 files → 900
 - More than 500 files → 1200
 
-STOP. Move to Step 11.
+### Step 4: Print Analysis Summary
 
-### Step 11: Print Analysis Summary
 Print:
 ```
 Project Analysis:
-  Name:           [project-name from Step 8]
+  Name:           [project-name from Step 1]
   Timeout:        [N]s (based on ~[X] files)
-  Commit prefix:  "[detected-prefix from Step 9]"
+  Commit prefix:  "[detected-prefix from Step 2]"
 ```
 
-Phase 2 is complete.
-
 <HARD-CONSTRAINT>
-Steps 8-10 are the ONLY reads in this phase. Do NOT read, explore, or analyze:
+Steps 1-3 are the ONLY reads in this phase. Do NOT read, explore, or analyze:
 - README, tsconfig, or any config files beyond package.json
 - Framework or dependency details
 - Project architecture or integrations
 - Test configuration or CI setup
-- Any file not explicitly listed in Steps 8-10
+- Any file not explicitly listed in Steps 1-3
 </HARD-CONSTRAINT>
 
-### Step 12: Complete Analysis Task
-Call TaskUpdate with status `completed` for the task from Step 6.
+> **END:** Call TaskUpdate with status `completed` for the Phase 2 task.
 
 ---
 
 ## Phase 3: Configure
 
-Execute the following steps in order. Each step is a single tool call.
+> **BEGIN:** Call TaskCreate with subject `"Configure Maximus settings"`, description `"Run maximus init, then edit 3 config values from Phase 2"`, activeForm `"Configuring Maximus settings"`. Then call TaskUpdate with status `in_progress` for that task.
 
-### Step 13: Create Configuration Task
-Call TaskCreate with:
-- subject: "Configure Maximus settings"
-- description: "Run maximus init, then edit 3 config values from Phase 2"
-- activeForm: "Configuring Maximus settings"
-
-### Step 14: Update Task Status
-Call TaskUpdate with status `in_progress` for the task from Step 13.
-
-### Step 15: Initialize Directory
+### Step 1: Initialize Directory
 
 **For State A only (no existing setup):**
 
@@ -178,21 +154,26 @@ Never use `mkdir`. Never add flags — `maximus init --help` will execute init i
 
 Skip this step entirely. The `.maximus/` directory already exists, and `maximus init` refuses to re-initialize existing directories.
 
-### Step 16: Read Default Configuration
+### Step 2: Read Default Configuration
+
 Read `.maximus/config.yml` to see the current/default values.
 
-### Step 17: Update Project Name
-Use Edit tool to change `project_name` to the value from Phase 2, Step 8.
+### Step 3: Update Project Name
 
-### Step 18: Update Timeout
-Use Edit tool to change the `timeout` value under the `agent:` section to the value from Phase 2, Step 10 (600, 900, or 1200).
+Use Edit tool to change `project_name` to the value from Phase 2, Step 1.
 
-### Step 19: Update Commit Prefix
-Use Edit tool to change `commit_prefix` under the `git:` section to the value from Phase 2, Step 9.
+### Step 4: Update Timeout
+
+Use Edit tool to change the `timeout` value under the `agent:` section to the value from Phase 2, Step 3 (600, 900, or 1200).
+
+### Step 5: Update Commit Prefix
+
+Use Edit tool to change `commit_prefix` under the `git:` section to the value from Phase 2, Step 2.
 
 **CONSTRAINT:** These are the ONLY 3 values you modify. Do NOT change any other fields. Do NOT add fields. Do NOT use Write tool on config.yml — only use Edit.
 
-### Step 20: Initialize Plan File
+### Step 6: Initialize Plan File
+
 Write `.maximus/plan.json` with:
 ```json
 {
@@ -201,19 +182,21 @@ Write `.maximus/plan.json` with:
 }
 ```
 
-### Step 21: User Confirmation (BLOCKING)
+If the file already exists, read it first then overwrite it.
 
-Use AskUserQuestion: "Does this configuration look correct?" with options:
-- "Yes, looks good"
-- "No, I want to change something"
+### Step 7: User Confirmation (BLOCKING)
 
 Present the 3 modified values:
 ```
 Configuration:
-  Project name:   [value from Step 17]
-  Timeout:        [value from Step 18]s
-  Commit prefix:  "[value from Step 19]"
+  Project name:   [value from Step 3]
+  Timeout:        [value from Step 4]s
+  Commit prefix:  "[value from Step 5]"
 ```
+
+Use AskUserQuestion: "Does this configuration look correct?" with options:
+- "Yes, looks good"
+- "No, I want to change something"
 
 If user selects "No, I want to change something":
 - Ask what to change
@@ -221,30 +204,21 @@ If user selects "No, I want to change something":
 - Re-confirm with another AskUserQuestion
 - Repeat until user approves
 
-Do NOT proceed to Step 22 until user selects "Yes, looks good".
+Do NOT proceed past this step until user selects "Yes, looks good".
 
-### Step 22: Complete Configuration Task
-Call TaskUpdate with status `completed` for the task from Step 13 after user confirms.
+> **END:** Call TaskUpdate with status `completed` for the Phase 3 task after user confirms.
 
 ---
 
 ## Phase 4: Validate & Handoff
 
-Execute the following steps in order. Each step is a single tool call.
+> **BEGIN:** Call TaskCreate with subject `"Validate & handoff"`, description `"Run final validation and present next steps"`, activeForm `"Validating final configuration"`. Then call TaskUpdate with status `in_progress` for that task.
 
-### Step 23: Create Validation Task
-Call TaskCreate with:
-- subject: "Validate & handoff"
-- description: "Run final validation and present next steps"
-- activeForm: "Validating final configuration"
+### Step 1: Final Validation
 
-### Step 24: Update Task Status
-Call TaskUpdate with status `in_progress` for the task from Step 23.
-
-### Step 25: Final Validation
 Run `maximus validate --json`
 
-### Step 26: Handle Validation Result
+### Step 2: Handle Validation Result
 
 **If `valid: true`:**
 
@@ -265,8 +239,6 @@ Next Steps:
      Run /arc:plan to design tasks for your feature
 ```
 
-Proceed to Step 28.
-
 **If invalid:**
 
 Show failures from the validation output.
@@ -281,30 +253,29 @@ If still invalid after 2 attempts:
 - Show the persistent failures
 - Ask the user for help: "I've attempted to fix these issues but validation still fails. Could you help me understand what needs to change?"
 
-### Step 27: Complete Validation Task
-Call TaskUpdate with status `completed` for the task from Step 23.
+> **END:** Call TaskUpdate with status `completed` for the Phase 4 task.
 
 ---
 
 ## Alternate Paths
 
-This skill has three possible execution paths determined in Phase 1, Step 4:
+This skill has three possible execution paths determined in Phase 1, Step 2:
 
 ### State A: No Existing Setup
 **Trigger:** `directory` check has `status: "fail"` in validation JSON
 
-**Path:** Phase 1 → Phase 2 → Phase 3 (with `maximus init` in Step 15) → Phase 4
+**Path:** Phase 1 → Phase 2 → Phase 3 (with `maximus init` in Step 1) → Phase 4
 
 **Description:** Fresh initialization. Creates `.maximus/` directory, analyzes project, configures settings, validates.
 
 ### State B: Existing Setup with Errors
 **Trigger:** `.maximus/` exists but other validation checks fail
 
-**Path:** Phase 1 → Phase 2 → Phase 3 (skip `maximus init` in Step 15) → Phase 4
+**Path:** Phase 1 → Phase 2 → Phase 3 (skip `maximus init` in Step 1) → Phase 4
 
 **Description:** Repair mode. Skips `maximus init` (refuses to re-initialize), analyzes project, applies targeted fixes to existing config, validates.
 
-**Critical difference:** Step 15 is skipped because `maximus init` will fail on existing directories.
+**Critical difference:** Step 1 is skipped because `maximus init` will fail on existing directories.
 
 ### State C: Valid Existing Setup
 **Trigger:** `valid: true` in validation JSON and user selects "No, this is good"

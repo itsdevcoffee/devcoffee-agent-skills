@@ -5,6 +5,14 @@ All notable changes to the Arc plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2026-02-15
+
+### Fixed
+
+- Enforce mandatory Task API usage — added CRITICAL block, restructured phases with BEGIN/END bookends instead of skippable numbered steps
+- Per-phase step numbering (Steps 1-N per phase instead of global 1-27) for clarity
+- Plan.json Write handles existing file gracefully (read first if exists)
+
 ## [0.1.1] - 2026-02-15
 
 ### Fixed
