@@ -8,20 +8,25 @@ description: Use when the user asks to "set up maximus", "configure maximus", "i
 **Announce:** "I'll validate your current setup, analyze the project, and configure Maximus Loop."
 
 <CRITICAL>
-## Task API is MANDATORY
+## Task API is MANDATORY — 4 separate tasks
 
-You MUST use TaskCreate and TaskUpdate for EVERY phase. This is not optional.
+You MUST call TaskCreate to create a NEW, SEPARATE task for EACH phase. This skill produces exactly 4 tasks:
 
-Each phase has a **BEGIN** block (TaskCreate + TaskUpdate in_progress) and an **END** block (TaskUpdate completed). These are your FIRST and LAST actions in each phase. Skipping them breaks the user's progress tracking.
+1. TaskCreate → "Detect & validate existing setup"
+2. TaskCreate → "Analyze project structure"
+3. TaskCreate → "Configure Maximus settings"
+4. TaskCreate → "Validate & handoff"
 
-If you skip Task API calls, this skill has FAILED regardless of whether the config was created.
+Do NOT reuse a task from a previous phase. Each BEGIN block creates a fresh task. Each END block completes that phase's task. The user sees 4 checkboxes — one per phase.
+
+If you skip Task API calls or reuse tasks across phases, this skill has FAILED.
 </CRITICAL>
 
 ---
 
 ## Phase 1: Detect & Validate
 
-> **BEGIN:** Call TaskCreate with subject `"Detect & validate existing setup"`, description `"Run maximus validate --json and determine current state"`, activeForm `"Detecting existing setup"`. Then call TaskUpdate with status `in_progress` for that task.
+> **BEGIN:** Call TaskCreate (NEW task, do not reuse previous) with subject `"Detect & validate existing setup"`, description `"Run maximus validate --json and determine current state"`, activeForm `"Detecting existing setup"`. Then call TaskUpdate with status `in_progress` for that task.
 
 ### Step 1: Run Validation
 
@@ -87,7 +92,7 @@ If user selects "Yes, I want to change settings":
 
 ## Phase 2: Analyze
 
-> **BEGIN:** Call TaskCreate with subject `"Analyze project structure"`, description `"Read package.json, git log, and count files to determine 3 config values"`, activeForm `"Analyzing project structure"`. Then call TaskUpdate with status `in_progress` for that task.
+> **BEGIN:** Call TaskCreate (NEW task, do not reuse previous) with subject `"Analyze project structure"`, description `"Read package.json, git log, and count files to determine 3 config values"`, activeForm `"Analyzing project structure"`. Then call TaskUpdate with status `in_progress` for that task.
 
 ### Step 1: Extract Project Name
 
@@ -140,7 +145,7 @@ Steps 1-3 are the ONLY reads in this phase. Do NOT read, explore, or analyze:
 
 ## Phase 3: Configure
 
-> **BEGIN:** Call TaskCreate with subject `"Configure Maximus settings"`, description `"Run maximus init, then edit 3 config values from Phase 2"`, activeForm `"Configuring Maximus settings"`. Then call TaskUpdate with status `in_progress` for that task.
+> **BEGIN:** Call TaskCreate (NEW task, do not reuse previous) with subject `"Configure Maximus settings"`, description `"Run maximus init, then edit 3 config values from Phase 2"`, activeForm `"Configuring Maximus settings"`. Then call TaskUpdate with status `in_progress` for that task.
 
 ### Step 1: Initialize Directory
 
@@ -212,7 +217,7 @@ Do NOT proceed past this step until user selects "Yes, looks good".
 
 ## Phase 4: Validate & Handoff
 
-> **BEGIN:** Call TaskCreate with subject `"Validate & handoff"`, description `"Run final validation and present next steps"`, activeForm `"Validating final configuration"`. Then call TaskUpdate with status `in_progress` for that task.
+> **BEGIN:** Call TaskCreate (NEW task, do not reuse previous) with subject `"Validate & handoff"`, description `"Run final validation and present next steps"`, activeForm `"Validating final configuration"`. Then call TaskUpdate with status `in_progress` for that task.
 
 ### Step 1: Final Validation
 
