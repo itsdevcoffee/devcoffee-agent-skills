@@ -1,0 +1,12 @@
+{
+  "name": "arc",
+  "version": "0.1.0",
+  "description": "Automation companion for the Maximus Loop CLI — project initialization, validation, task planning, and run analysis",
+  "author": {
+    "name": "Dev Coffee",
+    "url": "https://github.com/itsdevcoffee"
+  },
+  "repository": "https://github.com/itsdevcoffee/devcoffee-agent-skills",
+  "keywords": ["maximus-loop", "automation", "planning", "init", "validate", "review"],
+  "license": "MIT"
+}
