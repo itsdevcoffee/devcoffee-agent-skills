@@ -1,0 +1,139 @@
+---
+name: review
+description: Use when the user wants to review Maximus Loop results, analyze run performance, or check execution status. Triggers on "review the run", "analyze maximus results", "check status", "how is the run going", "show me the summary", "what's the progress", or when the user wants post-execution analysis with cost/performance insights.
+---
+
+# Arc Review — Run Analyzer
+
+Post-run analysis and intelligent status checking for Maximus Loop executions. Provides two modes: full review (default) for comprehensive analysis, and quick status (--quick flag) for fast progress checks.
+
+**Announce:** "I'll analyze the Maximus Loop execution for you."
+
+## Supporting Documentation
+
+Load reference files as needed:
+- **Run Summary Schema:** `${CLAUDE_PLUGIN_ROOT}/references/run-summary-schema.md` — Load during Phase 2
+- **Cost Estimation:** `${CLAUDE_PLUGIN_ROOT}/references/cost-estimation.md` — Load during Phase 3
+
+## Operating Modes
+
+**Full Review Mode (Default):**
+Use when user wants comprehensive analysis. Triggers: "review the run", "analyze results", "/arc:review"
+
+**Quick Status Mode (--quick):**
+Use when user wants fast check. Triggers: "check status", "how is it going", "--quick flag"
+
+## Full Review Mode: 6-Phase Analysis
+
+Create all 6 phase tasks upfront with TaskCreate, then execute sequentially.
+
+### Phase 1: Read Progress
+
+- TaskCreate: "Read progress metadata" / "Reading progress metadata"
+- Read `.maximus/progress.md`
+- Parse YAML frontmatter: current_iteration, total_tasks, completed_tasks, status
+- Extract latest iteration entry
+- Note blockers or errors
+- Mark completed
+
+### Phase 2: Read Run Summary
+
+- TaskCreate: "Load run summary data" / "Loading run summary data"
+- Read `.maximus/run-summary.json`
+- Parse TaskSummaryEntry fields (reference: `${CLAUDE_PLUGIN_ROOT}/references/run-summary-schema.md`)
+- Build outcome summary: completed, failed, blocked, timeout, skipped
+- Mark completed
+
+### Phase 3: Analyze Patterns
+
+- TaskCreate: "Identify failure patterns" / "Analyzing patterns and anomalies"
+- Load `${CLAUDE_PLUGIN_ROOT}/references/cost-estimation.md` for benchmarks
+- Failure analysis: count by outcome, group by error type, detect retry patterns
+- Cost analysis: cost per complexity, compare to expected benchmarks:
+  - Simple (haiku): Expected ~$0.32, flag if >$0.50
+  - Medium (sonnet): Expected ~$2.27, flag if >$3.50
+  - Complex (opus): Expected ~$5.00, flag if >$8.00
+- Complexity mismatch detection:
+  - Haiku tasks with >5 files changed → should be medium
+  - Haiku tasks with numTurns >8 → likely too complex
+  - Timeout tasks (durationMs = 900,000ms) → should be split
+- Performance patterns: average duration per complexity, outlier detection
+- Mark completed
+
+### Phase 4: Review Code (Optional)
+
+- TaskCreate: "Review code changes" / "Reviewing code changes"
+- Ask user: "Would you like me to review the code changes made during this run?"
+- If yes: git diff analysis for changed files, check for common issues
+- If no: skip
+- Mark completed
+
+### Phase 5: Generate Report
+
+- TaskCreate: "Generate findings report" / "Generating findings report"
+- Output structured report with sections:
+  - Summary (total tasks, completed, failed, cost, duration, success rate)
+  - Cost Breakdown table (by complexity)
+  - Issues with severity levels:
+    - Critical: timeouts, repeated failures >2 attempts, cost >3x expected
+    - Warning: cost >1.5x expected, high turn counts, complexity mismatches
+    - Info: optimization opportunities
+  - Top 5 Most Expensive Tasks
+  - Failed Tasks Detail
+  - Recommendations
+- Mark completed
+
+### Phase 6: Propose Follow-up
+
+- TaskCreate: "Propose follow-up actions" / "Proposing follow-up actions"
+- Suggest: retry failed tasks with complexity adjustments, split timeouts, extend plan with tests
+- Present as actionable next steps
+- Ask: "Would you like me to help implement any of these suggestions?"
+- If yes, use `/arc:plan` to extend
+- Mark completed
+
+## Quick Status Mode
+
+When triggered with --quick or status phrases. NO Task API, just read-only:
+
+1. Read progress.md frontmatter
+2. Read run-summary.json
+3. Calculate: completion %, total cost, average duration, ETA, warnings
+4. Output concise summary:
+
+```
+Maximus Loop Status
+
+Progress: 7/10 tasks (70%)
+Cost: $12.45 (Est. total: ~$17.50)
+ETA: ~8 minutes remaining
+
+Status: ✓ Running smoothly
+
+Warnings:
+- 1 task timed out (Task #5)
+
+Use '/arc:review' for full analysis.
+```
+
+No follow-up actions. Read-only and concise.
+
+## Error Handling
+
+- Missing progress.md: "No progress file found. Has the engine run yet?" Suggest /arc:plan
+- Missing run-summary.json: "No run summary found." Can still read progress.md
+- Active run (.heartbeat <30s old): "Engine is currently running. Status may be incomplete."
+
+## Best Practices
+
+**Do:**
+- Create all 6 tasks upfront in Full Review mode
+- Mark tasks in_progress immediately before starting
+- Mark tasks completed immediately after finishing
+- Use Quick Status for fast checks
+- Provide actionable recommendations
+
+**Don't:**
+- Skip Task API in Full Review mode
+- Modify .maximus/plan.json or progress.md (engine-managed)
+- Generate reports in Quick Status mode
