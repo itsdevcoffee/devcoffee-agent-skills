@@ -41,7 +41,9 @@ Create all 6 phase tasks upfront with TaskCreate, then execute sequentially.
 - TaskCreate: "Load run summary data" / "Loading run summary data"
 - Read `.maximus/run-summary.json`
 - Parse TaskSummaryEntry fields (reference: `${CLAUDE_PLUGIN_ROOT}/references/run-summary-schema.md`)
-- Build outcome summary: completed, failed, blocked, timeout, skipped
+- Note: file is a bare JSON array, not a wrapped object. Parse with `JSON.parse(content)` directly.
+- Build outcome summary: pass, fail, blocked
+- To detect timed-out tasks: filter by `outcome === 'fail' && durationMs >= 900000`
 - Mark completed
 
 ### Phase 3: Analyze Patterns
@@ -54,9 +56,9 @@ Create all 6 phase tasks upfront with TaskCreate, then execute sequentially.
   - Medium (sonnet): Expected ~$2.27, flag if >$3.50
   - Complex (opus): Expected ~$5.00, flag if >$8.00
 - Complexity mismatch detection:
-  - Haiku tasks with >5 files changed → should be medium
-  - Haiku tasks with numTurns >8 → likely too complex
-  - Timeout tasks (durationMs = 900,000ms) → should be split
+  - Haiku tasks with >1 file changed → should be medium (2+ files = medium minimum)
+  - Haiku tasks with numTurns >8 → likely too complex for simple
+  - Timed-out tasks (outcome === 'fail' && durationMs >= 900000) → task too complex, should be split
 - Performance patterns: average duration per complexity, outlier detection
 - Mark completed
 
@@ -87,7 +89,10 @@ Create all 6 phase tasks upfront with TaskCreate, then execute sequentially.
 
 - TaskCreate: "Propose follow-up actions" / "Proposing follow-up actions"
 - Suggest: retry failed tasks with complexity adjustments, split timeouts, extend plan with tests
-- Present as actionable next steps
+- Present as actionable next steps, including the post-run workflow:
+  1. `maximus archive` — save results to `.maximus/archive/` before cleaning
+  2. `maximus clean` — reset runtime state for the next batch
+  3. `/arc:plan` — plan the next batch
 - Ask: "Would you like me to help implement any of these suggestions?"
 - If yes, use `/arc:plan` to extend
 - Mark completed

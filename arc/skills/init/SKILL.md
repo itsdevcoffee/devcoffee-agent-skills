@@ -242,6 +242,9 @@ Next Steps:
      git commit -m "[prefix] Initialize Maximus Loop"
   2. Create your first task plan:
      Run /arc:plan to design tasks for your feature
+  3. After each run completes:
+     maximus archive  — save results to .maximus/archive/
+     maximus clean    — reset runtime state for the next batch
 ```
 
 **If invalid:**

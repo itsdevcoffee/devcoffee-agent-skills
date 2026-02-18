@@ -139,6 +139,11 @@ After each batch, ask for changes.
 
 **Acceptance criteria:** 4-7 per task, specific and verifiable, include file paths and expected outputs.
 
+**Optional fields for advanced use:**
+- `model`: Per-task model override (e.g. `"claude-opus-4-6"`, `"opus[1m]"`). Takes priority over complexity escalation. Use sparingly — it bypasses cost controls.
+- `provider`: Per-task provider override (e.g. `"codex"` for OpenAI Codex CLI). Requires `model` to also be set.
+- `skills`: Array of Claude Code skill names to invoke for this task (e.g. `["superpowers:tdd"]`).
+
 Mark task completed.
 
 ### Phase 5: Validate
@@ -190,7 +195,8 @@ Next steps:
   2. IMPORTANT — Commit before running:
      git add .maximus/ && git commit -m "Add task plan"
   3. Run the engine: maximus run
-  4. Monitor: maximus ui
+  4. Monitor: maximus ui or maximus tui
+  5. After the run completes: maximus archive (save results), then maximus clean (reset for next batch)
 ```
 
 Mark task completed.
@@ -212,7 +218,7 @@ Always ask which mode the user wants. Warn if `.maximus/.heartbeat` exists and w
 - Set all tasks to simple complexity
 - Create tasks without testing_steps
 - Write more than 8 tasks per phase
-- Create tasks that modify `.maximus/` state files (plan.json, .heartbeat, .state)
+- Create tasks that modify `.maximus/` state files (plan.json, progress.md, run-summary.json, .heartbeat, .state)
 - Skip user approval before writing plan.json
 - Create acceptance criteria with vague language ("should work", "properly configured")
 - Combine phases or skip phase gates

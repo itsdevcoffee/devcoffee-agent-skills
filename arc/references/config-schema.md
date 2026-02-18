@@ -29,9 +29,10 @@ Authoritative field reference for `.maximus/config.yml`. Derived from `engine/li
 
 | Field | Type | Required | Default | Valid Values |
 |-------|------|----------|---------|-------------|
-| `default_model` | string | **yes** | — | `"haiku"`, `"sonnet"`, `"opus"` |
+| `default_model` | string | **yes** | — | `"haiku"`, `"sonnet"`, `"opus"`, or any full model ID |
 | `timeout` | number | no | `600` | Seconds (recommended: 600–1200) |
 | `max_retries` | number | no | `2` | — |
+| `provider` | string | no | `"claude"` | `"claude"` or `"codex"` — selects the agent adapter |
 | `escalation` | object | no | — | Model escalation config |
 
 ### `agent.escalation` (optional)
@@ -95,7 +96,7 @@ Agents frequently invent these fields. **None of these exist in the schema:**
 | `language:` | Not a config field |
 | `framework:` | Not a config field |
 | `test_command:` | Not a config field |
-| `agent.model` | Correct field is `agent.default_model` |
+| `agent.model` | Correct field is `agent.default_model`. Note: `agent.provider` IS a valid field — don't confuse it with model. |
 | `loop.iterations` | Correct field is `loop.max_iterations` |
 | `git.prefix` | Correct field is `git.commit_prefix` |
 | `git.push` | Correct field is `git.auto_push` |
@@ -115,6 +116,7 @@ agent:
   default_model: sonnet
   timeout: 900
   max_retries: 2
+  provider: claude  # optional, defaults to "claude". Use "codex" for OpenAI Codex CLI.
   escalation:
     enabled: true
     simple: haiku

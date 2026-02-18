@@ -12,40 +12,38 @@ The engine writes this file after each task execution with a complete summary of
 
 ## Schema Structure
 
+The file is a **bare JSON array** of TaskSummaryEntry objects — no wrapper object:
+
 ```json
-{
-  "version": "1.0.0",
-  "summary": [
-    {
-      "taskId": "1",
-      "phase": 1,
-      "feature": "Add Task API reference doc",
-      "model": "haiku",
-      "costUsd": 0.32,
-      "durationMs": 120000,
-      "numTurns": 4,
-      "outcome": "completed",
-      "timestamp": "2026-02-14T03:30:00Z",
-      "errorMessage": null
-    }
-  ]
-}
+[
+  {
+    "taskId": 1,
+    "phase": 1,
+    "feature": "Add Task API reference doc",
+    "model": "haiku",
+    "costUsd": 0.32,
+    "durationMs": 120000,
+    "numTurns": 4,
+    "outcome": "pass",
+    "timestamp": "2026-02-14T03:30:00Z"
+  }
+]
 ```
 
 ## TaskSummaryEntry Fields
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `taskId` | string | Yes | Task identifier from plan.json (e.g., "1", "2", "3") |
+| `taskId` | number | Yes | Task identifier from plan.json (matches `id` field, always a number) |
 | `phase` | number | Yes | Phase number from plan.json (1-based integer) |
 | `feature` | string | Yes | Feature title from plan.json, 2-8 words |
-| `model` | string | Yes | Model used: `haiku`, `sonnet`, or `opus` |
-| `costUsd` | number | Yes | Total API cost in USD (rounded to 2 decimals) |
+| `model` | string | Yes | Model used: `haiku`, `sonnet`, or `opus` (or full model ID) |
+| `costUsd` | number | Yes | Total API cost in USD |
 | `durationMs` | number | Yes | Task execution time in milliseconds |
 | `numTurns` | number | Yes | Number of Claude API calls (turns) during execution |
-| `outcome` | string | Yes | Result status: `completed`, `blocked`, `timeout`, `failed`, `skipped` |
+| `outcome` | string | Yes | Result status: `pass`, `fail`, or `blocked` |
 | `timestamp` | string | Yes | ISO 8601 UTC timestamp when task finished |
-| `errorMessage` | string \| null | Yes | Error details if outcome is not `completed`, null otherwise |
+| `errorMessage` | string | No | Error details if outcome is `fail` or `blocked`. Absent on `pass` outcomes. |
 
 ## Field Details
 
@@ -53,7 +51,7 @@ The engine writes this file after each task execution with a complete summary of
 
 - Matches `id` field in plan.json
 - Used to correlate run-summary entries with plan tasks
-- Always a string ("1", not 1)
+- Always a **number** (e.g., `1`, not `"1"`)
 
 ### `phase`
 
@@ -69,10 +67,11 @@ The engine writes this file after each task execution with a complete summary of
 
 ### `model`
 
-Possible values:
+Possible values (short names or full model IDs):
 - `haiku` - For simple tasks (complexity_level: simple)
 - `sonnet` - For medium tasks (complexity_level: medium)
 - `opus` - For complex tasks (complexity_level: complex)
+- Also accepts full model IDs like `claude-sonnet-4-6` when per-task `model` override is used
 
 ### `costUsd`
 
@@ -89,7 +88,7 @@ Possible values:
 
 - Elapsed wall-clock time from task start to completion
 - Includes all API calls, tool execution, and parsing
-- Used to detect timeouts (900,000ms = 15 minutes)
+- To detect timed-out tasks: check `durationMs >= 900000` (default 900s timeout). Note: timed-out tasks have outcome `fail`, not a separate `timeout` value.
 
 ### `numTurns`
 
@@ -103,11 +102,9 @@ Status values:
 
 | Outcome | Meaning | Next Step |
 |---------|---------|-----------|
-| `completed` | Task finished successfully | Mark task `passes: true` in plan |
-| `blocked` | External dependency or user intervention needed | Review blockers, unblock if possible |
-| `timeout` | Exceeded 15-minute limit (900,000ms) | Task too complex, split into smaller tasks |
-| `failed` | Task failed with error | Review errorMessage, may need retry |
-| `skipped` | Task was skipped (e.g., dependency failed) | Address prerequisite task |
+| `pass` | Task finished successfully and was verified | Task is marked `passes: true` in plan |
+| `fail` | Task failed with error (includes timeouts) | Review errorMessage, may need retry |
+| `blocked` | Task blocked due to invalid provider, exceeded retries, or unresolvable state | Review and fix the underlying issue |
 
 ### `timestamp`
 
@@ -117,13 +114,12 @@ Status values:
 
 ### `errorMessage`
 
-- null for `completed` outcome
-- String describing error for other outcomes
+- **Absent** (field not present) on `pass` outcomes
+- String describing error on `fail` or `blocked` outcomes
 - Examples:
-  - "Task timed out after 900 seconds"
-  - "API rate limit exceeded"
-  - "File not found: src/index.ts"
-  - "Dependency task #2 is blocked"
+  - "Agent timed out after 900s"
+  - "Agent exited with code 1"
+  - "Invalid provider: codex"
 
 ## Usage Examples
 
@@ -132,9 +128,9 @@ Status values:
 ```javascript
 const summary = JSON.parse(fs.readFileSync('.maximus/run-summary.json'));
 
-// Group by phase
+// Group by phase (summary is a bare array)
 const costByPhase = {};
-summary.summary.forEach(entry => {
+summary.forEach(entry => {
   costByPhase[entry.phase] = (costByPhase[entry.phase] || 0) + entry.costUsd;
 });
 
@@ -145,7 +141,8 @@ console.log(costByPhase);
 ### Finding Failed Tasks
 
 ```javascript
-const failed = summary.summary.filter(e => e.outcome !== 'completed');
+const summary = JSON.parse(fs.readFileSync('.maximus/run-summary.json'));
+const failed = summary.filter(e => e.outcome !== 'pass');
 
 failed.forEach(task => {
   console.log(`Task #${task.taskId}: ${task.feature}`);
@@ -157,14 +154,16 @@ failed.forEach(task => {
 ### Calculating Performance Metrics
 
 ```javascript
+const summary = JSON.parse(fs.readFileSync('.maximus/run-summary.json'));
+
 // Average cost per task
-const avgCost = summary.summary.reduce((sum, t) => sum + t.costUsd, 0) / summary.summary.length;
+const avgCost = summary.reduce((sum, t) => sum + t.costUsd, 0) / summary.length;
 
 // Average duration
-const avgDuration = summary.summary.reduce((sum, t) => sum + t.durationMs, 0) / summary.summary.length;
+const avgDuration = summary.reduce((sum, t) => sum + t.durationMs, 0) / summary.length;
 
 // Success rate
-const successRate = summary.summary.filter(t => t.outcome === 'completed').length / summary.summary.length;
+const successRate = summary.filter(t => t.outcome === 'pass').length / summary.length;
 
 console.log(`Avg cost: $${avgCost.toFixed(2)}`);
 console.log(`Avg duration: ${(avgDuration / 1000).toFixed(1)}s`);
@@ -174,7 +173,8 @@ console.log(`Success rate: ${(successRate * 100).toFixed(1)}%`);
 ### Identifying Expensive Tasks
 
 ```javascript
-const expensive = summary.summary
+const summary = JSON.parse(fs.readFileSync('.maximus/run-summary.json'));
+const expensive = summary
   .sort((a, b) => b.costUsd - a.costUsd)
   .slice(0, 5);
 
@@ -184,21 +184,29 @@ expensive.forEach((t, i) => {
 });
 ```
 
+### Detecting Timed-Out Tasks
+
+```javascript
+const summary = JSON.parse(fs.readFileSync('.maximus/run-summary.json'));
+// Timed-out tasks have outcome 'fail' and durationMs near 900,000ms
+const timedOut = summary.filter(t => t.outcome === 'fail' && t.durationMs >= 900000);
+timedOut.forEach(t => console.log(`Task #${t.taskId} timed out after ${t.durationMs / 1000}s`));
+```
+
 ## Common Queries
 
 ### When would outcome be "blocked"?
 
 When a task can't proceed due to:
-- Previous task failed and this task depends on it
-- User intervention required (e.g., approval, decision)
+- Invalid or unavailable agent provider
+- Exceeded max retries with persistent failures
 - External service unavailable
 
-### Why might a task timeout?
+### Why might a task fail with long duration?
 
+- Task exceeded the 900s timeout limit (check `durationMs >= 900000`)
 - Task is too complex, needs splitting
 - Recursive problem-solving loops
-- Tool failures causing retries
-- Missing context about project structure
 
 ### How to interpret numTurns?
 
@@ -210,39 +218,23 @@ When a task can't proceed due to:
 
 | Field | From plan.json | Used for | In run-summary |
 |-------|----------------|----------|---|
-| `taskId` | `id` | Cross-reference | Yes, as string |
+| `taskId` | `id` | Cross-reference | Yes, as **number** |
 | `phase` | `phase` | Grouping, validation | Yes |
 | `feature` | `feature` | Display, reference | Yes |
-| Model | `complexity_level` | Selection | Yes, as model name |
+| Model | `complexity_level` or `model` override | Selection | Yes, as model name |
 | Cost | (calculated) | Analysis | Yes, costUsd |
 | Duration | (measured) | Performance | Yes, durationMs |
-| Outcome | (actual result) | Status | Yes |
+| Outcome | (actual result) | Status | Yes, `pass`/`fail`/`blocked` |
 
 ## Schema Evolution
 
 **Version 1.0.0:**
 - Initial release with 10 core fields
-- Supports all model types (haiku, sonnet, opus)
-- Outcome types: completed, blocked, timeout, failed, skipped
-
-## Example Entry
-
-```json
-{
-  "taskId": "3",
-  "phase": 2,
-  "feature": "Implement registration endpoint",
-  "model": "sonnet",
-  "costUsd": 2.47,
-  "durationMs": 285000,
-  "numTurns": 6,
-  "outcome": "completed",
-  "timestamp": "2026-02-14T04:15:30Z",
-  "errorMessage": null
-}
-```
+- Supports all model types (haiku, sonnet, opus) and full model IDs
+- Outcome types: `pass`, `fail`, `blocked`
+- File is a bare JSON array (no wrapper object)
 
 ---
 
-**Version:** 1.0
-**Last Updated:** 2026-02-13
+**Version:** 1.1
+**Last Updated:** 2026-02-18

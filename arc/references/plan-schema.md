@@ -26,6 +26,9 @@
 | `file` | string | Recommended | Primary file being changed (relative path from project root) |
 | `complexity_level` | `"simple"` \| `"medium"` \| `"complex"` | Recommended | Controls which AI model runs the task |
 | `testing_steps` | string[] | Recommended | Shell commands or manual checks to verify the work |
+| `model` | string | Optional | **Per-task model override.** Takes absolute priority over `complexity_level` escalation and `agent.default_model`. Use full model IDs (e.g. `"claude-opus-4-6"`) or short names (e.g. `"opus[1m]"`). Useful when one task in a plan needs a stronger model regardless of its complexity rating. |
+| `provider` | string | Optional | **Per-task provider override.** Selects which adapter runs this task (e.g. `"codex"`). When set to a different provider than the config default, `model` must also be set (escalation models are provider-specific). |
+| `skills` | string[] | Optional | Claude Code skills to invoke before task execution via the Skill tool. The engine injects a skills block into the agent prompt listing these skills. |
 
 ## Field Details
 
@@ -61,6 +64,26 @@ Controls model selection and directly impacts cost:
 - Runnable shell commands preferred
 - Include both automated tests and manual verification
 - Use project-specific commands (e.g., `bun test`, `npm test`, `cargo test`)
+
+### `model` (optional)
+- Full model ID or short name: `"claude-opus-4-6"`, `"opus[1m]"`, `"sonnet"`, `"codex-mini-latest"`
+- Priority chain: `task.model` > `escalation[complexity_level]` > `agent.default_model`
+- Useful for one-off escalation (e.g., a single `simple` task that genuinely needs opus)
+- **Cost warning:** Using opus on a simple task costs ~15x more than haiku
+
+### `provider` (optional)
+- Selects which adapter handles this task: `"claude"` (default) or `"codex"`
+- When `provider` differs from config default, `model` **must** also be set
+- Cross-provider safety: the engine will throw a clear error if `provider` is set without `model`
+
+### Engine-Managed Fields (do not set manually)
+These fields are written by the engine during execution — never include them in new tasks:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `lastError` | string | Most recent error message from a failed attempt |
+| `lastErrorTimestamp` | string | ISO timestamp of the last failure |
+| `failureCount` | number | Number of failed attempts so far |
 
 ## Engine Behavior
 

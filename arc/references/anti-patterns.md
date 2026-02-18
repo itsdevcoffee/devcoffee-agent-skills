@@ -46,10 +46,15 @@ Without testing steps, agents skip verification and commit untested code. Always
 
 ## 7. Tasks Targeting Engine State Files
 
-**Bad:** Task that modifies `.maximus/plan.json` or `.maximus/progress.md`
+**Bad:** Task that modifies `.maximus/plan.json`, `.maximus/progress.md`, or `.maximus/run-summary.json`
 **Good:** Tasks only modify project source code, never engine state
 
-The engine protects state files with chmod 444 locks and snapshot-restore. Tasks targeting these files will fail silently or cause corruption.
+The engine protects three state files with chmod 444 locks and snapshot-restore before each agent run:
+- `.maximus/plan.json` — task plan
+- `.maximus/progress.md` — iteration history
+- `.maximus/run-summary.json` — cost/performance log
+
+Tasks targeting any of these will fail silently (chmod 444 prevents writes) or be reverted by the snapshot-restore mechanism.
 
 ## 8. Overlapping File Targets
 

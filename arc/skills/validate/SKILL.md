@@ -51,7 +51,13 @@ Only run if Phase 1 passes. Check these 5 things, only report mismatches:
 ### 5. Plan health
 
 - If plan has tasks, report completion status (X/Y completed, Z pending)
-- If all tasks are complete, suggest creating a new plan
+- If all tasks are complete, suggest: `maximus archive` → `maximus clean` → `/arc:plan` for next batch
+
+### 6. Provider configuration
+
+- If `agent.provider` is set in config, check it is a recognized value (`claude` or `codex`)
+- If `codex` provider is configured, check that any per-task `provider` overrides also include a `model` field
+- Note: the preflight check in the engine will catch CLI availability at runtime, but a config advisory here prevents surprises
 
 Output format for advisories:
 ```
