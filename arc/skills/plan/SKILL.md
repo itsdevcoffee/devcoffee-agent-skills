@@ -59,8 +59,19 @@ Mark task in_progress. Silently read:
 6. `.maximus/plan.json` (if exists)
 7. `.maximus/config.yml` (if exists)
 8. README.md
+9. `.maximus/queue.md` (if exists)
 
 Present brief context summary to the user. If existing plan found with completed tasks, ask whether to extend or replace.
+
+**Queue check:** If `.maximus/queue.md` exists and contains unchecked items (`- [ ]`), present them to the user:
+```
+Found N item(s) in the queue:
+  1. [item description] (Priority: high)
+  2. [item description] (Priority: normal)
+
+Would you like to include any of these in this batch?
+```
+Items the user selects get promoted into plan tasks. Items not selected remain in queue.md unchanged. Items promoted should be checked off (`- [x]`) with a note: `Promoted to task #N in batch YYYY-MM-DD`.
 
 Mark task completed.
 

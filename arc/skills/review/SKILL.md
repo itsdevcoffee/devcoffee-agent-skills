@@ -92,7 +92,16 @@ Create all 6 phase tasks upfront with TaskCreate, then execute sequentially.
 - Present as actionable next steps, including the post-run workflow:
   1. `maximus archive` — save results to `.maximus/archive/` before cleaning
   2. `maximus clean` — reset runtime state for the next batch
-  3. `/arc:plan` — plan the next batch
+  3. `/arc:plan` — plan the next batch (will check queue.md automatically)
+- **Queue:** For observations that aren't ready for a full task yet (minor bugs noticed, future ideas, things to investigate), suggest adding them to `.maximus/queue.md`:
+  ```
+  # To capture a quick observation for later:
+  Add to .maximus/queue.md:
+  - [ ] Your observation here
+    - Added: YYYY-MM-DD
+    - Priority: normal
+  ```
+  Items in queue.md are surfaced automatically when you next run `/arc:plan`.
 - Ask: "Would you like me to help implement any of these suggestions?"
 - If yes, use `/arc:plan` to extend
 - Mark completed
