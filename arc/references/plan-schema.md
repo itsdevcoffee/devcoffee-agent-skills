@@ -22,7 +22,7 @@
 | `feature` | string | Yes | Short title (2-8 words) |
 | `description` | string | Yes | 2-3 sentences explaining the work, specific enough for an agent with zero project context |
 | `acceptance_criteria` | string[] | Yes | 4-7 specific, verifiable conditions (non-empty array) |
-| `passes` | boolean | Yes | Always set to `false` for new tasks. Engine sets to `true` on completion |
+| `passes` | boolean | Yes | Always set to `false` for new tasks. Engine sets to `true` on completion. **Never set to `"blocked"` — see warning below.** |
 | `file` | string | Recommended | Primary file being changed (relative path from project root) |
 | `complexity_level` | `"simple"` \| `"medium"` \| `"complex"` | Recommended | Controls which AI model runs the task |
 | `testing_steps` | string[] | Recommended | Shell commands or manual checks to verify the work |
@@ -100,8 +100,15 @@ These fields are written by the engine during execution — never include them i
 The engine processes tasks sequentially via `Array.find(task => task.passes === false)`:
 - No explicit dependency system — task ordering in the array IS the dependency order
 - Tasks within the same phase run sequentially
-- The engine validates only `id` (must be number) and `passes` (must be boolean or "blocked")
+- The engine validates `id` (must be number) and `passes` (must be boolean or `"blocked"`)
 - All other validation is the responsibility of the plan generator
+
+> **⚠️ WARNING — `passes: "blocked"` causes an immediate engine stop.**
+> The engine checks `isTaskBlocked()` before running any task. If ANY task in the plan has `passes === "blocked"`, the engine halts immediately with a `task_blocked` stop reason — it does not skip the task and continue.
+>
+> **Never pre-author `passes: "blocked"` in new tasks.** It is an engine-managed stop signal for dependency failures, not a "queue for later" marker.
+>
+> **To defer tasks for future batches, use `.maximus/queue.md`** — a plain markdown checklist the arc:plan skill reads at the start of every planning session. Items not promoted into the current plan stay in the file for the next batch.
 
 ## Example Task
 

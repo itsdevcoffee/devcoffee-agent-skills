@@ -173,7 +173,7 @@ Mark task in_progress. Run silent validation checklist, only report failures to 
 - Phase ordering respects dependencies
 - Max 8 tasks per phase
 - Descriptions specific enough for zero-context agent
-- All `passes` fields set to `false`
+- All `passes` fields set to `false` — **never `"blocked"`** (any blocked task causes immediate engine stop; use `.maximus/queue.md` for deferred work instead)
 - File paths relative to project root
 - If task has `inject[]`, warn user if `.glue/skills/index.json` not present in project root
 
