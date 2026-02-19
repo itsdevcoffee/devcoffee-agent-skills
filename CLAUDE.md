@@ -4,13 +4,15 @@
 
 **Before committing ANY changes to plugin source files, verify:**
 
-- [ ] **CHANGELOG.md** — Add entries under `[Unreleased]` for user-facing changes
-- [ ] **Version bump** — If releasing: update version in `<plugin>/.claude-plugin/plugin.json`, `<plugin>/.claude-plugin/plugin-metadata.json`, and `.claude-plugin/marketplace.json`
-- [ ] **Semantic version** — MAJOR (breaking), MINOR (new features), PATCH (bug fixes)
+- [ ] **Version bump** — Update version in `<plugin>/.claude-plugin/plugin.json` and `<plugin>/.claude-plugin/plugin-metadata.json`
+- [ ] **CHANGELOG.md** — Add entry under a new `[X.Y.Z]` section
+- [ ] **Semantic version** — MAJOR (breaking), MINOR (new features), PATCH (bug fixes/docs)
 
-**This applies to changes in:** `devcoffee/`, `video-analysis/`, `remotion-max/`, `maximus-loop/`, `tldr/`, `opentui-dev/`
+> **⚠️ WHY THIS IS MANDATORY:** Claude Code pins installed plugins to a specific git commit. `plugin update` only pulls new commits if the version number in `plugin.json` has changed. If you push changes without bumping the version, **users running `plugin update` will silently keep the old cached version** and never receive your fix.
 
-**Skip only for:** docs-only changes, test updates, CI/build config, internal refactoring with zero user impact.
+**This applies to changes in:** `arc/`, `devcoffee/`, `video-analysis/`, `remotion-max/`, `maximus-loop/`, `tldr/`, `opentui-dev/`
+
+**Skip only for:** repo-level docs (README, CONTRIBUTING), CI/build config, or changes with zero user-facing impact.
 
 ## Project Overview
 
