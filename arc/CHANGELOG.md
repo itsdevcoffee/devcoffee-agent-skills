@@ -5,6 +5,13 @@ All notable changes to the Arc plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-02-18
+
+### Fixed
+
+- `passes: "blocked"` misuse: clarified in plan-schema.md that any blocked task causes an immediate engine stop (`task_blocked`); it is not a "queue for later" marker. Added explicit warning block pointing to `.maximus/queue.md` as the correct mechanism for deferred tasks
+- SKILL.md Phase 5 validation now explicitly rejects `passes: "blocked"` in new tasks
+
 ## [0.2.0] - 2026-02-18
 
 ### Added
