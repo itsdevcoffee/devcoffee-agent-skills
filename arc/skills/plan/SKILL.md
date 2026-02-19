@@ -154,6 +154,9 @@ After each batch, ask for changes.
 - `model`: Per-task model override (e.g. `"claude-opus-4-6"`, `"opus[1m]"`). Takes priority over complexity escalation. Use sparingly — it bypasses cost controls.
 - `provider`: Per-task provider override (e.g. `"codex"` for OpenAI Codex CLI). Requires `model` to also be set.
 - `skills`: Array of Claude Code skill names to invoke for this task (e.g. `["superpowers:tdd"]`).
+- `inject`: Array of GLUE skill names to pre-inject before task execution (e.g. `["typescript-patterns"]`). Distinct from `skills` (Claude Code plugin tools). Requires `.glue/skills/index.json` — run `glue add <path>` to import skills. See `glue skills list` for available skills in the project.
+
+> **`inject` vs `skills`:** Use `inject` for domain knowledge loaded as markdown content (GLUE CLI). Use `skills` for Claude Code plugin tool invocations. They serve different purposes and can be combined on the same task.
 
 Mark task completed.
 
@@ -172,6 +175,7 @@ Mark task in_progress. Run silent validation checklist, only report failures to 
 - Descriptions specific enough for zero-context agent
 - All `passes` fields set to `false`
 - File paths relative to project root
+- If task has `inject[]`, warn user if `.glue/skills/index.json` not present in project root
 
 For full validation list: `${CLAUDE_PLUGIN_ROOT}/references/anti-patterns.md`
 
@@ -208,6 +212,7 @@ Next steps:
   3. Run the engine: maximus run
   4. Monitor: maximus ui or maximus tui
   5. After the run completes: maximus archive (save results), then maximus clean (reset for next batch)
+  5. If using GLUE inject skills: run `glue add <skills-path>` if not already done, then `git add .glue/ && git commit -m "add glue skills"`
 ```
 
 Mark task completed.

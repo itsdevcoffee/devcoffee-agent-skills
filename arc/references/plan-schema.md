@@ -29,6 +29,7 @@
 | `model` | string | Optional | **Per-task model override.** Takes absolute priority over `complexity_level` escalation and `agent.default_model`. Use full model IDs (e.g. `"claude-opus-4-6"`) or short names (e.g. `"opus[1m]"`). Useful when one task in a plan needs a stronger model regardless of its complexity rating. |
 | `provider` | string | Optional | **Per-task provider override.** Selects which adapter runs this task (e.g. `"codex"`). When set to a different provider than the config default, `model` must also be set (escalation models are provider-specific). |
 | `skills` | string[] | Optional | Claude Code skills to invoke before task execution via the Skill tool. The engine injects a skills block into the agent prompt listing these skills. |
+| `inject` | string[] | Optional | GLUE skill names to inject into the agent prompt before this task starts. The engine shells out to `glue skills inject` and prepends the content. Format: `"name"` or `"name@version"`. Requires `.glue/skills/index.json` in the project root. Different from `skills` (Claude Code plugin tools). |
 
 ## Field Details
 
@@ -75,6 +76,15 @@ Controls model selection and directly impacts cost:
 - Selects which adapter handles this task: `"claude"` (default) or `"codex"`
 - When `provider` differs from config default, `model` **must** also be set
 - Cross-provider safety: the engine will throw a clear error if `provider` is set without `model`
+
+### `inject` (optional)
+- Names of GLUE skills to inject before this task runs
+- Format: `"name"` (uses default version) or `"name@1.0.0"` (pinned version)
+- The engine calls `glue skills inject <names>` and prepends the output to the agent prompt
+- Requires `.glue/skills/index.json` — run `glue add <path>` to set up
+- Different from `skills`: `skills` invokes Claude Code plugin tools; `inject` loads GLUE markdown content
+- Use for domain knowledge that every agent step for this task should start with
+- Example: `"inject": ["typescript-patterns", "testing-best-practices@1.0.0"]`
 
 ### Engine-Managed Fields (do not set manually)
 These fields are written by the engine during execution — never include them in new tasks:
